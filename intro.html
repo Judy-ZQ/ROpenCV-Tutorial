@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>1 简介 | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="1 简介 | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1 简介 | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content="1.1 R简介...">
+<meta property="og:description" content="1.1 R简介...">
+<meta name="twitter:description" content="1.1 R简介...">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="active" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="intro" class="section level1" number="1">
+<h1>
+<span class="header-section-number">1</span> 简介<a class="anchor" aria-label="anchor" href="#intro"><i class="fas fa-link"></i></a>
+</h1>
+<div id="r简介" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> R简介<a class="anchor" aria-label="anchor" href="#r%E7%AE%80%E4%BB%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p>R是统计领域广泛使用的诞生于1980年左右的S语言的一个分支。而S语言是由AT&amp;T贝尔实验室开发的一种用来进行数据探索、统计分析和作图的解释型语言。最初S语言的实现版本主要是S-PLUS。S-PLUS是一个商业软件，它基于S语言，并由MathSoft公司的统计科学部进一步完善。后来新西兰奥克兰大学的RobertGentleman和RossIhaka及其他志愿人员开发了一个R系统。由“R开发核心团队”负责开发。R可以看作贝尔实验室开发的S语言的一种实现。</p>
+<!-- 在IEEE Spectrum于2024年10月21日发布的2024年top编程语言排名中，R语言排名第20位： -->
+<!-- ```{r, echo=FALSE, out.width='50%', out.height='50%', fig.align='center'} -->
+<!-- knitr::include_graphics("images/IEEESpectrumR2024.png") -->
+<!-- ``` -->
+<p>R的生态圈相当活跃，单就CRAN存放的R的工具包数量，目前就已经达到21598个，其中在2022年至今的三年里发布/更新的数据包分别有2899个、4456个和7051个。</p>
+<p>R的功能包括：数据存储和处理系统；数组运算工具（其向量、矩阵运算方面功能非常强大）；完整连贯的统计分析工具；优秀的统计制图功能；简便而强大的编程语言：可操纵数据的输入和输出，可实现分支、循环程序设计，支持用户实现自定义功能。比如，在统计制图功能方面，可以通过一句代码绘制鸢尾花数据集的萼片长度、萼片宽度、花瓣长度和花瓣宽度的箱线图：</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span>,<span class="op">-</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-2-1.png" width="672"></div>
+<p>也可以使用如下代码灵活绘制函数曲线图：</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成自变量向量x</span></span>
+<span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="co">#依据x计算exp(sin(x))，保存在y1中</span></span>
+<span><span class="va">y1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#依据x计2^(sin(x))，保存在y2中</span></span>
+<span><span class="va">y2</span> <span class="op">=</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#依据x,y1绘制相应的曲线，颜色为红色</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y1</span>,type<span class="op">=</span><span class="st">'l'</span>,col<span class="op">=</span><span class="st">"red"</span>, </span>
+<span>     main<span class="op">=</span><span class="st">"两个函数曲线对照图"</span>,xlab<span class="op">=</span><span class="st">""</span>,ylab<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span><span class="co">#依据x,y2绘制相应的曲线，颜色为蓝色</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y2</span>,col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#在y=exp(sin(x))的曲线上标注横坐标为4对应的点</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,pch<span class="op">=</span><span class="fl">16</span>,col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="co">#在标注点附近添加函数关系的说明文本</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">==</span><span class="va">e</span><span class="op">^</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">}</span><span class="op">)</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#在y=2^(sin(x))的曲线上标注横坐标为2对应的点</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">^</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>,pch<span class="op">=</span><span class="fl">16</span>,col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span>
+<span><span class="co">#在标注点附近添加函数关系的说明文本</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">y</span><span class="op">==</span><span class="fl">2</span><span class="op">^</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">}</span><span class="op">)</span>,adj<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-3-1.png" width="672"></div>
+<p>又比如，可以通过如下代码演示统计学的一个结论：当T分布的自由度趋于无穷大时，其分布逼近于标准正态分布。</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成自变量向量x</span></span>
+<span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>,<span class="fl">3</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="co">#依据自变量x计算标准正态分布的概率密度向量y.norm</span></span>
+<span><span class="va">y.norm</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#依据x,y.norm绘制标准正态分布的概率密度曲线（颜色为红色）</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y.norm</span>,type<span class="op">=</span><span class="st">"l"</span>,col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="co">#绘制横坐标为0竖直虚线（颜色为绿色）</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fl">0</span>,lty<span class="op">=</span><span class="st">"dashed"</span>,col<span class="op">=</span><span class="st">"green"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#动态绘制自由度从2变化到20的T分布的概率密度曲线，</span></span>
+<span><span class="co">#会发现随着自由度的增加，T分布的概率密度曲线逐渐</span></span>
+<span><span class="co">#与标准正态分布曲线重合</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">degree</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">y.t</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html">dt</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">degree</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y.t</span>,lty<span class="op">=</span><span class="st">"dashed"</span>,col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y.t</span>,lty<span class="op">=</span><span class="st">"dashed"</span>,col<span class="op">=</span><span class="st">"white"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y.t</span>,col<span class="op">=</span><span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+<p>再比如在矩阵计算方面，可以通过qr分解方式求如下矩阵的秩：</p>
+<p><span class="math display">\[
+\left[
+\begin{matrix}
+2 &amp; -1 &amp; -1 &amp; 1 &amp; 2 \\
+1 &amp; 1 &amp; -2 &amp; 1 &amp; 4 \\
+4 &amp; -6 &amp; 2 &amp; -2 &amp; 4 \\
+3 &amp; 6 &amp; -9 &amp; 7 &amp; 9
+\end{matrix}
+\right]
+\]</span></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成指定矩阵</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">4</span>,<span class="fl">4</span>,<span class="op">-</span><span class="fl">6</span>,<span class="fl">2</span>,<span class="op">-</span><span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">6</span>,<span class="op">-</span><span class="fl">9</span>,<span class="fl">7</span>,<span class="fl">9</span><span class="op">)</span>,nr<span class="op">=</span><span class="fl">4</span>,byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#从qr分级操作中读取rank（即获得矩阵的秩）</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/qr.html">qr</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">$</span><span class="va">rank</span></span></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<p>还可以快速求解如下方程组：</p>
+<p><span class="math display">\[
+\begin{cases}
+2x_1+x_2-5x_3+x_4=8\\
+x_1-3x_2-6x_4=9\\
+2x_2-x_3+2x_4=-5\\
+x_1+4x_2-7x_3+6x_4=0
+\end{cases}
+\]</span></p>
+<pre><code>## [1] 27</code></pre>
+<pre><code>##             [,1]       [,2]       [,3]       [,4]
+## [1,]  1.33333333 -0.6666667  0.3333333 -1.0000000
+## [2,] -0.07407407  0.2592593  1.1481481 -0.1111111
+## [3,]  0.37037037 -0.2962963  0.2592593 -0.4444444
+## [4,]  0.25925926 -0.4074074 -0.5185185 -0.1111111</code></pre>
+<pre><code>##      [,1]
+## [1,]    3
+## [2,]   -4
+## [3,]   -1
+## [4,]    1</code></pre>
+<pre><code>## [1]  3 -4 -1  1</code></pre>
+<p>R是一个免费的自由软件，它有UNIX、LINUX、MacOS和WINDOWS版本，都是可以免费下载和使用的。R语言的下载可以通过CRAN的镜像来查找。R的源代码也可自由下载使用，亦有已编译的执行档版本可以下载，可在多种平台下运行，包括UNIX（也包括FreeBSD和Linux）、Windows和MacOS。</p>
+</div>
+<div id="r中的一些图像工具包" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> R中的一些图像工具包<a class="anchor" aria-label="anchor" href="#r%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9B%BE%E5%83%8F%E5%B7%A5%E5%85%B7%E5%8C%85"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>magick</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/magick/">magick</a></span><span class="op">)</span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">frink</span> <span class="op">=</span> <span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="st">"images/frink.png"</span><span class="op">)</span></span>
+<span><span class="co">#显示读取的内容</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">frink</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##   format width height colorspace matte filesize density
+## 1    PNG   220    445       sRGB  TRUE    73494   72x72</code></pre>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-7-1.png" width="110"></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#将图像背景颜色变成hotpink</span></span>
+<span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/color.html">image_background</a></span><span class="op">(</span><span class="va">frink</span>, <span class="st">"hotpink"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-7-2.png" width="110"></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#在图像的左右各自添加20像素的边界，以及在图像的上下各自添加10像素的边界</span></span>
+<span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/composite.html">image_border</a></span><span class="op">(</span><span class="va">frink</span>, <span class="st">"#000000"</span>, <span class="st">"20x10"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-7-3.png" width="130"></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#截取部分图像</span></span>
+<span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/transform.html">image_crop</a></span><span class="op">(</span><span class="va">frink</span>, <span class="st">"100x150+50"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-7-4.png" width="50"></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#旋转图像</span></span>
+<span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/transform.html">image_rotate</a></span><span class="op">(</span><span class="va">frink</span>, <span class="fl">45</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-7-5.png" width="236"></div>
+<ul>
+<li>imager</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://asgr.github.io/imager/">imager</a></span><span class="op">)</span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/imager/man/load.image.html">load.image</a></span><span class="op">(</span><span class="st">"images/peppers.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#绘制图像</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#将图像灰度化并绘制结果</span></span>
+<span><span class="va">img</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/imager/man/grayscale.html">grayscale</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;"></div>
+<ul>
+<li>imagerExtra</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ShotaOchi/imagerExtra">imagerExtra</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对boats图像灰度化，结果保存在boats_g中</span></span>
+<span><span class="va">boats_g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imager/man/grayscale.html">grayscale</a></span><span class="op">(</span><span class="va">boats</span><span class="op">)</span></span>
+<span><span class="co">#在boats_g中添加噪声，结果保存在boats_noisy中</span></span>
+<span><span class="va">boats_noisy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/imager/man/imnoise.html">imnoise</a></span><span class="op">(</span>dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">boats_g</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span> <span class="va">boats_g</span> </span>
+<span></span>
+<span><span class="co">#绘制添加噪声前后的图像</span></span>
+<span><span class="va">op</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boats_g</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boats_noisy</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;"></div>
+<ul>
+<li>OpenImageR</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mlampros/OpenImageR">OpenImageR</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/OpenImageR/man/readImage.html">readImage</a></span><span class="op">(</span><span class="st">"images/sunflower.png"</span><span class="op">)</span></span>
+<span><span class="co">#查看图像维度信息</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 96 96  3</code></pre>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#显示图像</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/OpenImageR/man/imageShow.html">imageShow</a></span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将图像灰度化并绘制结果</span></span>
+<span><span class="va">r2g</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/OpenImageR/man/rgb_2gray.html">rgb_2gray</a></span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/OpenImageR/man/imageShow.html">imageShow</a></span><span class="op">(</span><span class="va">r2g</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;"></div>
+<ul>
+<li>imagefluency</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://imagefluency.com">imagefluency</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#加载图像文件</span></span>
+<span><span class="va">berries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stm.github.io/imagefluency/reference/img_read.html">img_read</a></span><span class="op">(</span><span class="st">"images/berries.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#显示图像</span></span>
+<span><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.raster.html">grid.raster</a></span><span class="op">(</span><span class="va">berries</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="01-introduction_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#获取图像对比度</span></span>
+<span><span class="fu"><a href="https://stm.github.io/imagefluency/reference/img_contrast.html">img_contrast</a></span><span class="op">(</span><span class="va">berries</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.2882635</code></pre>
+<ul>
+<li>colorfindr</li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://imagefluency.com">imagefluency</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">colorfindr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#确定图像文件</span></span>
+<span><span class="va">pic</span> <span class="op">=</span> <span class="st">"images/tiger.png"</span></span>
+<span></span>
+<span><span class="co">#获取图像使用最多的三种颜色</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/colorfindr/man/get_colors.html">get_colors</a></span><span class="op">(</span><span class="va">pic</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # A tibble: 3 × 3
+##   col_hex col_freq col_share
+##   &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt;
+## 1 #000000    20098     0.256
+## 2 #FFFFFF    19699     0.251
+## 3 #CC7226    12051     0.153</code></pre>
+<ul>
+<li>opencv</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ropensci.r-universe.dev/opencv">opencv</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">fish</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_read</a></span><span class="op">(</span><span class="st">'images/HappyFish.jpg'</span><span class="op">)</span></span>
+<span><span class="co">#边缘检测</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_edges</a></span><span class="op">(</span><span class="va">fish</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## &lt;pointer: 0x00000167ba5de910&gt;
+## attr(,"class")
+## [1] "opencv-image"</code></pre>
+<div class="inline-figure"><img src="images/ocv_edge.png"></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">tiger</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_read</a></span><span class="op">(</span><span class="st">'images/tiger.png'</span><span class="op">)</span></span>
+<span><span class="co">#特征点检测</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_markers</a></span><span class="op">(</span><span class="va">tiger</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## &lt;pointer: 0x00000167ba5dfb70&gt;
+## attr(,"class")
+## [1] "opencv-image"</code></pre>
+<div class="inline-figure"><img src="images/ocv_marker.png"></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">mona</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_read</a></span><span class="op">(</span><span class="st">'images/mona_small.jpg'</span><span class="op">)</span></span>
+<span><span class="co">#人脸检测</span></span>
+<span><span class="va">faces</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_face</a></span><span class="op">(</span><span class="va">mona</span><span class="op">)</span></span>
+<span><span class="co">#人脸位置（圆半径和圆心坐标）</span></span>
+<span><span class="va">facemask</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_facemask</a></span><span class="op">(</span><span class="va">mona</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">facemask</span>, <span class="st">'faces'</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##   radius   x   y
+## 1     40 136 113</code></pre>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#标注人脸</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/opencv/man/opencv.html">ocv_face</a></span><span class="op">(</span><span class="va">mona</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## &lt;pointer: 0x00000167ba5e1610&gt;
+## attr(,"class")
+## [1] "opencv-image"</code></pre>
+<div class="inline-figure"><img src="images/ocv_face.png"></div>
+<p>在这些工具中，图形处理的功能较之于OpenCV，都是相对很有限的，即便其中的opencv —— 这是基于OpenCV的一些功能进行封装形成的工具包 —— 到目前为止也仅仅开放了不到30个函数功能。</p>
+</div>
+<div id="opencv简介" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> OpenCV简介<a class="anchor" aria-label="anchor" href="#opencv%E7%AE%80%E4%BB%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p>OpenCV(开源的计算机视觉库)是基于BSD协议，因此它可免费用于学术和商业用途。其提供C++、C、Python和Java接口,支持Windows、Linux、Mac OS、iOS和Android。OpenCV致力于高效运算和即时应用开发：因其是用优化的C/C++编写的，可以充分利用多核处理优势；并且还启用了OpenSL,它可以利用底层异构计算平台的硬件加速。OpenCV广泛运用在世界各地，它拥有超过4.7万人的用户社区和超过1400万的下载次数。应用领域包括：</p>
+<ul>
+<li>人机互动</li>
+<li>物体识别</li>
+<li>图像分割</li>
+<li>人脸识别</li>
+<li>动作识别</li>
+<li>运动跟踪</li>
+<li>机器人</li>
+<li>运动分析</li>
+<li>机器视觉</li>
+<li>结构分析</li>
+<li>汽车安全驾驶</li>
+<li>等等</li>
+</ul>
+<p>OpenCV包含着数百个计算机视觉算法。它有一个模块化的结构，囊括了几个共享的或静态的库，其中包括：</p>
+<ul>
+<li>Core functionality（核心功能）：一个简洁基本且模块化的数据结构，包含了多维数组（矩阵）和用于其他模块的基本功能。</li>
+<li>Image processing（图像处理）：包括线性和非线性的图像滤波、几何图像转换（缩放、仿射和透视调整）、颜色模式转换、直方图等等。</li>
+<li>Video（视频）：一个视频分析模块，其包含了运动估计、背景消除和目标跟踪算法。</li>
+<li>Calib3d：提供基本的多视图几何算法、平面和立体影像校正、物体定位、立体通信算法和三维重建。</li>
+<li>Features2d：显著特征探测器、描述符和描述符匹配器。</li>
+<li>Objectect：检测对象和预定义的类的实例（例如：脸部、眼睛、杯子、人、车等等）。</li>
+<li>Highgui（图形界面）：提供一个简单易用的UI。</li>
+<li>Video I/O：提供一个简单易用的视频捕获和编码解码界面。</li>
+<li>GPU：来自于不同的OpenCV模块的GPU加速算法。</li>
+<li>等等</li>
+</ul>
+<p>以下是OpenCV教程中检测霍夫圆的例子：</p>
+<pre><code>#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+using namespace cv;
+using namespace std;
+int main(int argc, char** argv)
+{
+    const char* filename = "smarties.png";
+    // Loads an image
+    Mat src = imread( samples::findFile( filename ), IMREAD_COLOR );
+    
+    Mat gray;
+    cvtColor(src, gray, COLOR_BGR2GRAY);
+    medianBlur(gray, gray, 5);
+    vector&lt;Vec3f&gt; circles;
+    HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
+                 gray.rows/16,  
+                 100, 30, 1, 30
+    );
+    for( size_t i = 0; i &lt; circles.size(); i++ )
+    {
+        Vec3i c = circles[i];
+        Point center = Point(c[0], c[1]);
+        // circle center
+        circle( src, center, 1, Scalar(0,100,100), 3, LINE_AA);
+        // circle outline
+        int radius = c[2];
+        circle( src, center, radius, Scalar(255,0,255), 3, LINE_AA);
+    }
+    imshow("detected circles", src);
+    waitKey();
+    return EXIT_SUCCESS;
+}</code></pre>
+</div>
+<div id="ropencv" class="section level2" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> ROpenCV<a class="anchor" aria-label="anchor" href="#ropencv"><i class="fas fa-link"></i></a>
+</h2>
+<p>若能在R和OpenCV中建立桥梁，将OpenCV的功能尽可能移植到R环境中，且在使用过程中尽可能保留OpenCV的函数风格，这对于R的广大用户而言是令人兴奋的事情。为此，本书作者基于RCpp形成了ROpenCV工具包，可以尽可能地在R中使用OpenCV的各种功能。以下代码体现了利用ROpenCV实现的检测霍夫圆的例子：</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#加载图像工具包</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ROpenCV</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/smarties.png"</span><span class="op">)</span></span>
+<span><span class="co"># src = cv_imread("images/mona.jpg")</span></span>
+<span><span class="co">#获取src的基本信息</span></span>
+<span><span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## $width
+## [1] 413
+## 
+## $height
+## [1] 356
+## 
+## $channels
+## [1] 3
+## 
+## $depth
+## [1] 0
+## 
+## $type
+## [1] 64</code></pre>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#将src灰度化，结果保存在gray中</span></span>
+<span><span class="va">gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>,<span class="va">gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span><span class="co">#获取gray的基本信息</span></span>
+<span><span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">gray</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## $width
+## [1] 413
+## 
+## $height
+## [1] 356
+## 
+## $channels
+## [1] 1
+## 
+## $depth
+## [1] 0
+## 
+## $type
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#对gray进行中值滤波，结果仍然保存在gray中</span></span>
+<span><span class="fu">cv_medianBlur</span><span class="op">(</span><span class="va">gray</span>,<span class="va">gray</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测霍夫圆，结果保存在circles</span></span>
+<span><span class="va">circles</span> <span class="op">=</span> <span class="fu">stdVecOfVec3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_HoughCircles</span><span class="op">(</span><span class="va">gray</span>,<span class="va">circles</span>,<span class="va">HOUGH_GRADIENT</span>,<span class="fl">1</span>,</span>
+<span>                <span class="va">src</span><span class="op">$</span><span class="va">rows</span><span class="op">/</span><span class="fl">16</span>,</span>
+<span>                <span class="fl">100</span>,<span class="fl">30</span>,<span class="fl">1</span>,<span class="fl">30</span></span>
+<span>               <span class="op">)</span></span>
+<span><span class="va">circles</span></span></code></pre></div>
+<pre><code>## C++ object &lt;00000167b64f99c0&gt; of class 'stdVectorOfVec3f' &lt;00000167c6bd58b0&gt;</code></pre>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">circles</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 12</code></pre>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dst</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#绘制检测到的圆</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">circles</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">cir</span> <span class="op">=</span> <span class="va">circles</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="co">#获取圆心坐标</span></span>
+<span>  <span class="va">center</span> <span class="op">=</span> <span class="fu">Point</span><span class="op">(</span><span class="va">cir</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span>,<span class="va">cir</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="co">#标注圆心点</span></span>
+<span>  <span class="fu">cv_circle</span><span class="op">(</span><span class="va">dst</span>,<span class="va">center</span>,<span class="fl">1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">100</span>,<span class="fl">100</span><span class="op">)</span>,<span class="fl">3</span>,<span class="va">LINE_AA</span><span class="op">)</span></span>
+<span>  <span class="va">rad</span> <span class="op">=</span> <span class="va">cir</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="fu">cv_circle</span><span class="op">(</span><span class="va">dst</span>,<span class="va">center</span>,<span class="va">rad</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="fl">3</span>,<span class="va">LINE_AA</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#显示检测结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"原图"</span>,<span class="va">src</span><span class="op">)</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"圆检测结果"</span>,<span class="va">dst</span><span class="op">)</span></span></code></pre></div>
+<p><img src="01-introduction_files/figure-html/unnamed-chunk-19-1.png" width="288" style="display: block; margin: auto;"><img src="01-introduction_files/figure-html/unnamed-chunk-19-2.png" width="288" style="display: block; margin: auto;"></p>
+<!-- 在这个例子中，tmp.ref以及circles.ref都是引用类型变量，用来保留OpenCV函数的处理结果，这为的是确保在R中调用OpenCV函数时能够与在C++中调用相应函数保持一样的经验，详见第 \@ref(ROpenCVMechanisim) 章。 -->
+<!-- ## ROpenCV的安装和使用 -->
+<!-- 大致步骤为： -->
+<!-- 1、首先安装R语言，要求是4.0以上版本，然后安装Rstudio。  -->
+<!-- 2、再依次安装msys和Rtools，并安装OpenBlas、CBlas、lapack等。   -->
+<!-- 3、再用cmake编译OpenCV源代码，形成静态库（这个过程比较费力）。若觉得OpenCV-4.5.2够用，就可以暂时忽略此步骤，因为当前的ROpenCV代码中包含了OpenCV-4.5.2的编译结果，可以直接使用。   -->
+<!-- 4、下载ROpenCV代码文件（放在出版社的网站上，供用户下载），用RStudio打开其中的ROpenCV.Rproj工程文件，而后在build菜单项中点击“Clean and  Rebuild”生成ROpenCV工具包。   -->
+<!-- 5、工具包生成成功后，就可以加载工具包进行实验了。   -->
+<!-- 6、在使用过程中，若想进一步封装OpenCV的函数，就可以在src文件中添加或者更改相应的C++代码，并在R文件夹中也对应添加或者更改相应的R代码，然后通过“Clean and Rebuild”菜单重新生成ROpenCV工具包即可。 -->
+
+<p>output: html_document
+editor_options:
+chunk_output_type: console</p>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="index.html">前言</a></div>
+<div class="next"><a href="RBasis.html"><span class="header-section-number">2</span> R基础</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#intro"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="nav-link" href="#r%E7%AE%80%E4%BB%8B"><span class="header-section-number">1.1</span> R简介</a></li>
+<li><a class="nav-link" href="#r%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9B%BE%E5%83%8F%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="header-section-number">1.2</span> R中的一些图像工具包</a></li>
+<li><a class="nav-link" href="#opencv%E7%AE%80%E4%BB%8B"><span class="header-section-number">1.3</span> OpenCV简介</a></li>
+<li><a class="nav-link" href="#ropencv"><span class="header-section-number">1.4</span> ROpenCV</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/01-introduction.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/01-introduction.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

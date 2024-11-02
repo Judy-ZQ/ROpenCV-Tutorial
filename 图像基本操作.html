@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>4 图像基本操作 | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="4 图像基本操作 | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4 图像基本操作 | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content="4.1 输入图像 输入图像解决的是生成图像矩阵的问题，主要有三种方式：加载图像文件、利用OpenCV图像矩阵类（Mat）的构造函数和使用r2cv函数转换R语言的矩阵或者多维数组。  4.1.1 加载图像文件 OpenCV可读取的图像格式包括： Windows位图文件 —— BMP, DIB； JPEG文件 —— JPEG, JPG, JPE； Portable类型文件 ——...">
+<meta property="og:description" content="4.1 输入图像 输入图像解决的是生成图像矩阵的问题，主要有三种方式：加载图像文件、利用OpenCV图像矩阵类（Mat）的构造函数和使用r2cv函数转换R语言的矩阵或者多维数组。  4.1.1 加载图像文件 OpenCV可读取的图像格式包括： Windows位图文件 —— BMP, DIB； JPEG文件 —— JPEG, JPG, JPE； Portable类型文件 ——...">
+<meta name="twitter:description" content="4.1 输入图像 输入图像解决的是生成图像矩阵的问题，主要有三种方式：加载图像文件、利用OpenCV图像矩阵类（Mat）的构造函数和使用r2cv函数转换R语言的矩阵或者多维数组。  4.1.1 加载图像文件 OpenCV可读取的图像格式包括： Windows位图文件 —— BMP, DIB； JPEG文件 —— JPEG, JPG, JPE； Portable类型文件 ——...">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="active" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="图像基本操作" class="section level1" number="4">
+<h1>
+<span class="header-section-number">4</span> 图像基本操作<a class="anchor" aria-label="anchor" href="#%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><i class="fas fa-link"></i></a>
+</h1>
+<div id="输入图像" class="section level2" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> 输入图像<a class="anchor" aria-label="anchor" href="#%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F"><i class="fas fa-link"></i></a>
+</h2>
+<p>输入图像解决的是生成图像矩阵的问题，主要有三种方式：加载图像文件、利用OpenCV图像矩阵类（Mat）的构造函数和使用r2cv函数转换R语言的矩阵或者多维数组。</p>
+<div id="加载图像文件" class="section level3" number="4.1.1">
+<h3>
+<span class="header-section-number">4.1.1</span> 加载图像文件<a class="anchor" aria-label="anchor" href="#%E5%8A%A0%E8%BD%BD%E5%9B%BE%E5%83%8F%E6%96%87%E4%BB%B6"><i class="fas fa-link"></i></a>
+</h3>
+<p>OpenCV可读取的图像格式包括：</p>
+<ul>
+<li>Windows位图文件 —— BMP, DIB；</li>
+<li>JPEG文件 —— JPEG, JPG, JPE；</li>
+<li>Portable类型文件 —— PNG，PBM，PGM，PPM；</li>
+<li>Sun rasters —— SR，RAS；</li>
+<li>TIFF文件 —— TIFF，TIF;</li>
+<li>OpenEXR HDR文件 —— EXR;</li>
+<li>JPEG 2000文件 —— jp2。</li>
+</ul>
+<p>通过使用<strong>cv.imread</strong>函数可以读取指定图像文件，而后通过<strong>cv.imshow</strong>函数显示图像内容。</p>
+<div class="sourceCode" id="cb664"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#在当前目录中的images文件夹下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co">#读取此文件，读取结果保存在img中，</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span></code></pre></div>
+<p>在读入图像数据时，可以指定颜色控制参数，比如以单通道灰度图模式读入图像：</p>
+<div class="sourceCode" id="cb665"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co"># 指定读取参数为IMREAD_GRAYSCALE，将读入的图像转换为单通道灰度图像</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span>,<span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span> </span>
+<span><span class="co">#或者</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span>,<span class="fl">0</span><span class="op">)</span> </span></code></pre></div>
+<p>颜色控制参数除了IMREAD_GRAYSCALE外，还有其他多种取值：</p>
+<div class="inline-table"><table class="table table-sm">
+<thead><tr class="header">
+<th align="left">ImreadModes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">IMREAD_ANYCOLOR</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_ANYDEPTH</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_COLOR</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_COLOR_BGR</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_COLOR_RGB</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_GRAYSCALE</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_IGNORE_ORIENTATION</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_LOAD_GDAL</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_REDUCED_COLOR_2</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_REDUCED_COLOR_4</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_REDUCED_COLOR_8</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_REDUCED_GRAYSCALE_2</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_REDUCED_GRAYSCALE_4</td>
+</tr>
+<tr class="even">
+<td align="left">IMREAD_REDUCED_GRAYSCALE_8</td>
+</tr>
+<tr class="odd">
+<td align="left">IMREAD_UNCHANGED</td>
+</tr>
+</tbody>
+</table></div>
+<p>各个取值的作用意义可以参考OpenCV的帮助文档。</p>
+</div>
+<div id="创建图像矩阵-1" class="section level3" number="4.1.2">
+<h3>
+<span class="header-section-number">4.1.2</span> 创建图像矩阵<a class="anchor" aria-label="anchor" href="#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-1"><i class="fas fa-link"></i></a>
+</h3>
+<p>除了通过加载图像文件获取图像矩阵外，还可以利用OpenCV的图像矩阵类（Mat）的构造函数创建图像矩阵，这里沿用上一章生成纯色图像的例子：</p>
+<div class="sourceCode" id="cb666"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成100行、100列的8位无符号单通道图像，所有像素值都为0（即黑色）</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的8位无符号单通道图像，所有像素值都为128（即灰色）</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">128</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,255,255)（即紫色）</span></span>
+<span><span class="va">img3</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">128</span>,<span class="fl">0</span>,<span class="fl">128</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(255,0,0)（即蓝色）</span></span>
+<span><span class="va">img4</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,0,0)（即绿色）</span></span>
+<span><span class="va">img5</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,0,255)（即红色）</span></span>
+<span><span class="va">img6</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-6-1.png" width="672"></div>
+</div>
+<div id="使用r2cv函数" class="section level3" number="4.1.3">
+<h3>
+<span class="header-section-number">4.1.3</span> 使用r2cv函数<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8r2cv%E5%87%BD%E6%95%B0"><i class="fas fa-link"></i></a>
+</h3>
+<p>通过先生成R语言的矩阵或多维数组，再利用r2cv函数将其传入OpenCV的图像矩阵：</p>
+<div class="sourceCode" id="cb667"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成100行、100列的全0矩阵img1.mat</span></span>
+<span><span class="va">img1_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0</span>,nr<span class="op">=</span><span class="fl">100</span>,nc<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co"># 利用r2cv函数将img1_mat传入OpenCV的8位无符号整数单通道图像</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img1_mat</span><span class="op">)</span> </span>
+<span></span>
+<span></span>
+<span><span class="co"># 生成100行、100列的随机矩阵img2.mat</span></span>
+<span><span class="va">img2_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,<span class="fl">100</span><span class="op">*</span><span class="fl">100</span>,replace <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,nr<span class="op">=</span><span class="fl">100</span>,nc<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co"># 利用r2cv函数将img2.mat传入OpenCV的8位无符号整数单通道图像</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img2_mat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 生成3维数组img3.arr</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">img3_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,<span class="fl">100</span><span class="op">*</span><span class="fl">100</span><span class="op">*</span><span class="fl">3</span>,replace <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># 利用r2cv函数将img2.mat传入OpenCV的8位无符号整数三通道图像</span></span>
+<span><span class="va">img3</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="va">img3</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img3_arr</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
+</div>
+</div>
+<div id="获取图像基本信息" class="section level2" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> 获取图像基本信息<a class="anchor" aria-label="anchor" href="#%E8%8E%B7%E5%8F%96%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><i class="fas fa-link"></i></a>
+</h2>
+<p>使用<strong>iminfo</strong>函数可以获取图像的基本信息：</p>
+<div class="sourceCode" id="cb668"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#在当前目录中的images目录下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co">#读取此文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span><span class="co">#获取img的基本信息</span></span>
+<span><span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## $width
+## [1] 259
+## 
+## $height
+## [1] 194
+## 
+## $channels
+## [1] 3
+## 
+## $depth
+## [1] 0
+## 
+## $type
+## [1] 64</code></pre>
+<p>其中：</p>
+<ul>
+<li>width：表示图像的宽度</li>
+<li>height：表示图像的高度</li>
+<li>depth：表示图像的深度（即存储一个像素值所需要的字节数）</li>
+<li>type：表示图像矩阵的类型</li>
+</ul>
+<p>这些数据表明图像矩阵有194行（height）、259列（width），有3个通道（channels）。</p>
+<p>此外，矩阵的深度取值情况如下：</p>
+<p>矩阵类型常见取值情况包括：</p>
+<p>利用图像矩阵类也可以获取图形的基本信息：</p>
+<div class="sourceCode" id="cb670"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件，获得图像矩阵指针img</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/lena.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#获取矩阵的列数（宽度）</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="va">cols</span></span></code></pre></div>
+<pre><code>## [1] 512</code></pre>
+<div class="sourceCode" id="cb672"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#获取矩阵的行数（高度）</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="va">cols</span></span></code></pre></div>
+<pre><code>## [1] 512</code></pre>
+<div class="sourceCode" id="cb674"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#获取矩阵的通道数</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">channels</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<div class="sourceCode" id="cb676"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#获取矩阵的深度</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode" id="cb678"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#获取矩阵的类型</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">type</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 64</code></pre>
+</div>
+<div id="修改图像" class="section level2" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> 修改图像<a class="anchor" aria-label="anchor" href="#%E4%BF%AE%E6%94%B9%E5%9B%BE%E5%83%8F"><i class="fas fa-link"></i></a>
+</h2>
+<div id="单通道图像-1" class="section level3" number="4.3.1">
+<h3>
+<span class="header-section-number">4.3.1</span> 单通道图像<a class="anchor" aria-label="anchor" href="#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fas fa-link"></i></a>
+</h3>
+<p>修改单通道图像的指定像素值：</p>
+<div class="sourceCode" id="cb680"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成30行、30列的8位无符号整数图像矩阵指针img（所有像素值都为0）</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">30</span>,<span class="fl">30</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="co"># 修改第16行、第16列像素，使其值从0变为255（即由黑色变为白色）</span></span>
+<span><span class="va">img</span><span class="op">[</span><span class="fl">15</span>,<span class="fl">15</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span></code></pre></div>
+<p>修改完成后显示图像，可以发现图像中部区域有一个小白点。</p>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-14-1.png" width="672"></div>
+<p>类似地，可以将全黑图像的主对角线上和反对角线上的像素值都改成白色：</p>
+<div class="sourceCode" id="cb681"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成100行、100列的全0图像矩阵指针img</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="co"># 利用循环，将主对角线和反主对角线上的像素值从0变为255（即由黑色变为白色）</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">99</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">img</span><span class="op">[</span><span class="va">i</span>,<span class="va">i</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span>  <span class="va">img</span><span class="op">[</span><span class="va">i</span>,<span class="fl">99</span><span class="op">-</span><span class="va">i</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>如下代码也可以达到同样目的：</p>
+<div class="sourceCode" id="cb682"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成100行、100列的全0矩阵img_mat</span></span>
+<span><span class="va">img_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co"># 利用循环，将主对角线和反主对角线上的像素值从0变为255</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">img_mat</span><span class="op">[</span><span class="va">i</span>,<span class="va">i</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span>  <span class="va">img_mat</span><span class="op">[</span><span class="va">i</span>,<span class="fl">100</span><span class="op">-</span><span class="va">i</span><span class="op">+</span><span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># 利用r2cv函数将img_mat传入OpenCV的8位无符号整数单通道图像</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">img_mat</span>,<span class="st">"depth"</span><span class="op">)</span> <span class="op">=</span> <span class="va">img</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img_mat</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-18-1.png" width="672"></div>
+</div>
+<div id="三通道图像-1" class="section level3" number="4.3.2">
+<h3>
+<span class="header-section-number">4.3.2</span> 三通道图像<a class="anchor" aria-label="anchor" href="#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fas fa-link"></i></a>
+</h3>
+<p>修改三通道图像的指定像素值：</p>
+<div class="sourceCode" id="cb683"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成30行、30列的8位无符号整数图像矩阵指针img（所有像素值都为(0,0,0)）</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">30</span>,<span class="fl">30</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="co"># 修改第16行、第16列像素，使其值从(0,0,0)变为(0,0,255)，</span></span>
+<span><span class="co">#即由黑色变为红色</span></span>
+<span><span class="va">img</span><span class="op">[</span><span class="fl">15</span>,<span class="fl">15</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span></span></code></pre></div>
+<p>修改完成后显示图像，可以发现图像中部区域有一个小红点。</p>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-20-1.png" width="672"></div>
+<p>类似地，可以将全黑图像的主对角线上和反主对角线上的像素值分别改成红色和绿色：</p>
+<div class="sourceCode" id="cb684"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成100行、100列的全0图像矩阵指针img</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">99</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co"># 主对角线上的像素值变为红色</span></span>
+<span>  <span class="va">img</span><span class="op">[</span><span class="va">i</span>,<span class="va">i</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span></span>
+<span>  <span class="co"># 反主对角线上的像素值变为绿色</span></span>
+<span>  <span class="va">img</span><span class="op">[</span><span class="va">i</span>,<span class="fl">99</span><span class="op">-</span><span class="va">i</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>如下代码也可以达到同样目的：</p>
+<div class="sourceCode" id="cb685"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 生成3维数组img3_arr（所有元素全为0）</span></span>
+<span><span class="va">img_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co"># 主对角线上的元素更改为(0,0,255)</span></span>
+<span>  <span class="va">img_arr</span><span class="op">[</span><span class="va">i</span>,<span class="va">i</span>,<span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span></span>
+<span>  <span class="co"># 反主对角线上的元素更改为(0,255,0)</span></span>
+<span>  <span class="va">img_arr</span><span class="op">[</span><span class="va">i</span>,<span class="fl">100</span><span class="op">-</span><span class="va">i</span><span class="op">+</span><span class="fl">1</span>,<span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># 利用r2cv函数将img_arr传入OpenCV的8位无符号整数三通道图像</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat_zeros</span><span class="op">(</span><span class="fl">100</span>,<span class="fl">100</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">img_mat</span>,<span class="st">"depth"</span><span class="op">)</span> <span class="op">=</span> <span class="va">img</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img_arr</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-24-1.png" width="672"></div>
+</div>
+</div>
+<div id="输出图像" class="section level2" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> 输出图像<a class="anchor" aria-label="anchor" href="#%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F"><i class="fas fa-link"></i></a>
+</h2>
+<div id="输出到图形窗口" class="section level3" number="4.4.1">
+<h3>
+<span class="header-section-number">4.4.1</span> 输出到图形窗口<a class="anchor" aria-label="anchor" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E5%9B%BE%E5%BD%A2%E7%AA%97%E5%8F%A3"><i class="fas fa-link"></i></a>
+</h3>
+<p>通过<strong>cv.imshow</strong>函数产生图形窗口并在窗口中显示图像内容。</p>
+<div class="sourceCode" id="cb686"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 在当前目录中的images目录下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co"># 读取此文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span><span class="co"># 生成标题为Display window且尺寸自动按照图像大小自动缩放的窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="st">"Display window"</span>,<span class="va">WINDOW_AUTOSIZE</span><span class="op">)</span></span>
+<span><span class="co"># 将读取的图像内容显示在Display window窗口中</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Display window"</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<p>在上面的代码中，也可以省去cv.namedWindow(“Display window”,WINDOW_AUTOSIZE)，即不用提前生成图形窗口，而是由<strong>cv.imshow</strong>函数在执行的时候自动创建图形窗口并显示图像内容。</p>
+<div class="sourceCode" id="cb687"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 在当前目录中的images目录下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co"># 读取此文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span><span class="co"># 将读取的图像内容显示在Display window窗口中</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Display window"</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-27-1.png" width="672"></div>
+<p>在显示32位浮点数图像之前，需要转换为8位无符号数图像，例如：</p>
+<div class="sourceCode" id="cb688"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件，读取结果保存在img中</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/HappyFish.jpg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将img灰度化，结果保存在gray中</span></span>
+<span><span class="va">gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">img</span>, <span class="va">gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对gray进行Sobel边缘检测，结果保存在sobelx中，</span></span>
+<span><span class="co">#此时，sobelx为32位浮点数图像</span></span>
+<span><span class="va">sobelx</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_Sobel</span><span class="op">(</span><span class="va">gray</span>, <span class="va">sobelx</span>, <span class="va">CV_32F</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#获取sobelx的最小值和最大值，分别保存在minVal和maxVal中</span></span>
+<span><span class="va">minVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">maxVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="fu">cv_minMaxLoc</span><span class="op">(</span><span class="va">sobelx</span>, <span class="va">minVal</span>, <span class="va">maxVal</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#利用soblex的值映射到[0,255]区间上，进而转变为8位无符号图像</span></span>
+<span><span class="va">draw</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">sobelx</span><span class="op">$</span><span class="fu">convertTo</span><span class="op">(</span><span class="va">draw</span>,</span>
+<span>                     <span class="va">CV_8U</span>,</span>
+<span>                     <span class="fl">255.0</span> <span class="op">/</span> <span class="op">(</span><span class="va">maxVal</span> <span class="op">-</span> <span class="va">minVal</span><span class="op">)</span>,</span>
+<span>                     <span class="op">-</span><span class="va">minVal</span> <span class="op">*</span> <span class="fl">255.0</span> <span class="op">/</span> <span class="op">(</span><span class="va">maxVal</span> <span class="op">-</span> <span class="va">minVal</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-29-1.png" width="672"></div>
+</div>
+<div id="输出到命令行" class="section level3" number="4.4.2">
+<h3>
+<span class="header-section-number">4.4.2</span> 输出到命令行<a class="anchor" aria-label="anchor" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E5%91%BD%E4%BB%A4%E8%A1%8C"><i class="fas fa-link"></i></a>
+</h3>
+<p>通过cv2r函数可以将图像矩阵的像素值按行、列顺序输出到命令行。</p>
+<div class="sourceCode" id="cb689"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 在当前目录中的images目录下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co"># 读取此文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数按行、列顺序输出img的各个像素值</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>当图像矩阵较大时，这种输出方式会产生负担，可以按如下方法调整，进而查看指定部分的像素值：</p>
+<div class="sourceCode" id="cb690"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 在当前目录中的images目录下，有名为HappyFish.jpg的图像文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/happyfish.jpg"</span></span>
+<span><span class="co"># 读取此文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span><span class="co">#查看img中第11行~第20行、第11列~第20列的内容</span></span>
+<span><span class="va">img</span><span class="op">[</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span>,<span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></span></code></pre></div>
+<pre><code>## , , 1
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  252  252  252  252  254  255  249  255  251   158
+##  [2,]  252  252  252  252  254  255  252  255  251   156
+##  [3,]  252  252  252  252  254  255  255  251  248   195
+##  [4,]  252  252  252  252  254  255  255  252  249   228
+##  [5,]  254  254  254  254  254  255  255  255  251   234
+##  [6,]  255  255  255  255  255  255  250  253  250   239
+##  [7,]  255  255  255  255  255  250  255  255  253   245
+##  [8,]  255  255  255  255  255  255  249  255  253   251
+##  [9,]  255  255  255  255  255  255  249  255  246   253
+## [10,]  254  254  254  254  254  255  255  255  236   251
+## 
+## , , 2
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  254  254  254  254  255  255  247  254  251   158
+##  [2,]  254  254  254  254  255  255  248  253  250   157
+##  [3,]  254  254  254  254  255  255  255  249  247   196
+##  [4,]  254  254  254  254  255  254  255  250  248   228
+##  [5,]  254  253  254  254  255  255  255  254  251   235
+##  [6,]  253  252  253  253  255  255  255  255  252   237
+##  [7,]  252  252  253  253  255  253  255  255  254   244
+##  [8,]  253  253  254  254  254  255  250  255  254   252
+##  [9,]  254  254  254  254  254  253  245  254  245   255
+## [10,]  255  255  255  255  254  253  253  254  236   254
+## 
+## , , 3
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  254  254  254  254  253  252  246  255  255   182
+##  [2,]  254  254  254  254  253  252  247  255  255   183
+##  [3,]  254  254  254  254  253  252  254  255  255   224
+##  [4,]  254  254  254  254  253  249  252  255  255   255
+##  [5,]  254  255  254  254  253  248  249  255  255   255
+##  [6,]  255  255  255  255  251  244  239  251  255   255
+##  [7,]  255  255  255  255  251  238  245  251  255   255
+##  [8,]  255  255  254  254  254  254  248  255  255   255
+##  [9,]  254  254  253  254  254  255  250  255  249   255
+## [10,]  253  253  251  253  254  255  255  255  236   252</code></pre>
+<div class="sourceCode" id="cb692"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#或者利用cv2r函数将img转变为R语言的矩阵或多维数组arr</span></span>
+<span><span class="va">arr</span> <span class="op">=</span> <span class="va">img</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#查看arr中第11行~第20行、第11列~第20列的内容</span></span>
+<span><span class="va">arr</span><span class="op">[</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span>,<span class="fl">11</span><span class="op">:</span><span class="fl">20</span>,<span class="op">]</span></span></code></pre></div>
+<pre><code>## , , 1
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  252  252  252  252  252  254  254  255  249   248
+##  [2,]  252  252  252  252  252  254  255  249  255   251
+##  [3,]  252  252  252  252  252  254  255  252  255   251
+##  [4,]  252  252  252  252  252  254  255  255  251   248
+##  [5,]  252  252  252  252  252  254  255  255  252   249
+##  [6,]  254  254  254  254  254  254  255  255  255   251
+##  [7,]  255  255  255  255  255  255  255  250  253   250
+##  [8,]  255  255  255  255  255  255  250  255  255   253
+##  [9,]  255  255  255  255  255  255  255  249  255   253
+## [10,]  255  255  255  255  255  255  255  249  255   246
+## 
+## , , 2
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  254  254  254  254  254  255  253  255  248   248
+##  [2,]  254  254  254  254  254  255  255  247  254   251
+##  [3,]  254  254  254  254  254  255  255  248  253   250
+##  [4,]  254  254  254  254  254  255  255  255  249   247
+##  [5,]  254  254  254  254  254  255  254  255  250   248
+##  [6,]  253  254  253  254  254  255  255  255  254   251
+##  [7,]  252  253  252  253  253  255  255  255  255   252
+##  [8,]  252  252  252  253  253  255  253  255  255   254
+##  [9,]  253  253  253  254  254  254  255  250  255   254
+## [10,]  253  254  254  254  254  254  253  245  254   245
+## 
+## , , 3
+## 
+##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]  254  254  254  254  254  253  249  254  252   255
+##  [2,]  254  254  254  254  254  253  252  246  255   255
+##  [3,]  254  254  254  254  254  253  252  247  255   255
+##  [4,]  254  254  254  254  254  253  252  254  255   255
+##  [5,]  254  254  254  254  254  253  249  252  255   255
+##  [6,]  255  254  255  254  254  253  248  249  255   255
+##  [7,]  255  255  255  255  255  251  244  239  251   255
+##  [8,]  255  255  255  255  255  251  238  245  251   255
+##  [9,]  255  255  255  254  254  254  254  248  255   255
+## [10,]  255  254  254  253  254  254  255  250  255   249</code></pre>
+</div>
+<div id="输出到磁盘文件" class="section level3" number="4.4.3">
+<h3>
+<span class="header-section-number">4.4.3</span> 输出到磁盘文件<a class="anchor" aria-label="anchor" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6"><i class="fas fa-link"></i></a>
+</h3>
+<p>可以通过imwrite函数，将图像矩阵保存为图像文件：</p>
+<p>使用<strong>cv.imwrite</strong>函数，可以将图像数据保存为硬盘文件。</p>
+<div class="sourceCode" id="cb694"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 加载当前目录中images文件夹下的cat2.jpg文件</span></span>
+<span><span class="va">imgName</span> <span class="op">=</span> <span class="st">"images/cat2.jpg"</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="va">imgName</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 将彩色图像从BGR转换为灰度图</span></span>
+<span><span class="va">gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">img</span>,<span class="va">gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 显示原图和转换后的灰度图</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"原图"</span>,<span class="va">img</span><span class="op">)</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"灰度图"</span>,<span class="va">gray</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 将灰度图像数据gray_image保存在当前目录中的images文件夹下，</span></span>
+<span><span class="co"># 文件名称为gray_image.jpg</span></span>
+<span><span class="fu">cv_imwrite</span><span class="op">(</span><span class="st">"images/gray_image.jpg"</span>,<span class="va">gray_image</span><span class="op">)</span></span></code></pre></div>
+<p>指令执行成功后，在当前目录中的images文件夹下，会出现gray_image.jpg文件。</p>
+<p>要保存的文件格式由指定的文件名的扩展名决定。</p>
+<p><strong><em>如果要从内存（而非文件）中读写图像，可以使用cv::imdecode和cv::imencode从内存而不是文件读写图像。</em></strong></p>
+</div>
+</div>
+<div id="图像的基本运算" class="section level2" number="4.5">
+<h2>
+<span class="header-section-number">4.5</span> 图像的基本运算<a class="anchor" aria-label="anchor" href="#%E5%9B%BE%E5%83%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><i class="fas fa-link"></i></a>
+</h2>
+<p>当两个图像矩阵具有相同的高度、宽度、通道数和类型时，可以进行加减乘除运算。</p>
+<p><strong>生成两个图像矩阵img1和img2</strong></p>
+<div class="sourceCode" id="cb695"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#创建矩阵arr1、arr2和arr3</span></span>
+<span><span class="va">arr1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">248</span><span class="op">:</span><span class="fl">253</span>,nr<span class="op">=</span><span class="fl">2</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">arr2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>,nr<span class="op">=</span><span class="fl">2</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">arr3</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">0</span>,nr<span class="op">=</span><span class="fl">2</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#利用r2cv函数将arr1、arr2和arr3转为OpenCV的8位无符号整数</span></span>
+<span><span class="co">#单通道图像img1、img2和img3</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">arr1</span>,<span class="st">"depth"</span><span class="op">)</span><span class="op">=</span><span class="va">img1</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr1</span><span class="op">)</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">arr2</span>,<span class="st">"depth"</span><span class="op">)</span><span class="op">=</span><span class="va">img2</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr2</span><span class="op">)</span></span>
+<span><span class="va">img3</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">arr3</span>,<span class="st">"depth"</span><span class="op">)</span><span class="op">=</span><span class="va">img3</span><span class="op">$</span><span class="fu">depth</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img3</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr3</span><span class="op">)</span></span></code></pre></div>
+<p><strong>计算img1与img2之和</strong></p>
+<div class="sourceCode" id="cb696"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#img1+img2，结果保存在img.add中</span></span>
+<span><span class="va">img_add</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_add</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span>,<span class="va">img_add</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数按行、列顺序输出img_add的各个像素值</span></span>
+<span><span class="va">img_add</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]  249  253  255
+## [2,]  251  255  255
+## attr(,"depth")
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb698"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># img1[,]</span></span>
+<span><span class="co"># img2[,]</span></span></code></pre></div>
+<p>图像矩阵img1和img2相加，符合通常的矩阵相加规则，即对应元素相加；此外由于图像矩阵类型为8位无符号整数，其取值范围为[0,255]，所以相加之后超过255的像素值都被截断为255。</p>
+<p><strong>计算img2与img3之差</strong></p>
+<div class="sourceCode" id="cb699"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#img2-img3，结果保存在img_sub中</span></span>
+<span><span class="va">img_sub</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_subtract</span><span class="op">(</span><span class="va">img2</span>,<span class="va">img3</span>,<span class="va">img_sub</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数按行、列顺序输出img_sub的各个像素值</span></span>
+<span><span class="va">img_sub</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0    0    4
+## [2,]    0    2    6
+## attr(,"depth")
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb701"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># img2[]</span></span>
+<span><span class="co"># img3[]</span></span></code></pre></div>
+<p>图像矩阵img2和img3相减，符合通常的矩阵相减规则，即对应元素相减；此外由于图像矩阵类型为8位无符号整数，其取值范围为[0,255]，所以相减之后小于0的像素值都被截断为0。</p>
+<p><strong>计算img1与img2的乘积</strong></p>
+<div class="sourceCode" id="cb702"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#img1*img2，结果保存在img_mul中</span></span>
+<span><span class="va">img_mul</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_multiply</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span>,<span class="va">img_mul</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数按行、列顺序输出img_mul的各个像素值</span></span>
+<span><span class="va">img_mul</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]  248  255  255
+## [2,]  255  255  255
+## attr(,"depth")
+## [1] 0</code></pre>
+<p>图像矩阵img1和img2相乘，不是通常的矩阵相乘，而是对应元素相乘；此外由于图像矩阵类型为8位无符号整数，其取值范围为[0,255]，所以相乘之后大于255的像素值都被截断为255。</p>
+<p><strong>计算img1与img3的商</strong></p>
+<div class="sourceCode" id="cb704"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#img1*img2，结果保存在img_div中</span></span>
+<span><span class="va">img_div</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_divide02</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img3</span>,<span class="va">img_div</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数按行、列顺序输出img_div的各个像素值</span></span>
+<span><span class="va">img_div</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]   50   83  252
+## [2,]   62  126    0
+## attr(,"depth")
+## [1] 0</code></pre>
+<p>图像矩阵img1和img3相除，指的是对应元素相除；此外由于图像矩阵类型为8位无符号整数，其取值范围为[0,255]，所以相除之后大保留四舍五入的整数；当分母为0时，相除的结果为0。</p>
+<p>以上单通道图像矩阵之间的加减乘除运算结论也适用于多通道图像矩阵。</p>
+<p><strong>利用R语言的矩阵运算</strong></p>
+<p>由于R语言封装了很强的矩阵（或者数组）运算，所以可以先将图像矩阵转变为R的矩阵（或者数组），经过计算之后，再把计算结果转变回图像矩阵。</p>
+<div class="sourceCode" id="cb706"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取当前目录中images文件夹下名为LinuxLogo.jpg的图像文件，</span></span>
+<span><span class="co">#结果保存在img1中</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/LinuxLogo.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#读取当前目录中images文件夹下名为WindowsLogo.jpg的图像文件，</span></span>
+<span><span class="co">#结果保存在img2中</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/WindowsLogo.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#显示img1和img2</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'LinuxLogo'</span>,<span class="va">img1</span><span class="op">)</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'WindowsLogo'</span>,<span class="va">img2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#利用cv2r函数将img1和img2转变为R语言的数组arr1和arr2</span></span>
+<span><span class="va">arr1</span> <span class="op">=</span> <span class="va">img1</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">arr2</span> <span class="op">=</span> <span class="va">img2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#用str(arr1),str(arr2)命令可以看出img1和img2是240行、320列的</span></span>
+<span><span class="co">#8位无符号3通道图像</span></span>
+<span></span>
+<span><span class="co">#实现img1+img2，结果保存在img_add中</span></span>
+<span><span class="va">arr_add</span> <span class="op">=</span> <span class="va">arr1</span> <span class="op">+</span> <span class="va">arr2</span></span>
+<span><span class="va">arr_add</span><span class="op">[</span><span class="va">arr_add</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">arr_add</span><span class="op">[</span><span class="va">arr_add</span><span class="op">&gt;</span><span class="fl">255</span><span class="op">]</span> <span class="op">=</span>  <span class="fl">255</span></span>
+<span><span class="va">img_add</span> <span class="op">=</span> <span class="va">img1</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img_add</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr_add</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#实现img1-img2，结果保存在img.sub中</span></span>
+<span><span class="va">arr_sub</span> <span class="op">=</span> <span class="va">arr1</span> <span class="op">-</span> <span class="va">arr2</span></span>
+<span><span class="va">arr_sub</span><span class="op">[</span><span class="va">arr_sub</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">arr_sub</span><span class="op">[</span><span class="va">arr_sub</span><span class="op">&gt;</span><span class="fl">255</span><span class="op">]</span> <span class="op">=</span>  <span class="fl">255</span></span>
+<span><span class="va">img_sub</span> <span class="op">=</span> <span class="va">img1</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img_sub</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr_sub</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#实现img1*img2，结果保存在img.mul中</span></span>
+<span><span class="va">arr_mul</span> <span class="op">=</span> <span class="va">arr1</span> <span class="op">*</span> <span class="va">arr2</span></span>
+<span><span class="va">arr_mul</span><span class="op">[</span><span class="va">arr_mul</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">arr_mul</span><span class="op">[</span><span class="va">arr_mul</span><span class="op">&gt;</span><span class="fl">255</span><span class="op">]</span> <span class="op">=</span>  <span class="fl">255</span></span>
+<span><span class="va">img_mul</span> <span class="op">=</span> <span class="va">img1</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img_mul</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr_mul</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#实现img1/img2，结果保存在img.div中</span></span>
+<span><span class="va">arr_div</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">arr1</span> <span class="op">/</span> <span class="va">arr2</span><span class="op">)</span></span>
+<span><span class="va">arr_div</span><span class="op">[</span><span class="va">arr_div</span><span class="op">&lt;</span><span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">arr_div</span><span class="op">[</span><span class="va">arr_div</span><span class="op">==</span><span class="cn">Inf</span><span class="op">]</span> <span class="op">=</span>  <span class="fl">0</span> <span class="co">#分母为0时，结果为0</span></span>
+<span><span class="va">arr_div</span><span class="op">[</span><span class="va">arr_div</span><span class="op">&gt;</span><span class="fl">255</span><span class="op">]</span> <span class="op">=</span>  <span class="fl">255</span></span>
+<span><span class="va">img_div</span> <span class="op">=</span> <span class="va">img1</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img_div</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">arr_div</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb707"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_destroyAllWindows</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">matImgPlot</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">img_add</span>,<span class="va">img_sub</span>,<span class="va">img_mul</span>,<span class="va">img_div</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-39-1.png" width="672"></div>
+</div>
+<div id="查看图像的直方图" class="section level2" number="4.6">
+<h2>
+<span class="header-section-number">4.6</span> 查看图像的直方图<a class="anchor" aria-label="anchor" href="#%E6%9F%A5%E7%9C%8B%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE"><i class="fas fa-link"></i></a>
+</h2>
+<p>把图像矩阵转变为R语言的矩阵或者数组后，可以使用hist函数查看图形颜色直方图。</p>
+<div class="sourceCode" id="cb708"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件(采用灰度图读入模式)</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/lena.jpg"</span>,<span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数将img转变为R语言的矩阵</span></span>
+<span><span class="va">img_mat</span> <span class="op">=</span> <span class="va">img</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成直方图</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">img_mat</span>,breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,xlab<span class="op">=</span><span class="st">""</span>,ylab<span class="op">=</span><span class="st">""</span>,main<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-40-1.png" width="672"></div>
+<p>当读取的图像是三通道彩色图像时，可以按如下方式展示3个通道的颜色直方图：</p>
+<div class="sourceCode" id="cb709"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/lena.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#利用cv2r函数将img转变为R语言的矩阵</span></span>
+<span><span class="va">img_arr</span> <span class="op">=</span> <span class="va">img</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成蓝色分量直方图</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">img_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span>,breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,col<span class="op">=</span><span class="st">"blue"</span>,main<span class="op">=</span><span class="st">""</span>,xlab<span class="op">=</span><span class="st">""</span>,ylab<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span><span class="co">#生成红色分量直方图(叠加到上面的直方图上)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">img_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span>,breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,col<span class="op">=</span><span class="st">"green"</span>,add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#生成红色分量直方图(叠加到上面的直方图上)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">img_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span>,breaks <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,col<span class="op">=</span><span class="st">"red"</span>,add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="05-firstshow_files/figure-html/unnamed-chunk-41-1.png" width="672"></div>
+</div>
+<div id="等待用户按键" class="section level2" number="4.7">
+<h2>
+<span class="header-section-number">4.7</span> 等待用户按键<a class="anchor" aria-label="anchor" href="#%E7%AD%89%E5%BE%85%E7%94%A8%E6%88%B7%E6%8C%89%E9%94%AE"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb710"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取视频文件</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span><span class="co">#cap = VideoCapture("video/slow.flv")</span></span>
+<span><span class="co">#设置ret的值为TRUE</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="co">#设置引用变量，用来传递视频流读取的帧数据</span></span>
+<span><span class="va">frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#当视频流为打开状态且ret的值为TRUE是，循环播放视频</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取视频流中的帧：</span></span>
+<span>  <span class="co">#若读取失败（或者视频流结束），则ret的值为FALSE，循环终止，</span></span>
+<span>  <span class="co">#若读取成功，则存入frame并显示在标题为frame的窗口中。</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame'</span>,<span class="va">frame</span><span class="op">)</span></span>
+<span>    <span class="co">#调用waitKey函数暂停30毫秒，等待用户按键</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="co">#若按下了esc键，会终止循环（即终止播放）</span></span>
+<span>      <span class="kw">break</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">cap</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_destroyAllWindows</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="添加滑动条控制" class="section level2" number="4.8">
+<h2>
+<span class="header-section-number">4.8</span> 添加滑动条控制<a class="anchor" aria-label="anchor" href="#%E6%B7%BB%E5%8A%A0%E6%BB%91%E5%8A%A8%E6%9D%A1%E6%8E%A7%E5%88%B6"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<p>当图像输出到图形窗口时，可以在图形窗口中添加滑动条，进而实现一些交互性控制。下面的代码演示了如何通过滑动条“合成”红、绿、蓝三种颜色分量，形成一个调色板功能。</p>
+<div class="sourceCode" id="cb711"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#当拖动滑动条时，调用colPallette函数，实现红、绿、蓝颜色分量的合成</span></span>
+<span><span class="va">colPallete</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#获取红色滑动条的刻度值，作为红色分量r</span></span>
+<span>  <span class="va">r</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'R'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#获取绿色滑动条的刻度值，作为绿色分量g</span></span>
+<span>  <span class="va">g</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'G'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#获取蓝色滑动条的刻度值，作为蓝色分量b</span></span>
+<span>  <span class="va">b</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'B'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#生成512行512列的8位无符号3通道图像img，所有像素值都为(b,g,r)</span></span>
+<span>  <span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">512</span>,<span class="fl">512</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="va">b</span>,<span class="va">g</span>,<span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#将img图像显示在标题为image的图形窗口上</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'image'</span>,<span class="va">img</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#生成标题为image的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="st">'image'</span><span class="op">)</span></span>
+<span><span class="co">#在标题为image的图形窗口上生成名为R、G、B的滑动条，最小值都为0，最大值都为255，</span></span>
+<span><span class="co">#滑动条拖动的相应函数都为colPallete</span></span>
+<span><span class="co">#R、G、B滑动条的刻度分别代表红色、绿色和蓝色分量值</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"R"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"G"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"B"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#启用colPallete函数</span></span>
+<span><span class="fu">colPallete</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/tutorial/pallete.png"></div>
+<p><strong>示例</strong></p>
+<p>拖动滑动条，改变两个图像融合的权重：</p>
+<div class="sourceCode" id="cb712"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置滑动条的最大值</span></span>
+<span><span class="va">alpha_slider_max</span> <span class="op">=</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="co">#当拖动滑动条时，调用on_trackbar函数，进而调整两个图像的合成权重</span></span>
+<span><span class="va">on_trackbar</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取滑动条当前值</span></span>
+<span>  <span class="va">alpha_slider</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Weight"</span>, <span class="st">"Linear Blend"</span><span class="op">)</span></span>
+<span>  <span class="co">#以滑动条当前值与最大值的的比值作为图像src1的权重alpha</span></span>
+<span>  <span class="va">alpha</span> <span class="op">=</span> <span class="va">alpha_slider</span> <span class="op">/</span> <span class="va">alpha_slider_max</span></span>
+<span>  <span class="co">#以1-alpha作为图像src2的权重beta</span></span>
+<span>  <span class="va">beta</span> <span class="op">=</span> <span class="op">(</span><span class="fl">1.0</span> <span class="op">-</span> <span class="va">alpha</span><span class="op">)</span></span>
+<span>  <span class="co">#按权重合成两个图像，结果保存在dst中</span></span>
+<span>  <span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_addWeighted</span><span class="op">(</span><span class="va">src1</span>, <span class="va">alpha</span>, <span class="va">src2</span>, <span class="va">beta</span>, <span class="fl">0.0</span>, <span class="va">dst</span><span class="op">)</span></span>
+<span>  <span class="co">#实现合成结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Linear Blend"</span>, <span class="va">dst</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取两个图像文件</span></span>
+<span><span class="va">src1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/LinuxLogo.jpg"</span><span class="op">)</span></span>
+<span><span class="va">src2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/WindowsLogo.jpg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成标题为Linear Blend的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="st">"Linear Blend"</span>, <span class="va">WINDOW_AUTOSIZE</span><span class="op">)</span></span>
+<span><span class="co">#在图形窗口中创建控制权重的滑动条</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"Weight"</span>,</span>
+<span>                  <span class="st">"Linear Blend"</span>,</span>
+<span>                  <span class="fl">0</span>,</span>
+<span>                  <span class="va">alpha_slider_max</span>,</span>
+<span>                  <span class="va">on_trackbar</span><span class="op">)</span></span>
+<span><span class="co">#调用on_trackbar函数</span></span>
+<span><span class="fu">on_trackbar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/linearblend50.png"></div>
+</div>
+<div id="推荐使用方式" class="section level2" number="4.9">
+<h2>
+<span class="header-section-number">4.9</span> 推荐使用方式<a class="anchor" aria-label="anchor" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><i class="fas fa-link"></i></a>
+</h2>
+<p>结合OpenCV文档，查询相关函数的用法以及相关例子</p>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></div>
+<div class="next"><a href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li>
+<a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F"><span class="header-section-number">4.1</span> 输入图像</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E5%9B%BE%E5%83%8F%E6%96%87%E4%BB%B6"><span class="header-section-number">4.1.1</span> 加载图像文件</a></li>
+<li><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-1"><span class="header-section-number">4.1.2</span> 创建图像矩阵</a></li>
+<li><a class="nav-link" href="#%E4%BD%BF%E7%94%A8r2cv%E5%87%BD%E6%95%B0"><span class="header-section-number">4.1.3</span> 使用r2cv函数</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="header-section-number">4.2</span> 获取图像基本信息</a></li>
+<li>
+<a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%9B%BE%E5%83%8F"><span class="header-section-number">4.3</span> 修改图像</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><span class="header-section-number">4.3.1</span> 单通道图像</a></li>
+<li><a class="nav-link" href="#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><span class="header-section-number">4.3.2</span> 三通道图像</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F"><span class="header-section-number">4.4</span> 输出图像</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E5%9B%BE%E5%BD%A2%E7%AA%97%E5%8F%A3"><span class="header-section-number">4.4.1</span> 输出到图形窗口</a></li>
+<li><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="header-section-number">4.4.2</span> 输出到命令行</a></li>
+<li><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%88%B0%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6"><span class="header-section-number">4.4.3</span> 输出到磁盘文件</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><span class="header-section-number">4.5</span> 图像的基本运算</a></li>
+<li><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="header-section-number">4.6</span> 查看图像的直方图</a></li>
+<li><a class="nav-link" href="#%E7%AD%89%E5%BE%85%E7%94%A8%E6%88%B7%E6%8C%89%E9%94%AE"><span class="header-section-number">4.7</span> 等待用户按键</a></li>
+<li><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%BB%91%E5%8A%A8%E6%9D%A1%E6%8E%A7%E5%88%B6"><span class="header-section-number">4.8</span> 添加滑动条控制</a></li>
+<li><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="header-section-number">4.9</span> 推荐使用方式</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/05-firstshow.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/05-firstshow.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

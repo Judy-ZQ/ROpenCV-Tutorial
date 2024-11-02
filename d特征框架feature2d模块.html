@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>9 2D特征框架（feature2d模块） | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="9 2D特征框架（feature2d模块） | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="9 2D特征框架（feature2d模块） | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content="一幅图像中总存在着其独特的像素点，这些点可以被认为是这幅图像的特征，常称之为特征点。在计算机视觉领域中，特征点概念已经得到了广泛的应用， 包括目标识别、 图像配准、 视觉跟踪、 三维重建等。 特征点中包含角点和关键点。其中角点的数学描述，包含如下有几种： 一阶导数(即灰度的梯度)的局部最大所对应的像素点； 两条及两条以上边缘的交点； 图像中梯度值和梯度方向的变化速率都很高的点；...">
+<meta property="og:description" content="一幅图像中总存在着其独特的像素点，这些点可以被认为是这幅图像的特征，常称之为特征点。在计算机视觉领域中，特征点概念已经得到了广泛的应用， 包括目标识别、 图像配准、 视觉跟踪、 三维重建等。 特征点中包含角点和关键点。其中角点的数学描述，包含如下有几种： 一阶导数(即灰度的梯度)的局部最大所对应的像素点； 两条及两条以上边缘的交点； 图像中梯度值和梯度方向的变化速率都很高的点；...">
+<meta name="twitter:description" content="一幅图像中总存在着其独特的像素点，这些点可以被认为是这幅图像的特征，常称之为特征点。在计算机视觉领域中，特征点概念已经得到了广泛的应用， 包括目标识别、 图像配准、 视觉跟踪、 三维重建等。 特征点中包含角点和关键点。其中角点的数学描述，包含如下有几种： 一阶导数(即灰度的梯度)的局部最大所对应的像素点； 两条及两条以上边缘的交点； 图像中梯度值和梯度方向的变化速率都很高的点；...">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="active" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="d特征框架feature2d模块" class="section level1" number="9">
+<h1>
+<span class="header-section-number">9</span> 2D特征框架（feature2d模块）<a class="anchor" aria-label="anchor" href="#d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97"><i class="fas fa-link"></i></a>
+</h1>
+<p>一幅图像中总存在着其独特的像素点，这些点可以被认为是这幅图像的特征，常称之为特征点。在计算机视觉领域中，特征点概念已经得到了广泛的应用， 包括目标识别、 图像配准、 视觉跟踪、 三维重建等。</p>
+<p>特征点中包含角点和关键点。其中角点的数学描述，包含如下有几种：</p>
+<ul>
+<li>一阶导数(即灰度的梯度)的局部最大所对应的像素点；</li>
+<li>两条及两条以上边缘的交点；</li>
+<li>图像中梯度值和梯度方向的变化速率都很高的点；</li>
+<li>角点处的一阶导数最大，二阶导数为零，指示物体边缘变化不连续的方向。</li>
+</ul>
+<p>较之于角点，关键点是更加抽象的概念，一般而言指的是对于图像分析问题起着重要作用的点。在提取关键点时，边缘应该作为一个重要的参考依据，但一定不是唯一的依据，只要对分析特定问题有帮助的点都可以称其为关键点。</p>
+<p>基于特征点可以做图像匹配，即寻找两幅图像之间的特征点的对应关系，进而确定两幅图像的一些空间位置关系。特征点匹配的大致步骤为：</p>
+<p>1、检测子（detector）提取：在两张待匹配的图像中寻找那些最容易识别的像素点(角点)，比如纹理丰富的物体边缘点等。其提取方法有SIFT算法、Harris算法、FAST算法。<br>
+2、描述子（descriptor）提取：对于检测出的角点，用一些数学上的特征对其进行描述，如梯度直方图，局部随机二值特征等。其提取算法有邻域模板匹配、SIFT特征描述子、ORB特征描述子。<br>
+3、匹配：通过各个角点的描述子来判断它们在两张图像中的对应关系。常用方法有暴力匹配、KD树等。</p>
+<div id="角点检测基本思想" class="section level2" number="9.1">
+<h2>
+<span class="header-section-number">9.1</span> 角点检测基本思想<a class="anchor" aria-label="anchor" href="#%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><i class="fas fa-link"></i></a>
+</h2>
+<p>确定一个尺寸固定的滤波器<span class="math inline">\(W\)</span>并放置在图像上，而后沿任意方向滑动<span class="math inline">\(W\)</span>，并计算滑动前后滤波器覆盖像素的滤波输出值。如果在任意方向上滤波器滑动前后的两个滤波输出值都有着较大变化，那么可以认为滤波器在滑动前所覆盖的图像区域中存在角点。</p>
+<p>在OpenCV中，将滤波器滑动前后的两个滤波输出值的变化转变为角点响应值，角点响应值计算公式的大致推导过程如下：</p>
+<p>考虑灰度图像<span class="math inline">\(I\)</span>和滤波器<span class="math inline">\(W\)</span>，其锚点位置为<span class="math inline">\((anchor_x,anchor_y)\)</span>，滤波器<span class="math inline">\(W\)</span>在图像<span class="math inline">\(I\)</span>上沿<span class="math inline">\(x\)</span>方向移动<span class="math inline">\(u\)</span>个像素，沿<span class="math inline">\(y\)</span>方向移动<span class="math inline">\(v\)</span>个像素，则移动前后滤波器覆盖范围的像素加权和分别为：</p>
+<p><span class="math display">\[
+\sum_{x,y}w(x,y) I(x,y)
+\]</span></p>
+<p><span class="math display">\[
+\sum_{x,y}w(x,y) I(x+u,y+v)
+\]</span></p>
+<p>其中：</p>
+<ul>
+<li>
+<span class="math inline">\(w(x,y)\)</span>是滤波器<span class="math inline">\(W\)</span>覆盖在<span class="math inline">\((x,y)\)</span>点上的权重值</li>
+<li>
+<span class="math inline">\(I(x,y)\)</span>是<span class="math inline">\((x,y)\)</span>处的强度值</li>
+<li>
+<span class="math inline">\(I(x+u,y+v)\)</span>是移动窗口处<span class="math inline">\((x+u,y+v)\)</span>的强度值</li>
+</ul>
+<p>定义<span class="math inline">\(E(u,v)\)</span>为：</p>
+<p><span class="math display">\[
+E(u,v) = \sum_{x,y}w(x,y) \left[ I(x+u,y+v)-I(x,y) \right]^2
+\]</span></p>
+<p>为了找寻角点，需要找寻强度变化很大的窗口，也即需要最大化上述方程，特别是如下部分：</p>
+<p><span class="math display">\[
+\sum_{x,y}\left[ I(x+u,y+v)-I(x,y) \right]^2
+\]</span></p>
+<p>对其进行泰勒展开：</p>
+<p><span class="math display">\[
+\sum_{x,y}\left[ I(x+u,y+v)-I(x,y) \right]^2 \approx \sum_{x,y} \left[ I(x,y) +uI_x+vI_y-I(x,y) \right]^2
+\]</span></p>
+<p>展开公式并适当取消：</p>
+<p><span class="math display">\[
+\sum_{x,y}\left[ I(x+u,y+v)-I(x,y) \right]^2 \approx u^2I_x^2+2uvI_xI_y+v^2I_y^2= [u \; v] \left(  \left[ \begin{matrix} I_x^2&amp;I_xI_y \\I_xI_y&amp;I_y^2 \end{matrix} \right] \right) \left[ \begin{matrix} u \\ v \end{matrix} \right]
+\]</span></p>
+<p>所以：</p>
+<p><span class="math display">\[
+E(u,v) \approx [u \; v] \left( \sum_{x,y} w(x,y) \left[ \begin{matrix} I_x^2&amp;I_xI_y \\I_xI_y&amp;I_y^2 \end{matrix} \right] \right) \left[ \begin{matrix} u \\ v \end{matrix} \right]
+\]</span></p>
+<p>令：</p>
+<p><span class="math display">\[
+M = \sum_{x,y} w(x,y) \left[ \begin{matrix} I_x^2&amp;I_xI_y \\I_xI_y&amp;I_y^2 \end{matrix} \right]
+\]</span></p>
+<p><strong><em>这里的<span class="math inline">\(M\)</span>也被称为导数协方差矩阵。</em></strong></p>
+<p>则有：</p>
+<p><span class="math display">\[
+E(u,v) \approx [u \; v] M \left[ \begin{matrix} u \\ v \end{matrix} \right]
+\]</span></p>
+<p>进一步，定义如下公式作为角点响应值的计算公式：</p>
+<p><span class="math display">\[
+\begin{aligned}
+R &amp;= det(M) - k(trace(M))^2   \\
+&amp;=I_x^2 I_y^2 - (I_x I_y)^2 - k(trace(M))^2
+\end{aligned}
+\]</span></p>
+<p>其中：</p>
+<ul>
+<li>
+<span class="math inline">\(det(M)\)</span>为<span class="math inline">\(M\)</span>的行列式<br>
+</li>
+<li>
+<span class="math inline">\(trace(M)\)</span>为<span class="math inline">\(M\)</span>的迹<br>
+</li>
+<li>
+<span class="math inline">\(k\)</span>为角点检测灵敏度系数</li>
+</ul>
+<p>当R大于某阈值时，则认为图像<span class="math inline">\(I\)</span>在<span class="math inline">\((anchor_x,anchor_y)\)</span>处存在角点。</p>
+<p>若<span class="math inline">\(M\)</span>的特征值为<span class="math inline">\(\lambda_1\)</span> 和 <span class="math inline">\(\lambda_2\)</span>时，则：</p>
+<p><span class="math display">\[
+det(M) = \lambda_1\lambda_2
+\]</span></p>
+<p><span class="math display">\[
+trace(M) = \lambda_1+\lambda_2
+\]</span></p>
+<p>所以角点响应值的计算公式也可以是：</p>
+<p><span class="math display">\[
+R = \lambda_1\lambda_2 - k(\lambda_1+\lambda_2)^2
+\]</span></p>
+</div>
+<div id="harris角点检测器" class="section level2" number="9.2">
+<h2>
+<span class="header-section-number">9.2</span> Harris角点检测器<a class="anchor" aria-label="anchor" href="#harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%99%A8"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1310"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成20行20列的全0矩阵img_mat</span></span>
+<span><span class="va">img_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0</span>,nr<span class="op">=</span><span class="fl">20</span>,nc<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="co">#将img_mat第5行的第5-16列元素设置为255</span></span>
+<span><span class="va">img_mat</span><span class="op">[</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">:</span><span class="fl">16</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span><span class="co">#将img_mat第5列的第5-16行元素设置为255</span></span>
+<span><span class="va">img_mat</span><span class="op">[</span><span class="fl">5</span><span class="op">:</span><span class="fl">16</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span></span>
+<span><span class="co">#将img.mat转变为图像矩阵img</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">20</span>,<span class="fl">20</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img_mat</span><span class="op">)</span></span>
+<span><span class="co">#设置权重窗口尺寸为2</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">2</span> </span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置敏感度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#进行角点检测，检测结果保存在dst中</span></span>
+<span><span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cornerHarris</span><span class="op">(</span><span class="va">img</span>,<span class="va">dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span>,<span class="va">k</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#查看角点检测结果</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">dst</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11] [,12]
+##  [1,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [2,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [3,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [4,]    0    0    0  0.00  0.00  0.00 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [5,]    0    0    0  0.00  0.02  0.02  0.00 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [6,]    0    0    0  0.00  0.02  0.02  0.04 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [7,]    0    0    0 -0.01  0.00  0.04  0.11 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [8,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+##  [9,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [10,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [11,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [12,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [13,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [14,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [15,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [16,]    0    0    0  0.00  0.02  0.02  0.00  0.00  0.00  0.00  0.00  0.00
+## [17,]    0    0    0  0.00  0.02  0.02  0.00  0.00  0.00  0.00  0.00  0.00
+## [18,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+## [19,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+## [20,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##       [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20]
+##  [1,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [2,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [3,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [4,] -0.01 -0.01 -0.01  0.00  0.00     0     0     0
+##  [5,] -0.01 -0.01 -0.01  0.02  0.02     0     0     0
+##  [6,] -0.01 -0.01 -0.01  0.02  0.02     0     0     0
+##  [7,] -0.01 -0.01 -0.01  0.00  0.00     0     0     0
+##  [8,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [9,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [10,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [11,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [12,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [13,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [14,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [15,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [16,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [17,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [18,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [19,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [20,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## attr(,"depth")
+## [1] 5</code></pre>
+<p>可以通过如下代码验证：</p>
+<div class="sourceCode" id="cb1312"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置窗口尺寸为2</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">2</span> </span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置敏感度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#依据blockSize、ksize设置scale</span></span>
+<span><span class="va">scale</span> <span class="op">=</span> <span class="fl">2</span><span class="op">^</span><span class="op">(</span><span class="va">ksize</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">blockSize</span></span>
+<span><span class="co">#img的depth为CV_8U，scale还需要再乘以255</span></span>
+<span><span class="va">scale</span> <span class="op">=</span> <span class="va">scale</span><span class="op">*</span><span class="fl">255</span></span>
+<span><span class="co">#取倒数</span></span>
+<span><span class="va">scale</span> <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="va">scale</span></span>
+<span></span>
+<span><span class="co">#设置求导结果的像素存储位数为32为浮点数</span></span>
+<span><span class="va">ddepth</span> <span class="op">=</span> <span class="fu"><a href="https://rlang.r-lib.org/reference/expr.html">expr</a></span><span class="op">(</span><span class="va">CV_32F</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#求水平方向导数，结果保存在dx中</span></span>
+<span><span class="va">dx</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_Sobel</span><span class="op">(</span><span class="va">img</span>,<span class="va">dx</span>,<span class="va">ddepth</span>,<span class="fl">1</span>,<span class="fl">0</span>,scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#求垂直方向导数，结果保存在dy中</span></span>
+<span><span class="va">dy</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_Sobel</span><span class="op">(</span><span class="va">img</span>,<span class="va">dy</span>,<span class="va">ddepth</span>,<span class="fl">0</span>,<span class="fl">1</span>,scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成三维数组cov.arr，维度为20 X 20 X 3</span></span>
+<span><span class="va">cov_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">img_mat</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">img_mat</span><span class="op">)</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#cov_arr[,,1]存放dx的平方</span></span>
+<span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">dx</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="co">#cov_arr[,,2]存放dx与dy的乘积</span></span>
+<span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">dx</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span> <span class="op">*</span> <span class="va">dy</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#cov_arr[,,1]存放dy的平方</span></span>
+<span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">dy</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span></span>
+<span><span class="co">#将cov.arr转变为图像矩阵cov</span></span>
+<span><span class="va">cov</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">20</span>,<span class="fl">20</span>,<span class="va">CV_32FC3</span><span class="op">)</span></span>
+<span><span class="va">cov</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">cov_arr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对cov进行归一化盒子滤波（这就是移动窗口？），结果仍保存在cov中</span></span>
+<span><span class="fu">cv_boxFilter</span><span class="op">(</span><span class="va">cov</span>,<span class="va">cov</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fu">Size</span><span class="op">(</span><span class="va">blockSize</span>,<span class="va">blockSize</span><span class="op">)</span>,normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将cov转变为三维数组cov_arr</span></span>
+<span><span class="va">cov_arr</span> <span class="op">=</span> <span class="va">cov</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#计算各个像素的角点响应函数值，结果保存在eigenv_mat</span></span>
+<span><span class="va">eigenv_mat</span> <span class="op">=</span> <span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span><span class="op">-</span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">-</span><span class="va">k</span><span class="op">*</span><span class="op">(</span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span><span class="op">+</span><span class="va">cov_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="co">#查看结果</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">eigenv_mat</span>,<span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3]  [,4]  [,5]  [,6]  [,7]  [,8]  [,9] [,10] [,11] [,12]
+##  [1,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [2,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [3,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##  [4,]    0    0    0  0.00  0.00  0.00 -0.01 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [5,]    0    0    0  0.00  0.02  0.02  0.00 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [6,]    0    0    0  0.00  0.02  0.02  0.04 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [7,]    0    0    0 -0.01  0.00  0.04  0.11 -0.01 -0.01 -0.01 -0.01 -0.01
+##  [8,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+##  [9,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [10,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [11,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [12,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [13,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [14,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [15,]    0    0    0 -0.01 -0.01 -0.01 -0.01  0.00  0.00  0.00  0.00  0.00
+## [16,]    0    0    0  0.00  0.02  0.02  0.00  0.00  0.00  0.00  0.00  0.00
+## [17,]    0    0    0  0.00  0.02  0.02  0.00  0.00  0.00  0.00  0.00  0.00
+## [18,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+## [19,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+## [20,]    0    0    0  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+##       [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20]
+##  [1,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [2,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [3,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [4,] -0.01 -0.01 -0.01  0.00  0.00     0     0     0
+##  [5,] -0.01 -0.01 -0.01  0.02  0.02     0     0     0
+##  [6,] -0.01 -0.01 -0.01  0.02  0.02     0     0     0
+##  [7,] -0.01 -0.01 -0.01  0.00  0.00     0     0     0
+##  [8,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+##  [9,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [10,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [11,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [12,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [13,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [14,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [15,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [16,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [17,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [18,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [19,]  0.00  0.00  0.00  0.00  0.00     0     0     0
+## [20,]  0.00  0.00  0.00  0.00  0.00     0     0     0</code></pre>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1314"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/chessboard1.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#获取图像基本信息</span></span>
+<span><span class="va">src_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#设置blockSize为2，作为权重窗口的高度和宽度</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置敏感度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#使用cornerHarris函数检测src_gray的角点，结果保存在dst中</span></span>
+<span><span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cornerHarris</span><span class="op">(</span><span class="va">src_gray</span>,<span class="va">dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span>,<span class="va">k</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对dst进行二值化：像素值超过0.1的都点都设置为255，即将角点变成小白点</span></span>
+<span><span class="va">dst_bin</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_threshold</span><span class="op">(</span><span class="va">dst</span>,<span class="va">dst_bin</span>,<span class="fl">0.1</span>,<span class="fl">255</span>,<span class="va">THRESH_BINARY</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.1</code></pre>
+<div class="sourceCode" id="cb1316"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'dst'</span>,<span class="va">dst_bin</span><span class="op">)</span></span></code></pre></div>
+<p>也可以换一种方式：将角点位置用小圆圈标记出来</p>
+<div class="sourceCode" id="cb1317"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/building1.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#获取图像基本信息</span></span>
+<span><span class="va">src_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#设置blockSize为2，作为权重窗口的高度和宽度</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置敏感度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#使用cornerHarris函数检测src_gray的角点，结果保存在dst中</span></span>
+<span><span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cornerHarris</span><span class="op">(</span><span class="va">src_gray</span>,<span class="va">dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span>,<span class="va">k</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将dst的像素值映射到[0,255]上，结果保存在dst_norm中</span></span>
+<span><span class="va">dst_norm</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_normalize</span><span class="op">(</span><span class="va">dst</span>, <span class="va">dst_norm</span>, <span class="fl">0</span>, <span class="fl">255</span>, <span class="va">NORM_MINMAX</span>, <span class="va">CV_32FC1</span><span class="op">)</span></span>
+<span><span class="co">#将dst_norm的像素存储位数改变为8位无符号数，结果保存在dst_norm_scaled中</span></span>
+<span><span class="va">dst_norm_scaled</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_convertScaleAbs</span><span class="op">(</span><span class="va">dst_norm</span>, <span class="va">dst_norm_scaled</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将dst_norm转变为R语言的矩阵dst_norm_mat</span></span>
+<span><span class="va">dst_norm_mat</span> <span class="op">=</span> <span class="va">dst_norm</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#用小圆圈在dst_norm_scaled上标注像素值超过阈值的点</span></span>
+<span><span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">dst_norm_mat</span><span class="op">&gt;</span><span class="fl">200</span>,arr.ind <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu">cv_circle</span><span class="op">(</span><span class="va">dst_norm_scaled</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">2</span><span class="op">]</span>, <span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fl">5</span>,  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#显示原图</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"source"</span>,<span class="va">src</span><span class="op">)</span></span>
+<span><span class="co">#显示角点（标注）结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"result"</span>, <span class="va">dst_norm_scaled</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1318"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#指定显示源图像的窗口标题</span></span>
+<span><span class="va">source_window</span> <span class="op">=</span> <span class="st">"Source image"</span></span>
+<span><span class="co">#指定显示角点结果的窗口标题</span></span>
+<span><span class="va">corners_window</span> <span class="op">=</span> <span class="st">"Corners detected"</span></span>
+<span></span>
+<span><span class="co">#设置blockSize为2，作为权重窗口的高度和宽度</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置敏感度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span><span class="co">#生成引用变量，用来传递图像处理函数结果</span></span>
+<span></span>
+<span><span class="co">#定义滑动条滑动事件的响应函数</span></span>
+<span><span class="va">cornerHarris_demo</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制阈值的滑动条的当前取值，存入thresh中</span></span>
+<span>  <span class="va">thresh</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Threshold: "</span>, <span class="va">source_window</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#使用cornerHarris函数检测src_gray的角点，结果保存在dst中</span></span>
+<span>  <span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_cornerHarris</span><span class="op">(</span><span class="va">src_gray</span>,<span class="va">dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span>,<span class="va">k</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#将dst的像素值映射到[0,255]上，结果保存在dst_norm中</span></span>
+<span>  <span class="va">dst_norm</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_normalize</span><span class="op">(</span><span class="va">dst</span>, <span class="va">dst_norm</span>, <span class="fl">0</span>, <span class="fl">255</span>, <span class="va">NORM_MINMAX</span>, <span class="va">CV_32FC1</span><span class="op">)</span></span>
+<span>  <span class="co">#将dst_norm的像素存储位数改变为8位无符号数，结果保存在dst_norm_scaled中</span></span>
+<span>  <span class="va">dst_norm_scaled</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_convertScaleAbs</span><span class="op">(</span><span class="va">dst_norm</span>, <span class="va">dst_norm_scaled</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#将dst_norm_scaled转变为R语言的矩阵dst_norm_scaled_mat</span></span>
+<span>  <span class="va">dst_norm_scaled_mat</span> <span class="op">=</span> <span class="va">dst_norm_scaled</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">dst_norm_scaled_mat</span><span class="op">&gt;</span><span class="va">thresh</span>,arr.ind <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">dst_norm_scaled</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">2</span><span class="op">]</span>, <span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fl">5</span>,  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="co">#显示角点（标注）结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="va">corners_window</span>, <span class="va">dst_norm_scaled</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/building1.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#获取图像基本信息</span></span>
+<span><span class="va">src_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建以source_window取值为标题的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="va">source_window</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#在图形窗口中创建控制角点阈值的滑动条（滑动条的位置先置于200处）</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"Threshold: "</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">200</span>,</span>
+<span>                  <span class="fl">255</span>,</span>
+<span>                  <span class="va">cornerHarris_demo</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Threshold: "</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">200</span><span class="op">)</span></span>
+<span><span class="co">#在以source_window取值为标题的图形窗口中显示src图像</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="va">source_window</span>, <span class="va">src</span><span class="op">)</span></span>
+<span><span class="co">#调用cornerHarris_demo函数</span></span>
+<span><span class="fu">cornerHarris_demo</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1319"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置找寻的最大角点数为100</span></span>
+<span><span class="va">maxCorners</span> <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="co">#设置角点最小品质为0.01（低于该值的角点会被舍去）</span></span>
+<span><span class="va">qualityLevel</span> <span class="op">=</span> <span class="fl">0.03</span></span>
+<span><span class="co">#设置检测到的角点之间的最小距离为10（避免角点紧紧相连的情况）</span></span>
+<span><span class="va">minDistance</span> <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="co">#设置权重窗口的高度和宽度都为3</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">gradientSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置useHarrisDetector为TRUE，即使用Harris角点检测，而不使用ShiTomasi角点检测</span></span>
+<span><span class="va">useHarrisDetector</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="co">#使用Harris角点检测时，灵敏度系数设置为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.01</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/building1.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#将src灰度化，结果存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测src_gray中的角点，结果保存在corners中</span></span>
+<span><span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span></span>
+<span>  <span class="va">src_gray</span>,</span>
+<span>  <span class="va">corners</span>,</span>
+<span>  <span class="va">maxCorners</span>,</span>
+<span>  <span class="va">qualityLevel</span>,</span>
+<span>  <span class="va">minDistance</span>,</span>
+<span>  <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">blockSize</span>,</span>
+<span>  <span class="va">gradientSize</span>,</span>
+<span>  <span class="va">useHarrisDetector</span>,</span>
+<span>  <span class="va">k</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#输出寻找到的角点数</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"** Number of corners detected: "</span> , <span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  100</code></pre>
+<div class="sourceCode" id="cb1321"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#用小圆圈在src中标注角点位置</span></span>
+<span><span class="va">radius</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src</span>, <span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#在标题为Image的图形窗口中显示src</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Image"</span>, <span class="va">src</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="shi-tomasi角点探测器" class="section level2" number="9.3">
+<h2>
+<span class="header-section-number">9.3</span> Shi-Tomasi角点探测器<a class="anchor" aria-label="anchor" href="#shi-tomasi%E8%A7%92%E7%82%B9%E6%8E%A2%E6%B5%8B%E5%99%A8"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1322"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置找寻的最大角点数为30</span></span>
+<span><span class="va">maxCorners</span> <span class="op">=</span> <span class="fl">30</span></span>
+<span><span class="co">#设置角点最小品质为0.01（低于该值的角点会被舍去）</span></span>
+<span><span class="va">qualityLevel</span> <span class="op">=</span> <span class="fl">0.01</span></span>
+<span><span class="co">#设置检测到的角点之间的最小距离为10（避免角点紧紧相连的情况）</span></span>
+<span><span class="va">minDistance</span> <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="co">#设置权重窗口的高度和宽度都为3</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">gradientSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置useHarrisDetector为FALSE，即不使用Harris角点检测，而是使用ShiTomasi角点检测</span></span>
+<span><span class="va">useHarrisDetector</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="co">#使用Harris角点检测时，灵敏度系数设置为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/pic3.png"</span><span class="op">)</span></span>
+<span><span class="co">#将src灰度化，结果存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测src_gray中的角点，结果保存在corners中</span></span>
+<span><span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span></span>
+<span>  <span class="va">src_gray</span>,</span>
+<span>  <span class="va">corners</span>,</span>
+<span>  <span class="va">maxCorners</span>,</span>
+<span>  <span class="va">qualityLevel</span>,</span>
+<span>  <span class="va">minDistance</span>,</span>
+<span>  <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">blockSize</span>,</span>
+<span>  <span class="va">gradientSize</span>,</span>
+<span>  <span class="va">useHarrisDetector</span>,</span>
+<span>  <span class="va">k</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#输出寻找到的角点数</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"** Number of corners detected: "</span> , <span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  30</code></pre>
+<div class="sourceCode" id="cb1324"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#用小圆圈在src中标注角点位置</span></span>
+<span><span class="va">radius</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src</span>, <span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#在标题为Image的图形窗口中显示src</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Image"</span>, <span class="va">src</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1325"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置角点最小品质为0.01（低于该值的角点会被舍去）</span></span>
+<span><span class="va">qualityLevel</span> <span class="op">=</span> <span class="fl">0.01</span></span>
+<span><span class="co">#设置检测到的角点之间的最小距离为10（避免角点紧紧相连的情况）</span></span>
+<span><span class="va">minDistance</span> <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="co">#设置权重窗口的高度和宽度都为3</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">gradientSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置useHarrisDetector为FALSE，即不使用Harris角点检测，而是使用ShiTomasi角点检测</span></span>
+<span><span class="va">useHarrisDetector</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="co">#使用Harris角点检测时，灵敏度系数设置为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#定义滑动条滑动事件的响应函数</span></span>
+<span><span class="va">goodFeaturesToTrack_Demo</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制角点最大数量的滑动条的当前取值，存入maxCorners中</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>, <span class="st">"Image"</span><span class="op">)</span></span>
+<span>  <span class="co">#如果maxCorners小于1，则取1</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">maxCorners</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#生成src的克隆体src_clone</span></span>
+<span>  <span class="va">src_clone</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#检测src_gray中的角点，结果保存在corners中</span></span>
+<span>  <span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span></span>
+<span>    <span class="va">src_gray</span>,</span>
+<span>    <span class="va">corners</span>,</span>
+<span>    <span class="va">maxCorners</span>,</span>
+<span>    <span class="va">qualityLevel</span>,</span>
+<span>    <span class="va">minDistance</span>,</span>
+<span>    <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="va">blockSize</span>,</span>
+<span>    <span class="va">gradientSize</span>,</span>
+<span>    <span class="va">useHarrisDetector</span>,</span>
+<span>    <span class="va">k</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="co">#输出寻找到的角点数</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"** Number of corners detected: "</span> , <span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#用小圆圈在src.clone中标注角点位置</span></span>
+<span>  <span class="va">radius</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src_clone</span>, <span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co">#在标题为Image的图形窗口中显示src.clone</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Image"</span>, <span class="va">src_clone</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/chessboard1.jpg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果存在src_gray中</span></span>
+<span><span class="va">src_gray</span><span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建标题为Image的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="st">"Image"</span><span class="op">)</span></span>
+<span><span class="co">#在图形窗口中创建控制最大角点数量的滑动条（滑动条的位置先置于23处）</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="st">"Image"</span>,</span>
+<span>                  <span class="fl">23</span>,</span>
+<span>                  <span class="fl">255</span>,</span>
+<span>                  <span class="va">goodFeaturesToTrack_Demo</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="st">"Image"</span>,</span>
+<span>                  <span class="fl">23</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  23</code></pre>
+<div class="sourceCode" id="cb1327"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#在标题为Image的图形窗口中显示src图像</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Image"</span>, <span class="va">src</span><span class="op">)</span></span>
+<span><span class="co">#调用goodFeaturesToTrack_Demo函数</span></span>
+<span><span class="fu">goodFeaturesToTrack_Demo</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  23</code></pre>
+</div>
+<div id="通过cornereigenvalsandvecs实现harris角点检测" class="section level2" number="9.4">
+<h2>
+<span class="header-section-number">9.4</span> 通过cornerEigenValsAndVecs实现Harris角点检测<a class="anchor" aria-label="anchor" href="#%E9%80%9A%E8%BF%87cornereigenvalsandvecs%E5%AE%9E%E7%8E%B0harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p>cv::cornerEigenValsAndVecs可以计算<span class="math inline">\(M\)</span>的特征值和特征向量，返回的结果为6维向量：</p>
+<p><span class="math display">\[
+(\lambda_1,\lambda_2,x_1,y_1,x_2,y_2)
+\]</span></p>
+<p>其中：<br><span class="math inline">\(\lambda_1, \lambda_2\)</span> 为矩阵<span class="math inline">\(M\)</span>的特征值；<br><span class="math inline">\((x_1, y_1)\)</span>为矩阵<span class="math inline">\(M\)</span>对应于<span class="math inline">\(\lambda_1\)</span>的特征向量；<br><span class="math inline">\((x_2, y_2)\)</span>为矩阵<span class="math inline">\(M\)</span>对应于<span class="math inline">\(\lambda_2\)</span>的特征向量。</p>
+<p>OpenCV将这个6维向量存放在6通道图像矩阵中，这6个通道依次存放<span class="math inline">\((\lambda_1\)</span>、<span class="math inline">\(\lambda_2\)</span>、<span class="math inline">\(x_1\)</span>、<span class="math inline">\(y_1\)</span>、<span class="math inline">\(x_2\)</span>和<span class="math inline">\(y_2\)</span>。</p>
+<p>基于cv::cornerEigenValsAndVecs可以实现Harris角点检测功能。</p>
+<p>cv::cornerMinEigenVal可以计算<span class="math inline">\(M\)</span>的最小特征值，而基于cv::cornerMinEigenVal则可以实现Shi-Tomasi角点检测功能。</p>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1329"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#角点探测品质控制滑动条的最大值为100</span></span>
+<span><span class="va">max_qualityLevel</span> <span class="op">=</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="co">#初始化Harris角点检测结果的最小值和最大值</span></span>
+<span><span class="va">myHarris_minVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">myHarris_maxVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span></span>
+<span><span class="co">#显示Harris角点检测结果的图形窗口标题</span></span>
+<span><span class="va">myHarris_window</span> <span class="op">=</span> <span class="st">"My Harris corner detector"</span></span>
+<span></span>
+<span><span class="co">#Harris角点检测最低品质控制滑动条的响应函数</span></span>
+<span><span class="va">myHarris_function</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制ShiTomasi角点检测最低品质的滑动条的当前取值，存入myHarris_qualityLevel中</span></span>
+<span>  <span class="va">myHarris_qualityLevel</span> <span class="op">=</span></span>
+<span>    <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Quality Level:"</span>, <span class="va">myHarris_window</span><span class="op">)</span></span>
+<span>  <span class="co">#若myShiTomasi_qualityLevel&lt;1，则myShiTomasi_qualityLevel取1</span></span>
+<span>  <span class="va">myHarris_qualityLevel</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">myHarris_qualityLevel</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="co">#生成src的克隆体myHarris_clone</span></span>
+<span>  <span class="va">myHarris_clone</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co">#在myHarris_clone上用小圆圈标注角点</span></span>
+<span>  <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">Mc_mat</span><span class="op">&gt;</span> <span class="va">myHarris_minVal</span> <span class="op">+</span> <span class="op">(</span><span class="va">myHarris_maxVal</span> <span class="op">-</span> <span class="va">myHarris_minVal</span><span class="op">)</span> <span class="op">*</span> <span class="va">myHarris_qualityLevel</span> <span class="op">/</span> <span class="va">max_qualityLevel</span>,arr.ind <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">myHarris_clone</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">2</span><span class="op">]</span>, <span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fl">4</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="va">myHarris_window</span>, <span class="va">myHarris_clone</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/building1.jpg"</span><span class="op">)</span></span>
+<span><span class="co"># src = cv.imread("images/pic3.png")</span></span>
+<span><span class="co">#获取图像基本信息</span></span>
+<span><span class="va">src_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#设置权重矩阵的尺寸为3行3列</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核的高度和宽度都为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置角点检测的灵敏度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#计算M的特征值和特征向量，保存在myHarris_dst中</span></span>
+<span><span class="va">myHarris_dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cornerEigenValsAndVecs</span><span class="op">(</span><span class="va">src_gray</span>,<span class="va">myHarris_dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span><span class="op">)</span></span>
+<span><span class="co">#将myHarris_dst转变为R语言矩阵myHarris_dst.mat</span></span>
+<span><span class="va">myHarris_dst_mat</span> <span class="op">=</span> <span class="va">myHarris_dst</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#计算各像素的角点响应函数值，结果保存在Mc_mat中</span></span>
+<span><span class="va">lambda1</span> <span class="op">=</span> <span class="va">myHarris_dst_mat</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">lambda2</span> <span class="op">=</span> <span class="va">myHarris_dst_mat</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span></span>
+<span><span class="va">Mc_mat</span> <span class="op">=</span> <span class="va">lambda1</span><span class="op">*</span><span class="va">lambda2</span> <span class="op">-</span> <span class="va">k</span><span class="op">*</span><span class="op">(</span><span class="va">lambda1</span><span class="op">+</span><span class="va">lambda2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="co">#获取Mc.mat的最大值和最小值</span></span>
+<span><span class="va">myHarris_minVal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">Mc_mat</span><span class="op">)</span></span>
+<span><span class="va">myHarris_maxVal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">Mc_mat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成用于展示Harris角点检测结果的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span> <span class="va">myHarris_window</span> <span class="op">)</span></span>
+<span><span class="co">#在图形窗口上创建控制检测品质的滑动条，响应函数为myHarris_function</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span> <span class="st">"Quality Level:"</span>, <span class="va">myHarris_window</span>, <span class="fl">50</span>, <span class="va">max_qualityLevel</span>, <span class="va">myHarris_function</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Quality Level:"</span>, <span class="va">myHarris_window</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co">#调用myHarris_function函数</span></span>
+<span><span class="fu">myHarris_function</span><span class="op">(</span> <span class="fl">0</span>, <span class="fl">0</span> <span class="op">)</span></span></code></pre></div>
+</div>
+<div id="通过cornermineigenval实现shitomasi角点检测" class="section level2" number="9.5">
+<h2>
+<span class="header-section-number">9.5</span> 通过cornerMinEigenVal实现ShiTomasi角点检测<a class="anchor" aria-label="anchor" href="#%E9%80%9A%E8%BF%87cornermineigenval%E5%AE%9E%E7%8E%B0shitomasi%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1330"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#角点探测品质控制滑动条的最大值为100</span></span>
+<span><span class="va">max_qualityLevel</span> <span class="op">=</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="co">#初始化hiTomasi角点检测结果的最小值和最大值</span></span>
+<span><span class="va">myShiTomasi_minVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">myShiTomasi_maxVal</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span></span>
+<span><span class="co">#显示ShiTomasi角点检测结果的图形窗口标题</span></span>
+<span><span class="va">myShiTomasi_window</span> <span class="op">=</span> <span class="st">"My Shi Tomasi corner detector"</span></span>
+<span></span>
+<span><span class="co">#ShiTomasi角点检测最低品质控制滑动条的响应函数</span></span>
+<span><span class="va">myShiTomasi_function</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制ShiTomasi角点检测最低品质的滑动条的当前取值，存入myShiTomasi_qualityLevel中</span></span>
+<span>  <span class="va">myShiTomasi_qualityLevel</span> <span class="op">=</span></span>
+<span>    <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Quality Level:"</span>, <span class="va">myShiTomasi_window</span><span class="op">)</span></span>
+<span>  <span class="co">#若myShiTomasi_qualityLevel&lt;1，则myShiTomasi_qualityLevel取1</span></span>
+<span>  <span class="va">myShiTomasi_qualityLevel</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">myShiTomasi_qualityLevel</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="co">#生成src的克隆体myShiTomasi_clone</span></span>
+<span>  <span class="va">myShiTomasi_clone</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#将myShiTomasi_dst转变为R语言矩阵myShiTomasi_dst_mat</span></span>
+<span>  <span class="va">myShiTomasi_dst_mat</span> <span class="op">=</span> <span class="va">myShiTomasi_dst</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="co">#在myShiTomasi_clone上用小圆圈标注角点</span></span>
+<span>  <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">myShiTomasi_dst_mat</span> <span class="op">&gt;</span> <span class="va">myShiTomasi_minVal</span> <span class="op">+</span> <span class="op">(</span><span class="va">myShiTomasi_maxVal</span> <span class="op">-</span> <span class="va">myShiTomasi_minVal</span><span class="op">)</span> <span class="op">*</span> <span class="va">myShiTomasi_qualityLevel</span> <span class="op">/</span> <span class="va">max_qualityLevel</span>,arr.ind <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>     <span class="fu">cv_circle</span><span class="op">(</span><span class="va">myShiTomasi_clone</span>,</span>
+<span>                  <span class="fu">Point</span><span class="op">(</span><span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">1</span><span class="op">]</span>, <span class="va">pos</span><span class="op">[</span><span class="va">i</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>                  <span class="fl">4</span>,</span>
+<span>                  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">255</span><span class="op">)</span>,</span>
+<span>                  <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="co">#显示角点标注结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="va">myShiTomasi_window</span>, <span class="va">myShiTomasi_clone</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/building1.jpg"</span><span class="op">)</span></span>
+<span><span class="co"># src = cv.imread("images/pic3.png")</span></span>
+<span><span class="co">#获取图像基本信息</span></span>
+<span><span class="va">src_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#设置权重矩阵的尺寸为3行3列</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核的高度和宽度都为3</span></span>
+<span><span class="va">ksize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置角点检测的灵敏度系数为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#计算M的最小特征值，保存在myShiTomasi_dst中</span></span>
+<span><span class="va">myShiTomasi_dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cornerMinEigenVal</span><span class="op">(</span><span class="va">src_gray</span>,<span class="va">myShiTomasi_dst</span>,<span class="va">blockSize</span>,<span class="va">ksize</span><span class="op">)</span></span>
+<span><span class="co">#将myShiTomasi_dst转变为R语言矩myShiTomasi_dst_mat</span></span>
+<span><span class="va">myShiTomasi_dst_mat</span> <span class="op">=</span> <span class="va">myShiTomasi_dst</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#获取myShiTomasi_dst_mat的最大值和最小值</span></span>
+<span><span class="va">myShiTomasi_minVal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">myShiTomasi_dst_mat</span><span class="op">)</span></span>
+<span><span class="va">myShiTomasi_maxVal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">myShiTomasi_dst_mat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成用于展示ShiTomasi角点检测结果的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span> <span class="va">myShiTomasi_window</span> <span class="op">)</span></span>
+<span><span class="co">#在图形窗口上创建控制检测品质的滑动条，响应函数为myShiTomasi_function</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span> <span class="st">"Quality Level:"</span>, <span class="va">myShiTomasi_window</span>, <span class="fl">50</span>, <span class="va">max_qualityLevel</span>, <span class="va">myShiTomasi_function</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Quality Level:"</span>, <span class="va">myShiTomasi_window</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co">#调用myShiTomasi_function函数</span></span>
+<span><span class="fu">myShiTomasi_function</span><span class="op">(</span> <span class="fl">0</span>, <span class="fl">0</span> <span class="op">)</span></span></code></pre></div>
+</div>
+<div id="亚像素角点检测" class="section level2" number="9.6">
+<h2>
+<span class="header-section-number">9.6</span> 亚像素角点检测<a class="anchor" aria-label="anchor" href="#%E4%BA%9A%E5%83%8F%E7%B4%A0%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p>opencv中也提供了Harris角点检测的接口，即cv::cornerHarris()，但是Harris角点检测存在很多缺陷（如角点是像素级别的，速度较慢等），因此我们这里将介绍opencv中的另一个功能更为强大的函数——cv::goodFeaturesToTrack()，它不仅支持Harris角点检测，也支持Shi Tomasi算法的角点检测。但是，该函数检测到的角点依然是像素级别的，若想获取更为精细的角点坐标，则需要调用cv::cornerSubPix()函数进一步细化处理，即亚像素。</p>
+<p>cv::goodFeaturesToTrack()提取到的角点只能达到像素级别，在很多情况下并不能满足实际的需求，这时，我们则需要使用cv::cornerSubPix()对检测到的角点作进一步的优化计算，可使角点的精度达到亚像素级别。</p>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1331"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置控制最大角点数的滑动条最大值为25</span></span>
+<span><span class="va">maxTrackbar</span> <span class="op">=</span> <span class="fl">25</span></span>
+<span><span class="co">#设置图形窗口的标题为Image</span></span>
+<span><span class="va">source_window</span> <span class="op">=</span> <span class="st">"Image"</span></span>
+<span></span>
+<span><span class="co">#设置角点最小品质为0.01（低于该值的角点会被舍去）</span></span>
+<span><span class="va">qualityLevel</span> <span class="op">=</span> <span class="fl">0.01</span></span>
+<span><span class="co">#设置检测到的角点之间的最小距离为10（避免角点紧紧相连的情况）</span></span>
+<span><span class="va">minDistance</span> <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="co">#设置权重窗口的高度和宽度都为3</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">gradientSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置useHarrisDetector为FALSE，即不使用Harris角点检测，而是使用ShiTomasi角点检测</span></span>
+<span><span class="va">useHarrisDetector</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="co">#使用Harris角点检测时，灵敏度系数设置为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#定义滑动条滑动事件的响应函数</span></span>
+<span><span class="va">goodFeaturesToTrack_Demo</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制最大角点数的滑动条的当前值，存入maxCorners中</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>, <span class="va">source_window</span><span class="op">)</span></span>
+<span>  <span class="co">#如果maxCorners小于1，则maxCorners取1</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">maxCorners</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#生成src的克隆体src_clone</span></span>
+<span>  <span class="va">src_clone</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#检测src_gray中角点，结果保存在coners中</span></span>
+<span>  <span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span></span>
+<span>    <span class="va">src_gray</span>,</span>
+<span>    <span class="va">corners</span>,</span>
+<span>    <span class="va">maxCorners</span>,</span>
+<span>    <span class="va">qualityLevel</span>,</span>
+<span>    <span class="va">minDistance</span>,</span>
+<span>    <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="va">blockSize</span>,</span>
+<span>    <span class="va">gradientSize</span>,</span>
+<span>    <span class="va">useHarrisDetector</span>,</span>
+<span>    <span class="va">k</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#在控制台显示找到的角点数量</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"** Number of corners detected: "</span> , <span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="co">#在src.clone中用小圆标注角点位置</span></span>
+<span>  <span class="va">radius</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src_clone</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="co">#显示角点标注结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="va">source_window</span>, <span class="va">src_clone</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#设置计算亚像素角点时考虑的区域大小</span></span>
+<span>  <span class="va">winSize</span> <span class="op">=</span> <span class="fu">Size</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="co">#设置零区域大小，(-1,-1)表示忽略</span></span>
+<span>  <span class="va">zeroZone</span> <span class="op">=</span> <span class="fu">Size</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="co">#设置计算亚像素时停止迭代的标准</span></span>
+<span>  <span class="va">criteria</span> <span class="op">=</span> <span class="fu">TermCriteria</span><span class="op">(</span><span class="va">EPS</span><span class="op">+</span><span class="va">COUNT</span>,<span class="fl">40</span>,<span class="fl">0.001</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#计算亚像素角点，结果保存在corners_subpix</span></span>
+<span>  <span class="co"># corners_subpix = corners</span></span>
+<span>  <span class="fu">cv_cornerSubPix</span><span class="op">(</span><span class="va">src_gray</span>, <span class="va">corners</span>, <span class="va">winSize</span>, <span class="va">zeroZone</span>, <span class="va">criteria</span><span class="op">)</span></span>
+<span>  <span class="co">#在控制台中显示亚像素角点坐标</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" -- Refined Corner ["</span> ,</span>
+<span>        <span class="va">i</span> ,</span>
+<span>        <span class="st">"]  ("</span> ,</span>
+<span>        <span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,</span>
+<span>        <span class="st">","</span> ,</span>
+<span>        <span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span>,</span>
+<span>        <span class="st">")"</span> ,</span>
+<span>        <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="va">source_window</span><span class="op">)</span></span>
+<span><span class="co">#在图形窗口中创建控制最大角点数的滑动条</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">10</span>,</span>
+<span>                  <span class="va">maxTrackbar</span>,</span>
+<span>                  <span class="va">goodFeaturesToTrack_Demo</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  10 
+##  -- Refined Corner [ 0 ]  ( 106.1577 , 271.1891 ) 
+##  -- Refined Corner [ 1 ]  ( 274 , 380 ) 
+##  -- Refined Corner [ 2 ]  ( 311.8034 , 230.7013 ) 
+##  -- Refined Corner [ 3 ]  ( 296.7006 , 245.793 ) 
+##  -- Refined Corner [ 4 ]  ( 288 , 369 ) 
+##  -- Refined Corner [ 5 ]  ( 283.4326 , 174.3752 ) 
+##  -- Refined Corner [ 6 ]  ( 302 , 171 ) 
+##  -- Refined Corner [ 7 ]  ( 141 , 232 ) 
+##  -- Refined Corner [ 8 ]  ( 193.1618 , 320.4098 ) 
+##  -- Refined Corner [ 9 ]  ( 333.2073 , 214.2635 )</code></pre>
+<div class="sourceCode" id="cb1333"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#在图形窗口中显示src</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="va">source_window</span>, <span class="va">src</span><span class="op">)</span></span>
+<span><span class="co">#调用函数goodFeaturesToTrack_Demo</span></span>
+<span><span class="fu">goodFeaturesToTrack_Demo</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  10 
+##  -- Refined Corner [ 0 ]  ( 106.1577 , 271.1891 ) 
+##  -- Refined Corner [ 1 ]  ( 274 , 380 ) 
+##  -- Refined Corner [ 2 ]  ( 311.8034 , 230.7013 ) 
+##  -- Refined Corner [ 3 ]  ( 296.7006 , 245.793 ) 
+##  -- Refined Corner [ 4 ]  ( 288 , 369 ) 
+##  -- Refined Corner [ 5 ]  ( 283.4326 , 174.3752 ) 
+##  -- Refined Corner [ 6 ]  ( 302 , 171 ) 
+##  -- Refined Corner [ 7 ]  ( 141 , 232 ) 
+##  -- Refined Corner [ 8 ]  ( 193.1618 , 320.4098 ) 
+##  -- Refined Corner [ 9 ]  ( 333.2073 , 214.2635 )</code></pre>
+<p>也可以同时将检测到亚像素角点用小圆圈标注出来：</p>
+<div class="sourceCode" id="cb1335"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置控制最大角点数的滑动条最大值为25</span></span>
+<span><span class="va">maxTrackbar</span> <span class="op">=</span> <span class="fl">25</span></span>
+<span><span class="co">#设置图形窗口的标题为Image</span></span>
+<span><span class="va">source_window</span> <span class="op">=</span> <span class="st">"Image"</span></span>
+<span></span>
+<span><span class="co">#设置角点最小品质为0.01（低于该值的角点会被舍去）</span></span>
+<span><span class="va">qualityLevel</span> <span class="op">=</span> <span class="fl">0.01</span></span>
+<span><span class="co">#设置检测到的角点之间的最小距离为10（避免角点紧紧相连的情况）</span></span>
+<span><span class="va">minDistance</span> <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="co">#设置权重窗口的高度和宽度都为3</span></span>
+<span><span class="va">blockSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置求导内核尺寸为3</span></span>
+<span><span class="va">gradientSize</span> <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="co">#设置useHarrisDetector为FALSE，即不使用Harris角点检测，而是使用ShiTomasi角点检测</span></span>
+<span><span class="va">useHarrisDetector</span> <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="co">#使用Harris角点检测时，灵敏度系数设置为0.04</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fl">0.04</span></span>
+<span></span>
+<span><span class="co">#定义滑动条滑动事件的响应函数</span></span>
+<span><span class="va">goodFeaturesToTrack_Demo</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#获取控制最大角点数的滑动条的当前值，存入maxCorners中</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>, <span class="va">source_window</span><span class="op">)</span></span>
+<span>  <span class="co">#如果maxCorners小于1，则maxCorners取1</span></span>
+<span>  <span class="va">maxCorners</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">maxCorners</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#生成src的克隆体src_clone和src_clone1</span></span>
+<span>  <span class="va">src_clone</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">src_clone1</span> <span class="op">=</span> <span class="va">src</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#检测src_gray中角点，结果保存在coners中</span></span>
+<span>  <span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span></span>
+<span>    <span class="va">src_gray</span>,</span>
+<span>    <span class="va">corners</span>,</span>
+<span>    <span class="va">maxCorners</span>,</span>
+<span>    <span class="va">qualityLevel</span>,</span>
+<span>    <span class="va">minDistance</span>,</span>
+<span>    <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="va">blockSize</span>,</span>
+<span>    <span class="va">gradientSize</span>,</span>
+<span>    <span class="va">useHarrisDetector</span>,</span>
+<span>    <span class="va">k</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#在控制台显示找到的角点数量</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"** Number of corners detected: "</span> , <span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="co">#在src.clone中用红色小圆标注角点位置</span></span>
+<span>  <span class="va">radius</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src_clone</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co">#设置计算亚像素角点时考虑的区域大小</span></span>
+<span>  <span class="va">winSize</span> <span class="op">=</span> <span class="fu">Size</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="co">#设置零区域大小，(-1,-1)表示忽略</span></span>
+<span>  <span class="va">zeroZone</span> <span class="op">=</span> <span class="fu">Size</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="co">#设置计算亚像素时停止迭代的标准</span></span>
+<span>  <span class="va">criteria</span> <span class="op">=</span> <span class="fu">TermCriteria</span><span class="op">(</span><span class="va">EPS</span> <span class="op">+</span> <span class="va">COUNT</span>,<span class="fl">40</span>,<span class="fl">0.001</span><span class="op">)</span></span>
+<span>  <span class="co">#计算亚像素角点，结果保存在corners</span></span>
+<span>  <span class="fu">cv_cornerSubPix</span><span class="op">(</span><span class="va">src_gray</span>, <span class="va">corners</span>, <span class="va">winSize</span>, <span class="va">zeroZone</span>, <span class="va">criteria</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#在src_clone1中用黄色小圆标注亚像素角点位置</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">corners</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">src_clone1</span>, <span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">radius</span>, <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co">#显示角点标注结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="va">source_window</span>, <span class="va">src_clone</span><span class="op">)</span></span>
+<span>  <span class="co">#显示亚像素角点标注结果</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"corner_subpix"</span>, <span class="va">src_clone1</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将src灰度化，结果保存在src_gray中</span></span>
+<span><span class="va">src_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">src_gray</span>, <span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="va">source_window</span><span class="op">)</span></span>
+<span><span class="co">#在图形窗口中创建控制最大角点数的滑动条</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">10</span>,</span>
+<span>                  <span class="va">maxTrackbar</span>,</span>
+<span>                  <span class="va">goodFeaturesToTrack_Demo</span><span class="op">)</span></span>
+<span><span class="fu">cv_setTrackbarPos</span><span class="op">(</span><span class="st">"Max corners:"</span>,</span>
+<span>                  <span class="va">source_window</span>,</span>
+<span>                  <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#在图形窗口中显示src</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="va">source_window</span>, <span class="va">src</span><span class="op">)</span></span>
+<span><span class="co">#调用函数goodFeaturesToTrack_Demo</span></span>
+<span><span class="fu">goodFeaturesToTrack_Demo</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## ** Number of corners detected:  10 
+## [1] 10</code></pre>
+</div>
+<div id="featuredetector关键点检测" class="section level2" number="9.7">
+<h2>
+<span class="header-section-number">9.7</span> FeatureDetector关键点检测<a class="anchor" aria-label="anchor" href="#featuredetector%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1337"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建FastFeatureDetector检测器</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">FastFeatureDetector</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## 10 TRUE 2</code></pre>
+<div class="sourceCode" id="cb1339"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#检测关键点，结果保存在keypoints中</span></span>
+<span><span class="co"># kk = KeyPoint()</span></span>
+<span><span class="va">keypoints</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># keypoints$push_back(kk)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detect</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#绘制关键点，结果保存在img_keypoints_fast中</span></span>
+<span><span class="va">img_keypoints_fast</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawKeypoints</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="va">img_keypoints_fast</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"FastFeatureDetector Keypoints"</span>, <span class="va">img_keypoints_fast</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="orb关键点检测" class="section level2" number="9.8">
+<h2>
+<span class="header-section-number">9.8</span> ORB关键点检测<a class="anchor" aria-label="anchor" href="#orb%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1340"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建ORB检测器</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">ORB</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#检测关键点，结果保存在keypoints中</span></span>
+<span><span class="va">keypoints</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detect</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#绘制关键点，结果保存在img_keypoints_orb中</span></span>
+<span><span class="va">img_keypoints_orb</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawKeypoints</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="va">img_keypoints_orb</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"ORB Keypoints"</span>, <span class="va">img_keypoints_orb</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="surf关键点检测" class="section level2" number="9.9">
+<h2>
+<span class="header-section-number">9.9</span> SURF关键点检测<a class="anchor" aria-label="anchor" href="#surf%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1341"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建SURF检测器</span></span>
+<span><span class="va">minHessian</span> <span class="op">=</span> <span class="fl">400</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">SURF</span><span class="op">(</span><span class="va">minHessian</span><span class="op">)</span></span>
+<span><span class="co">#检测关键点，结果保存在keypoints中</span></span>
+<span><span class="va">keypoints</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detect</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#绘制关键点，结果保存在img_keypoints_surf中</span></span>
+<span><span class="va">img_keypoints_surf</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawKeypoints</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="va">img_keypoints_surf</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"surf Keypoints"</span>, <span class="va">img_keypoints_surf</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="sift关键点检测" class="section level2" number="9.10">
+<h2>
+<span class="header-section-number">9.10</span> SIFT关键点检测<a class="anchor" aria-label="anchor" href="#sift%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1342"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">src</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建SIFT检测器</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">SIFT</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#检测关键点，结果保存在keypoints中</span></span>
+<span><span class="va">keypoints</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detect</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#绘制关键点，结果保存在img_keypoints_sift中</span></span>
+<span><span class="va">img_keypoints_sift</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawKeypoints</span><span class="op">(</span><span class="va">src</span>, <span class="va">keypoints</span>, <span class="va">img_keypoints_sift</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"SIFT Keypoints"</span>, <span class="va">img_keypoints_sift</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="09-2dfeature_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
+</div>
+<div id="基于bfmatcher的特征匹配" class="section level2" number="9.11">
+<h2>
+<span class="header-section-number">9.11</span> 基于BFMatcher的特征匹配<a class="anchor" aria-label="anchor" href="#%E5%9F%BA%E4%BA%8Ebfmatcher%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1343"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box.png"</span>, <span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span>, <span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建SURF检测器</span></span>
+<span><span class="va">minHessian</span> <span class="op">=</span> <span class="fl">400</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">SURF</span><span class="op">(</span><span class="va">minHessian</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测img1的关键点并计算特征描述子，结果分别保存在keypoints1和descriptors1中</span></span>
+<span><span class="va">keypoints1</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">keypoints2</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img1</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">keypoints1</span>, <span class="va">descriptors1</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测img2的关键点并计算特征描述子，结果分别保存在keypoints2和descriptors2中</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img2</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">keypoints2</span>, <span class="va">descriptors2</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Step 2: Matching descriptor vectors with a brute force matcher</span></span>
+<span><span class="co">#// Since SURF is a floating-point descriptor NORM_L2 is used</span></span>
+<span><span class="co">#Ptr&lt;DescriptorMatcher&gt; matcher = DescriptorMatcher::create(DescriptorMatcher::BRUTEFORCE);</span></span>
+<span><span class="co">#创建暴力匹配器</span></span>
+<span><span class="va">matcher</span> <span class="op">=</span> <span class="fu">BFMatcher</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#匹配两个描述子，结果保存在matches中</span></span>
+<span><span class="va">matches</span> <span class="op">=</span> <span class="fu">stdVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">matcher</span><span class="op">$</span><span class="fu">match</span><span class="op">(</span><span class="va">descriptors1</span>, <span class="va">descriptors2</span>, <span class="va">matches</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#绘制匹配结果，结果保存在img_matches中</span></span>
+<span><span class="co">#//-- Draw matches</span></span>
+<span><span class="va">img_matches</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawMatches</span><span class="op">(</span><span class="va">img1</span>, <span class="va">keypoints1</span>, <span class="va">img2</span>, <span class="va">keypoints2</span>, <span class="va">matches</span>, <span class="va">img_matches</span><span class="op">)</span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="co">#//-- Show detected matches</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Matches"</span>, <span class="va">img_matches</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="基于flann的特征匹配" class="section level2" number="9.12">
+<h2>
+<span class="header-section-number">9.12</span> 基于FLANN的特征匹配<a class="anchor" aria-label="anchor" href="#%E5%9F%BA%E4%BA%8Eflann%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1344"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box.png"</span><span class="op">)</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建SURF检测器</span></span>
+<span><span class="va">minHessian</span> <span class="op">=</span> <span class="fl">400</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">SURF</span><span class="op">(</span><span class="va">minHessian</span><span class="op">)</span></span>
+<span><span class="co"># detector = cv.SIFT(edgeThreshold = 40)</span></span>
+<span></span>
+<span><span class="co">#检测img1的关键点并计算特征描述子，结果分别保存在keypoints1和descriptors1中</span></span>
+<span><span class="va">keypoints1</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">keypoints2</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img1</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">keypoints1</span>, <span class="va">descriptors1</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#检测img2的关键点并计算特征描述子，结果分别保存在keypoints2和descriptors2中</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img2</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">keypoints2</span>, <span class="va">descriptors2</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#创建Flann匹配器</span></span>
+<span><span class="va">matcher</span> <span class="op">=</span> <span class="fu">FlannBasedMatcher</span><span class="op">(</span><span class="op">)</span> <span class="co">#不能应用于orb特征检测器</span></span>
+<span></span>
+<span><span class="co">#匹配两个描述子，结果保存在matches中</span></span>
+<span><span class="va">matches</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">matcher</span><span class="op">$</span><span class="fu">knnMatch</span><span class="op">(</span><span class="va">descriptors1</span>, <span class="va">descriptors2</span>, <span class="va">matches</span>, <span class="fl">2</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>,<span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#//-- Filter matches using the Lowe's ratio test</span></span>
+<span><span class="co">#过滤出质量较高的匹配，结果保存在good_matches中</span></span>
+<span><span class="va">ratio_thresh</span> <span class="op">=</span> <span class="fl">0.7</span></span>
+<span><span class="va">good_matches</span> <span class="op">=</span> <span class="fu">stdVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">matches</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;</span> <span class="va">ratio_thresh</span> <span class="op">*</span> <span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span></span>
+<span>    <span class="op">{</span></span>
+<span>        <span class="va">good_matches</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#//-- Draw matches</span></span>
+<span><span class="co">#绘制匹配结果</span></span>
+<span><span class="va">img_matches</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawMatches</span><span class="op">(</span><span class="va">img1</span>, <span class="va">keypoints1</span>, <span class="va">img2</span>, <span class="va">keypoints2</span>, <span class="va">good_matches</span>, <span class="va">img_matches</span>,<span class="fu">ScalarAll</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>                 <span class="fu">ScalarAll</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="fu">stdVecOfdouble</span><span class="op">(</span><span class="op">)</span>,<span class="va">NOT_DRAW_SINGLE_POINTS</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Show detected matches</span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Matches"</span>, <span class="va">img_matches</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="结合单应矩阵定位目标" class="section level2" number="9.13">
+<h2>
+<span class="header-section-number">9.13</span> 结合单应矩阵定位目标<a class="anchor" aria-label="anchor" href="#%E7%BB%93%E5%90%88%E5%8D%95%E5%BA%94%E7%9F%A9%E9%98%B5%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87"><i class="fas fa-link"></i></a>
+</h2>
+<pre><code>## [1] 0</code></pre>
+<p><img src="09-2dfeature_files/figure-html/unnamed-chunk-22-1.png" width="672"><img src="09-2dfeature_files/figure-html/unnamed-chunk-22-2.png" width="672"></p>
+<p><strong>示例</strong></p>
+<p>基于</p>
+<div class="sourceCode" id="cb1346"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img_object</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box.png"</span><span class="op">)</span></span>
+<span><span class="va">img_scene</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/box_in_scene.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Step 1: Detect the keypoints using SIFT Detector, compute the descriptors</span></span>
+<span><span class="co">#创建SIFT检测器</span></span>
+<span><span class="va">detector</span> <span class="op">=</span> <span class="fu">SIFT</span><span class="op">(</span>edgeThreshold <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="co">#检测img_object的关键点并计算特征描述子，结果分别保存在keypoints_object和descriptors_object中</span></span>
+<span><span class="va">keypoints_object</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">keypoints_scene</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors_object</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">descriptors_scene</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img_object</span>,</span>
+<span>                          <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                          <span class="va">keypoints_object</span>,</span>
+<span>                          <span class="va">descriptors_object</span>,</span>
+<span>                          <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#检测img_scene的关键点并计算特征描述子，结果分别保存在keypoints_scene和descriptors_scene中</span></span>
+<span><span class="va">detector</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img_scene</span>,</span>
+<span>                          <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                          <span class="va">keypoints_scene</span>,</span>
+<span>                          <span class="va">descriptors_scene</span>,</span>
+<span>                          <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#//-- Step 2: Matching descriptor vectors with a Flann matcher</span></span>
+<span><span class="co">#// Since SURF is a floating-point descriptor NORM_L2 is used</span></span>
+<span><span class="co">#创建Flann匹配器</span></span>
+<span><span class="va">matcher</span> <span class="op">=</span> <span class="fu">FlannBasedMatcher</span><span class="op">(</span><span class="op">)</span> <span class="co">#不能应用于orb特征检测器</span></span>
+<span><span class="co">#std::vector&lt; DMatch &gt; matches;</span></span>
+<span><span class="co">##匹配两个描述子，结果保存在matches中</span></span>
+<span><span class="va">matches</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">matcher</span><span class="op">$</span><span class="fu">knnMatch</span><span class="op">(</span><span class="va">descriptors_object</span>,</span>
+<span>                   <span class="va">descriptors_scene</span>,</span>
+<span>                   <span class="va">matches</span>,</span>
+<span>                   <span class="fl">2</span>,</span>
+<span>                   <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                   <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#//-- Filter matches using the Lowe's ratio test</span></span>
+<span><span class="co">#过滤出质量较好的匹配</span></span>
+<span><span class="va">ratio_thresh</span> <span class="op">=</span> <span class="fl">0.7</span></span>
+<span><span class="va">good_matches</span> <span class="op">=</span> <span class="fu">stdVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">matches</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;</span> <span class="va">ratio_thresh</span> <span class="op">*</span> <span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span></span>
+<span>  <span class="op">{</span></span>
+<span>    <span class="va">good_matches</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#//-- Draw matches</span></span>
+<span><span class="co">#绘制匹配结果</span></span>
+<span><span class="va">img_matches</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawMatches</span><span class="op">(</span></span>
+<span>  <span class="va">img_object</span>,</span>
+<span>  <span class="va">keypoints_object</span>,</span>
+<span>  <span class="va">img_scene</span>,</span>
+<span>  <span class="va">keypoints_scene</span>,</span>
+<span>  <span class="va">good_matches</span>,</span>
+<span>  <span class="va">img_matches</span>,</span>
+<span>  <span class="fu">ScalarAll</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu">ScalarAll</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu">stdVecOfchar</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">NOT_DRAW_SINGLE_POINTS</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Localize the object</span></span>
+<span><span class="co">#定位目标</span></span>
+<span><span class="va">obj</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">scene</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">good_matches</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="co">#//-- Get the keypoints from the good matches</span></span>
+<span>  <span class="va">obj</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">keypoints_object</span><span class="op">[[</span><span class="va">good_matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">queryIdx</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">)</span></span>
+<span>  <span class="va">scene</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">keypoints_scene</span><span class="op">[[</span><span class="va">good_matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">trainIdx</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#计算多个二维点对之间的最优单映射变换矩阵H，并返回遮罩矩阵mask</span></span>
+<span><span class="va">mask</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">H</span> <span class="op">=</span> <span class="fu">cv_findHomography</span><span class="op">(</span><span class="va">obj</span>, <span class="va">scene</span>, <span class="va">mask</span>, <span class="va">RANSAC</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Get the corners from the image_1 ( the object to be "detected" )</span></span>
+<span><span class="va">img_object_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img_object</span><span class="op">)</span></span>
+<span><span class="va">obj_corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">obj_corners</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_corners</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_corners</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="va">img_object_info</span><span class="op">$</span><span class="va">height</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_corners</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">0</span>, <span class="va">img_object_info</span><span class="op">$</span><span class="va">height</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#</span></span>
+<span><span class="va">scene_corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_perspectiveTransform</span><span class="op">(</span><span class="va">obj_corners</span>, <span class="va">scene_corners</span>, <span class="va">H</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#//-- Draw lines between the corners (the mapped object in the scene - image_2 )</span></span>
+<span><span class="va">tmpP0</span> <span class="op">=</span> <span class="va">scene_corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">tmpP1</span> <span class="op">=</span> <span class="va">scene_corners</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">tmpP2</span> <span class="op">=</span> <span class="va">scene_corners</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">tmpP3</span> <span class="op">=</span> <span class="va">scene_corners</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu">Point2f</span><span class="op">(</span><span class="va">img_object_info</span><span class="op">$</span><span class="va">width</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cv_line</span><span class="op">(</span></span>
+<span>  <span class="va">img_matches</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP0</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP0</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP1</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP1</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fl">4</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">cv_line</span><span class="op">(</span></span>
+<span>  <span class="va">img_matches</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP1</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP1</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP2</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP2</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fl">4</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">cv_line</span><span class="op">(</span></span>
+<span>  <span class="va">img_matches</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP2</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP2</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP3</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP3</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fl">4</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cv_line</span><span class="op">(</span></span>
+<span>  <span class="va">img_matches</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP3</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP3</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Point</span><span class="op">(</span><span class="va">tmpP0</span><span class="op">$</span><span class="va">x</span>,<span class="va">tmpP0</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>  <span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fl">4</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#-- Show detected matches</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"Good Matches &amp; Object detection"</span>, <span class="va">img_matches</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1347"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_destroyAllWindows</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/img_matches_loc.jpg"></div>
+</div>
+<div id="akaze局部特征匹配" class="section level2" number="9.14">
+<h2>
+<span class="header-section-number">9.14</span> AKAZE局部特征匹配<a class="anchor" aria-label="anchor" href="#akaze%E5%B1%80%E9%83%A8%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fas fa-link"></i></a>
+</h2>
+<p>使用AKAZE局部特征来检测和匹配两幅图像上的关键点，我们将在一对具有给定单应矩阵的图像上找到关键点，对它们进行匹配，并计算内联线的数目（即，符合给定单应矩阵的匹配）。</p>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1348"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">inlier_threshold</span> <span class="op">=</span> <span class="fl">2.5</span> <span class="co"># Distance threshold to identify inliers with homography check</span></span>
+<span><span class="va">nn_match_ratio</span> <span class="op">=</span> <span class="fl">0.8</span>   <span class="co"># Nearest neighbor matching ratio</span></span>
+<span></span>
+<span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/graf1.png"</span>, <span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/graf3.png"</span>, <span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#确定单应矩阵</span></span>
+<span><span class="va">homography</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="fl">0.76285898</span>,</span>
+<span>    <span class="op">-</span><span class="fl">0.29922929</span>,</span>
+<span>    <span class="fl">225.67123</span>,</span>
+<span>    <span class="fl">0.33443473</span>,</span>
+<span>    <span class="fl">1.0143901</span>,</span>
+<span>    <span class="op">-</span><span class="fl">76.999973</span>,</span>
+<span>    <span class="fl">0.00034663091</span>,</span>
+<span>    <span class="op">-</span><span class="fl">0.000014364524</span>,</span>
+<span>    <span class="fl">1.0000000</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  nr <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  nc <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  byrow <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="co">#生成AKAZE检测器</span></span>
+<span><span class="va">akaze</span> <span class="op">=</span> <span class="fu">AKAZE</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#检测img1的关键点并计算特征描述子，结果分别保存在kpts1和desc1中</span></span>
+<span><span class="va">kpts1</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">desc1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">akaze</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img1</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">kpts1</span>, <span class="va">desc1</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#检测img2的关键点并计算特征描述子，结果分别保存在kpts2和desc2中</span></span>
+<span><span class="va">kpts2</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">desc2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">akaze</span><span class="op">$</span><span class="fu">detectAndCompute</span><span class="op">(</span><span class="va">img2</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="va">kpts2</span>, <span class="va">desc2</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#创建暴力匹配器</span></span>
+<span><span class="va">matcher</span> <span class="op">=</span> <span class="fu">BFMatcher</span><span class="op">(</span><span class="va">NORM_HAMMING</span><span class="op">)</span></span>
+<span><span class="co">#匹配两个描述子，结果保存在matches中</span></span>
+<span><span class="va">nn_matches</span> <span class="op">=</span> <span class="fu">stdVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">matcher</span><span class="op">$</span><span class="fu">knnMatch</span><span class="op">(</span><span class="va">desc1</span>, <span class="va">desc2</span>, <span class="va">nn_matches</span>, <span class="fl">2</span>, <span class="fu">cv_noArray</span><span class="op">(</span><span class="op">)</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Use 2-nn matches and ratio criterion to find correct keypoint matches</span></span>
+<span><span class="va">matched1</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">matched2</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">nn_matches</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">first</span> <span class="op">=</span> <span class="va">nn_matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">dist1</span> <span class="op">=</span> <span class="va">nn_matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
+<span>  <span class="va">dist2</span> <span class="op">=</span> <span class="va">nn_matches</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">distance</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">dist1</span> <span class="op">&lt;</span> <span class="va">nn_match_ratio</span> <span class="op">*</span> <span class="va">dist2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">matched1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">kpts1</span><span class="op">[[</span><span class="va">first</span><span class="op">$</span><span class="va">queryIdx</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">matched2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">kpts2</span><span class="op">[[</span><span class="va">first</span><span class="op">$</span><span class="va">trainIdx</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">good_matches</span> <span class="op">=</span> <span class="fu">stdVecOfDMatch</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">inliers1</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">inliers2</span> <span class="op">=</span> <span class="fu">stdVecOfKeyPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">matched1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">colmat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span>, nr <span class="op">=</span> <span class="fl">3</span>, nc <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">colmat</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">matched1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">$</span><span class="va">x</span></span>
+<span>  <span class="va">colmat</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">matched1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">$</span><span class="va">y</span></span>
+<span>  <span class="va">colmat</span> <span class="op">=</span> <span class="va">homography</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">colmat</span></span>
+<span>  <span class="va">colmat</span> <span class="op">=</span> <span class="va">colmat</span> <span class="op">/</span> <span class="va">colmat</span><span class="op">[</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">ddist</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="va">colmat</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="va">matched2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">$</span><span class="va">x</span><span class="op">)</span> <span class="op">^</span> <span class="fl">2</span> <span class="op">+</span></span>
+<span>                 <span class="op">(</span><span class="va">colmat</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="va">matched2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">pt</span><span class="op">$</span><span class="va">y</span><span class="op">)</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">ddist</span> <span class="op">&lt;</span> <span class="va">inlier_threshold</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">new_i</span> <span class="op">=</span> <span class="va">inliers1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">inliers1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">matched1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">inliers2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">matched2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="va">good_matches</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">DMatch</span><span class="op">(</span><span class="va">new_i</span>, <span class="va">new_i</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_drawMatches</span><span class="op">(</span><span class="va">img1</span>, <span class="va">inliers1</span>, <span class="va">img2</span>, <span class="va">inliers2</span>, <span class="va">good_matches</span>, <span class="va">res</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">inlier_ratio</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">inliers1</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">matched1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"A-KAZE Matching Results"</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## A-KAZE Matching Results</code></pre>
+<div class="sourceCode" id="cb1350"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"*******************************"</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## *******************************</code></pre>
+<div class="sourceCode" id="cb1352"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"# Keypoints 1:                        \t"</span> , <span class="va">kpts1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # Keypoints 1:                            2418</code></pre>
+<div class="sourceCode" id="cb1354"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"# Keypoints 2:                        \t"</span> , <span class="va">kpts2</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # Keypoints 2:                            2884</code></pre>
+<div class="sourceCode" id="cb1356"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"# Matches:                            \t"</span> , <span class="va">matched1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # Matches:                                382</code></pre>
+<div class="sourceCode" id="cb1358"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"# Inliers:                            \t"</span> , <span class="va">inliers1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # Inliers:                                267</code></pre>
+<div class="sourceCode" id="cb1360"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"# Inliers Ratio:                      \t"</span> , <span class="va">inlier_ratio</span> , <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## # Inliers Ratio:                          1</code></pre>
+<div class="sourceCode" id="cb1362"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1363"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"result"</span>, <span class="va">res</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1364"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_destroyAllWindows</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">matImgPlot</span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="09-2dfeature_files/figure-html/unnamed-chunk-26-1.png" width="672"></div>
+<div class="inline-figure"><img src="images/graf_match.jpg"></div>
+</div>
+<div id="基于hogdescriptor的平面目标检测" class="section level2" number="9.15">
+<h2>
+<span class="header-section-number">9.15</span> 基于HOGDescriptor的平面目标检测<a class="anchor" aria-label="anchor" href="#%E5%9F%BA%E4%BA%8Ehogdescriptor%E7%9A%84%E5%B9%B3%E9%9D%A2%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1365"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/flagtrain.jpg"</span><span class="op">)</span></span>
+<span><span class="co"># img = cv_imread("images/crowd3.png")</span></span>
+<span><span class="co">#生成Hog描述子</span></span>
+<span><span class="va">hog</span> <span class="op">=</span> <span class="fu">HOGDescriptor</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#进行行人检测，检测结果保存在found中</span></span>
+<span><span class="va">found</span> <span class="op">=</span> <span class="fu">stdVecOfRect</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">hog</span><span class="op">$</span><span class="fu">detectMultiScale</span><span class="op">(</span><span class="va">img</span>,<span class="va">found</span>,<span class="fl">0</span>,<span class="fu">Size</span><span class="op">(</span><span class="op">)</span>,<span class="fu">Size</span><span class="op">(</span><span class="op">)</span>,<span class="fl">1.05</span>,<span class="fl">2.0</span>,<span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#依据found中的数据，在img绘制相应的矩形框</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">found</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu">cv_rectangle</span><span class="op">(</span><span class="va">img</span>,<span class="va">found</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#显示结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'img'</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="09-2dfeature_files/figure-html/unnamed-chunk-28-1.png" width="672"></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></div>
+<div class="next"><a href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="nav-link" href="#%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="header-section-number">9.1</span> 角点检测基本思想</a></li>
+<li><a class="nav-link" href="#harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%99%A8"><span class="header-section-number">9.2</span> Harris角点检测器</a></li>
+<li><a class="nav-link" href="#shi-tomasi%E8%A7%92%E7%82%B9%E6%8E%A2%E6%B5%8B%E5%99%A8"><span class="header-section-number">9.3</span> Shi-Tomasi角点探测器</a></li>
+<li><a class="nav-link" href="#%E9%80%9A%E8%BF%87cornereigenvalsandvecs%E5%AE%9E%E7%8E%B0harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.4</span> 通过cornerEigenValsAndVecs实现Harris角点检测</a></li>
+<li><a class="nav-link" href="#%E9%80%9A%E8%BF%87cornermineigenval%E5%AE%9E%E7%8E%B0shitomasi%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.5</span> 通过cornerMinEigenVal实现ShiTomasi角点检测</a></li>
+<li><a class="nav-link" href="#%E4%BA%9A%E5%83%8F%E7%B4%A0%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.6</span> 亚像素角点检测</a></li>
+<li><a class="nav-link" href="#featuredetector%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.7</span> FeatureDetector关键点检测</a></li>
+<li><a class="nav-link" href="#orb%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.8</span> ORB关键点检测</a></li>
+<li><a class="nav-link" href="#surf%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.9</span> SURF关键点检测</a></li>
+<li><a class="nav-link" href="#sift%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.10</span> SIFT关键点检测</a></li>
+<li><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Ebfmatcher%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><span class="header-section-number">9.11</span> 基于BFMatcher的特征匹配</a></li>
+<li><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Eflann%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><span class="header-section-number">9.12</span> 基于FLANN的特征匹配</a></li>
+<li><a class="nav-link" href="#%E7%BB%93%E5%90%88%E5%8D%95%E5%BA%94%E7%9F%A9%E9%98%B5%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87"><span class="header-section-number">9.13</span> 结合单应矩阵定位目标</a></li>
+<li><a class="nav-link" href="#akaze%E5%B1%80%E9%83%A8%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><span class="header-section-number">9.14</span> AKAZE局部特征匹配</a></li>
+<li><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Ehogdescriptor%E7%9A%84%E5%B9%B3%E9%9D%A2%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><span class="header-section-number">9.15</span> 基于HOGDescriptor的平面目标检测</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/09-2dfeature.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/09-2dfeature.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>10 视频处理（视频IO以及Video模块） | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="10 视频处理（视频IO以及Video模块） | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10 视频处理（视频IO以及Video模块） | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content='10.1 读入视频文件并播放 #读取视频文件 cap = VideoCapture("video/vtest.avi") #设置ret的值为TRUE ret = TRUE #设置引用变量，用来传递视频流读取的帧数据 frame = Mat() #当视频流为打开状态且ret的值为TRUE是，循环播放视频 while(cap$isOpened() &amp;&amp; ret){  #读取视频流中的帧： ...'>
+<meta property="og:description" content='10.1 读入视频文件并播放 #读取视频文件 cap = VideoCapture("video/vtest.avi") #设置ret的值为TRUE ret = TRUE #设置引用变量，用来传递视频流读取的帧数据 frame = Mat() #当视频流为打开状态且ret的值为TRUE是，循环播放视频 while(cap$isOpened() &amp;&amp; ret){  #读取视频流中的帧： ...'>
+<meta name="twitter:description" content='10.1 读入视频文件并播放 #读取视频文件 cap = VideoCapture("video/vtest.avi") #设置ret的值为TRUE ret = TRUE #设置引用变量，用来传递视频流读取的帧数据 frame = Mat() #当视频流为打开状态且ret的值为TRUE是，循环播放视频 while(cap$isOpened() &amp;&amp; ret){  #读取视频流中的帧： ...'>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="active" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="视频处理视频io以及video模块" class="section level1" number="10">
+<h1>
+<span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）<a class="anchor" aria-label="anchor" href="#%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97"><i class="fas fa-link"></i></a>
+</h1>
+<div id="读入视频文件并播放" class="section level2" number="10.1">
+<h2>
+<span class="header-section-number">10.1</span> 读入视频文件并播放<a class="anchor" aria-label="anchor" href="#%E8%AF%BB%E5%85%A5%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%B9%B6%E6%92%AD%E6%94%BE"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb1366"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取视频文件</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span><span class="co">#设置ret的值为TRUE</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="co">#设置引用变量，用来传递视频流读取的帧数据</span></span>
+<span><span class="va">frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#当视频流为打开状态且ret的值为TRUE是，循环播放视频</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取视频流中的帧：</span></span>
+<span>  <span class="co">#若读取失败（或者视频流结束），则ret的值为FALSE，循环终止，</span></span>
+<span>  <span class="co">#若读取成功，则存入frame并显示在标题为frame的窗口中。</span></span>
+<span>  <span class="co">#播放过程中按esc键，也会终止循环（即终止播放）</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame'</span>,<span class="va">frame</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw">break</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">cap</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>可以通过帧率控制每帧显示时间</p>
+<div class="sourceCode" id="cb1367"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取视频文件</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#获取视频帧率</span></span>
+<span><span class="va">fps</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FPS</span><span class="op">)</span></span>
+<span><span class="co">#设置两帧之间的间隔</span></span>
+<span><span class="va">pauseTime</span> <span class="op">=</span> <span class="fl">1000</span><span class="op">/</span><span class="va">fps</span></span>
+<span></span>
+<span><span class="co">#设置ret的值为TRUE</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="co">#设置引用变量，用来传递视频流读取的帧数据</span></span>
+<span><span class="va">frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#当视频流为打开状态且ret的值为TRUE是，循环播放视频</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取视频流中的帧，若读取失败（或者视频流结束），则ret的值为FALSE，循环终止</span></span>
+<span>  <span class="co">#若读取成功，则存入frame并显示在标题为frame的窗口中</span></span>
+<span>  <span class="co">#播放过程中按esc键，也会终止循环（即终止播放）</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame'</span>,<span class="va">frame</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="va">pauseTime</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw">break</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">cap</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="视频相似性度量" class="section level2" number="10.2">
+<h2>
+<span class="header-section-number">10.2</span> 视频相似性度量<a class="anchor" aria-label="anchor" href="#%E8%A7%86%E9%A2%91%E7%9B%B8%E4%BC%BC%E6%80%A7%E5%BA%A6%E9%87%8F"><i class="fas fa-link"></i></a>
+</h2>
+<div id="psnrpeak-signal-to-noise-ratio方法" class="section level3" number="10.2.1">
+<h3>
+<span class="header-section-number">10.2.1</span> PSNR(Peak signal-to-noise ratio)方法<a class="anchor" aria-label="anchor" href="#psnrpeak-signal-to-noise-ratio%E6%96%B9%E6%B3%95"><i class="fas fa-link"></i></a>
+</h3>
+<p>PSNR是使用“局部均值误差”来判断视频差异的最简单的方法，相应公式为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+MSE &amp;= \frac{1}{c\times m\times n} \sum(I_1 - I_2)^2 \\
+PSNR &amp;= 10 \times lg \left( \frac{MAX_I^2}{MSE} \right)
+\end{aligned}
+\]</span></p>
+<p>其中：</p>
+<p><span class="math inline">\(I_1\)</span>和<span class="math inline">\(I_2\)</span>为待比较的两个图像，它们的行、列数分别是<span class="math inline">\(m\)</span>，<span class="math inline">\(n\)</span>，有<span class="math inline">\(c\)</span>个通道，<span class="math inline">\(MAX_I\)</span>表示图像像素的最大可能取值，当图像深度为8位无符号整数时，那么<span class="math inline">\(MAX_I\)</span>就是255。</p>
+<div class="sourceCode" id="cb1368"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">getPSNR</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">I1</span>, <span class="va">I2</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>  <span class="va">psnr</span> <span class="op">=</span> <span class="cn">NA</span></span>
+<span>  <span class="va">I1_arr</span> <span class="op">=</span> <span class="va">I1</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">I2_arr</span> <span class="op">=</span> <span class="va">I2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">s</span> <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">I1_arr</span> <span class="op">-</span> <span class="va">I2_arr</span><span class="op">)</span><span class="op">)</span> <span class="op">^</span> <span class="fl">2</span></span>
+<span>  <span class="va">sse</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="co"># sum channels</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">sse</span> <span class="op">&lt;=</span> <span class="fl">1e-10</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co"># for small values return zero</span></span>
+<span>    <span class="va">psnr</span> <span class="op">=</span> <span class="cn">Inf</span></span>
+<span>  <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>    <span class="va">mse</span>  <span class="op">=</span> <span class="va">sse</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/prod.html">prod</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">I1_arr</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">psnr</span> <span class="op">=</span> <span class="fl">10.0</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="op">(</span><span class="fl">255</span> <span class="op">*</span> <span class="fl">255</span><span class="op">)</span> <span class="op">/</span> <span class="va">mse</span><span class="op">)</span> <span class="co">#限定为8bit图像？</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">psnr</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># ![get-psnr]</span></span>
+<span></span>
+<span><span class="co"># 单通道图像测试</span></span>
+<span><span class="va">img1_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,nr<span class="op">=</span><span class="fl">3</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img1_mat</span><span class="op">)</span></span>
+<span><span class="fu">getPSNR</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] Inf</code></pre>
+<div class="sourceCode" id="cb1370"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">img2_mat</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img2_mat</span><span class="op">[</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img2_mat</span><span class="op">)</span></span>
+<span><span class="fu">getPSNR</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 43.69383</code></pre>
+<div class="sourceCode" id="cb1372"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mse</span> <span class="op">=</span> <span class="fl">5</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="fl">9</span></span>
+<span><span class="fl">10</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="fl">255</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="va">mse</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 43.69383</code></pre>
+<div class="sourceCode" id="cb1374"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 3通道彩色图像测试</span></span>
+<span><span class="va">img1_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">img2_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img1_mat</span><span class="op">)</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img2_mat</span><span class="op">)</span></span>
+<span><span class="fu">getPSNR</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 43.69383</code></pre>
+<div class="sourceCode" id="cb1376"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mse</span> <span class="op">=</span> <span class="fl">3</span><span class="op">*</span><span class="fl">5</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="op">(</span><span class="fl">3</span><span class="op">*</span><span class="fl">9</span><span class="op">)</span></span>
+<span><span class="fl">10</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="fl">255</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="va">mse</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 43.69383</code></pre>
+</div>
+<div id="ssim" class="section level3" number="10.2.2">
+<h3>
+<span class="header-section-number">10.2.2</span> SSIM<a class="anchor" aria-label="anchor" href="#ssim"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>示例</strong>*</p>
+<div class="sourceCode" id="cb1378"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ![get-mssim] 用R矩阵实现</span></span>
+<span><span class="va">getMSSIM</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">i1</span>, <span class="va">i2</span><span class="op">)</span></span>
+<span><span class="op">{</span></span>
+<span>    <span class="va">C1</span> <span class="op">=</span> <span class="fl">6.5025</span></span>
+<span>    <span class="va">C2</span> <span class="op">=</span> <span class="fl">58.5225</span></span>
+<span>    <span class="co">#/***************************** INITS **********************************/</span></span>
+<span>    </span>
+<span>    <span class="va">i1_arr</span> <span class="op">=</span> <span class="va">i1</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">i2_arr</span> <span class="op">=</span> <span class="va">i2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">chn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">i1_arr</span><span class="op">)</span><span class="op">)</span><span class="op">&gt;</span><span class="fl">2</span>,<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">i1_arr</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">i1_2_arr</span> <span class="op">=</span> <span class="va">i1_arr</span><span class="op">^</span><span class="fl">2</span></span>
+<span>    <span class="va">i1_2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">i1</span><span class="op">$</span><span class="va">rows</span>,<span class="va">i1</span><span class="op">$</span><span class="va">cols</span>,<span class="va">i1</span><span class="op">$</span><span class="fu">type</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">i1_2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">i1_2_arr</span><span class="op">)</span></span>
+<span>    <span class="va">i1_2</span><span class="op">$</span><span class="fu">convertTo</span><span class="op">(</span><span class="va">i1_2</span>,<span class="va">CV_32F</span><span class="op">)</span></span>
+<span>      </span>
+<span>    <span class="va">i2_2_arr</span> <span class="op">=</span> <span class="va">i2_arr</span><span class="op">^</span><span class="fl">2</span></span>
+<span>    <span class="va">i2_2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">i2</span><span class="op">$</span><span class="va">rows</span>,<span class="va">i2</span><span class="op">$</span><span class="va">cols</span>,<span class="va">i2</span><span class="op">$</span><span class="fu">type</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">i2_2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">i2_2_arr</span><span class="op">)</span></span>
+<span>    <span class="va">i2_2</span><span class="op">$</span><span class="fu">convertTo</span><span class="op">(</span><span class="va">i2_2</span>,<span class="va">CV_32F</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">i1_i2_arr</span> <span class="op">=</span> <span class="va">i1_arr</span> <span class="op">*</span> <span class="va">i2_arr</span></span>
+<span>    <span class="va">i1_i2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">i1</span><span class="op">$</span><span class="va">rows</span>,<span class="va">i1</span><span class="op">$</span><span class="va">cols</span>,<span class="va">i1</span><span class="op">$</span><span class="fu">type</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">i1_i2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">i1_i2_arr</span><span class="op">)</span></span>
+<span>    <span class="va">i1_i2</span><span class="op">$</span><span class="fu">convertTo</span><span class="op">(</span><span class="va">i1_i2</span>,<span class="va">CV_32F</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co">#*************************** END INITS **********************************/</span></span>
+<span>    <span class="va">mu1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">mu2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span>                   <span class="co"># PRELIMINARY COMPUTING</span></span>
+<span>    <span class="fu">cv_GaussianBlur</span><span class="op">(</span><span class="va">i1</span>, <span class="va">mu1</span>, <span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span>    <span class="fu">cv_GaussianBlur</span><span class="op">(</span><span class="va">i2</span>, <span class="va">mu2</span>, <span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="va">mu1_2_arr</span> <span class="op">=</span> <span class="va">mu1</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span>    <span class="va">mu2_2_arr</span> <span class="op">=</span> <span class="va">mu2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span>    <span class="va">mu1_mu2_arr</span> <span class="op">=</span> <span class="va">mu1</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span> <span class="op">*</span> <span class="va">mu2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    </span>
+<span>    </span>
+<span>    <span class="va">sigma1_2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">sigma2_2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">sigma1_sigma2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">cv_GaussianBlur</span><span class="op">(</span><span class="va">i1_2</span>, <span class="va">sigma1_2</span>, <span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span>    <span class="fu">cv_GaussianBlur</span><span class="op">(</span><span class="va">i2_2</span>, <span class="va">sigma2_2</span>, <span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span>    <span class="fu">cv_GaussianBlur</span><span class="op">(</span><span class="va">i1_i2</span>, <span class="va">sigma1_sigma2</span>, <span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>, <span class="fl">1.5</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">sigma1_2_arr</span> <span class="op">=</span> <span class="va">sigma1_2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">sigma2_2_arr</span> <span class="op">=</span> <span class="va">sigma2_2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">sigma1_sigma2_arr</span> <span class="op">=</span> <span class="va">sigma1_sigma2</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">sigma1_2_arr</span> <span class="op">=</span> <span class="va">sigma1_2_arr</span> <span class="op">-</span> <span class="va">mu1_2_arr</span></span>
+<span>    <span class="va">sigma2_2_arr</span> <span class="op">=</span> <span class="va">sigma2_2_arr</span> <span class="op">-</span> <span class="va">mu2_2_arr</span></span>
+<span>    <span class="va">sigma1_sigma2_arr</span> <span class="op">=</span> <span class="va">sigma1_sigma2_arr</span> <span class="op">-</span> <span class="va">mu1_mu2_arr</span></span>
+<span>    </span>
+<span>    <span class="va">t1</span> <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">mu1_mu2_arr</span> <span class="op">+</span> <span class="va">C1</span></span>
+<span>    <span class="va">t2</span> <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">sigma1_sigma2_arr</span> <span class="op">+</span> <span class="va">C2</span></span>
+<span>    <span class="va">t3</span> <span class="op">=</span> <span class="va">t1</span> <span class="op">*</span> <span class="va">t2</span></span>
+<span>    </span>
+<span>    <span class="va">t1</span> <span class="op">=</span> <span class="va">mu1_2_arr</span> <span class="op">+</span> <span class="va">mu2_2_arr</span> <span class="op">+</span> <span class="va">C1</span></span>
+<span>    <span class="va">t2</span> <span class="op">=</span> <span class="va">sigma1_2_arr</span> <span class="op">+</span> <span class="va">sigma2_2_arr</span> <span class="op">+</span> <span class="va">C2</span></span>
+<span>    <span class="va">t4</span> <span class="op">=</span> <span class="va">t1</span> <span class="op">*</span> <span class="va">t2</span></span>
+<span>    <span class="va">ssimg_map</span> <span class="op">=</span> <span class="va">t3</span> <span class="op">/</span> <span class="va">t4</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="va">chn</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="va">mssim</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ssimg_map</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>      <span class="va">mssim</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">ssimg_map</span>,<span class="fl">3</span>,<span class="va">mean</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span> <span class="op">(</span><span class="va">mssim</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># ![get-mssim]</span></span>
+<span></span>
+<span><span class="co"># 单通道图像测试</span></span>
+<span><span class="va">img1_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,nr<span class="op">=</span><span class="fl">3</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img1_mat</span><span class="op">)</span></span>
+<span><span class="fu">getMSSIM</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<div class="sourceCode" id="cb1380"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">img2_mat</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img2_mat</span><span class="op">[</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img2_mat</span><span class="op">)</span></span>
+<span><span class="fu">getMSSIM</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.9066809</code></pre>
+<div class="sourceCode" id="cb1382"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 3通道彩色图像测试</span></span>
+<span><span class="va">img1_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img1_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">img1_mat</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="va">img1</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img1_arr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">img2_arr</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img2_arr</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">img2_mat</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="va">img2</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img2_arr</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">getMSSIM</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.9066809 0.9066809 0.9066809</code></pre>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1384"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sourceReference</span> <span class="op">=</span><span class="st">"video/Megamind01.avi"</span></span>
+<span><span class="va">captRefrnc</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="va">sourceReference</span><span class="op">)</span></span>
+<span><span class="va">sourceCompareWith</span> <span class="op">=</span> <span class="st">"video/Megamind_bugy01.avi"</span></span>
+<span><span class="va">captUndTst</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="va">sourceCompareWith</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#captRefrnc$open(sourceReference)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">captRefrnc</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Could not open reference "</span> , <span class="va">sourceReference</span> , <span class="st">'\n'</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">captUndTst</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Could not open case test "</span> , <span class="va">sourceCompareWith</span> , <span class="st">'\n'</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">captRefrnc</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FRAME_WIDTH</span><span class="op">)</span></span>
+<span><span class="va">captUndTst</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FRAME_WIDTH</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">captRefrnc</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FRAME_HEIGHT</span><span class="op">)</span></span>
+<span><span class="va">captUndTst</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FRAME_HEIGHT</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">frame1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">frame2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">frameNum</span> <span class="op">=</span> <span class="op">-</span><span class="fl">1</span></span>
+<span><span class="va">psnrTriggerValue</span> <span class="op">=</span> <span class="fl">35</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">ret1</span> <span class="op">=</span> <span class="va">captRefrnc</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame1</span><span class="op">)</span></span>
+<span>  <span class="va">ret2</span> <span class="op">=</span> <span class="va">captUndTst</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame2</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="va">ret1</span> <span class="op">&amp;&amp;</span> <span class="va">ret2</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="kw">break</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">frameNum</span> <span class="op">=</span> <span class="va">frameNum</span><span class="op">+</span><span class="fl">1</span></span>
+<span>  <span class="va">psnrV</span> <span class="op">=</span> <span class="fu">getPSNR</span><span class="op">(</span><span class="va">frame1</span>,<span class="va">frame2</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Frame: "</span>,<span class="va">frameNum</span>,<span class="st">" "</span>, <span class="va">psnrV</span>,<span class="st">"dB"</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">psnrV</span> <span class="op">&amp;&amp;</span> <span class="va">psnrV</span> <span class="op">&lt;</span> <span class="va">psnrTriggerValue</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">mssimV</span> <span class="op">=</span> <span class="fu">getMSSIM</span><span class="op">(</span><span class="va">frame1</span>, <span class="va">frame2</span><span class="op">)</span></span>
+<span>    <span class="va">res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">res</span>,<span class="st">"\tMSSIM: R "</span>,<span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">mssimV</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">*</span><span class="fl">100</span>,<span class="fl">2</span><span class="op">)</span>,<span class="st">"% G "</span>,<span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">mssimV</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">*</span><span class="fl">100</span>,<span class="fl">2</span><span class="op">)</span>,<span class="st">"% B "</span>,<span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">mssimV</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="fl">100</span>,<span class="fl">2</span><span class="op">)</span>,<span class="st">"%"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">res</span>,<span class="st">"\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"参考视频"</span>,<span class="va">frame1</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"检测视频"</span>,<span class="va">frame2</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">cc</span> <span class="op">=</span> <span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fl">27</span> <span class="op">==</span> <span class="va">cc</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">break</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co"># 感觉有些停滞</span></span></code></pre></div>
+</div>
+</div>
+<div id="背景减除" class="section level2" number="10.3">
+<h2>
+<span class="header-section-number">10.3</span> 背景减除<a class="anchor" aria-label="anchor" href="#%E8%83%8C%E6%99%AF%E5%87%8F%E9%99%A4"><i class="fas fa-link"></i></a>
+</h2>
+<p>背景减除（BS）是通过使用静态相机生成前景遮罩（即，包含属于场景中的运动对象的像素的二值图像）的常见且广泛使用的技术。</p>
+<p>顾名思义，BS计算前景遮罩，在当前帧和背景模型之间执行减法运算，其中包含场景的静态部分，或者更一般地说，根据所观察场景的特征，可以认为是背景的所有内容。</p>
+<div class="inline-figure"><img src="images/tutorial/Background_Subtraction_Tutorial_Scheme.png"></div>
+<p>OpenCV中的背景减除函数为：</p>
+<pre><code>createBackgroundSubtractorMOG2(
+  int  history = 500, 
+  double  varThreshold = 16,
+  bool  detectShadows = true 
+)</code></pre>
+<p>参数解释如下：</p>
+<ul>
+<li>history表示过往帧数，500帧，选择history = 1就变成两帧差。</li>
+<li>varThreshold表示像素与模型之间的马氏距离，值越大，只有那些最新的像素会被归到前景，值越小前景对光照越敏感。</li>
+<li>detectShadows 是否保留阴影检测，请选择False这样速度快点。</li>
+</ul>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1386"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#创建高斯混合模型分离算法器mog2：</span></span>
+<span><span class="co">#history表示过往帧数，选择history = 1就变成两帧差；</span></span>
+<span><span class="co">#varThreshold表示像素与模型之间的马氏距离，值越大，只有那些最新的像素会被归到前景，值越小前景对光照越敏感；</span></span>
+<span><span class="co">#detectShadows 是否保留阴影检测，请选择False这样速度快点。</span></span>
+<span><span class="va">mog2</span> <span class="op">=</span> <span class="fu">BackgroundSubtractorMOG2</span><span class="op">(</span>history <span class="op">=</span> <span class="fl">600</span>, varThreshold <span class="op">=</span> <span class="fl">500</span>, detectShadows <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#读取视频文件</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span><span class="co">#获取视频帧率</span></span>
+<span><span class="va">fps</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="va">CAP_PROP_FPS</span><span class="op">)</span></span>
+<span><span class="co">#设置两帧之间的间隔</span></span>
+<span><span class="va">pauseTime</span> <span class="op">=</span> <span class="fl">1000</span><span class="op">/</span><span class="va">fps</span></span>
+<span></span>
+<span><span class="co"># #生成图像矩阵的引用类变量</span></span>
+<span><span class="co"># tmp.ref = encloseRef(cv.mat.Mat01())</span></span>
+<span></span>
+<span><span class="co">#定义getPerson函数，用于提取视频中的人物</span></span>
+<span><span class="va">getPerson</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#获取前景遮罩</span></span>
+<span>  <span class="va">mask</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">mog2</span><span class="op">$</span><span class="fu">apply</span><span class="op">(</span><span class="va">frame</span>,<span class="va">mask</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#去除噪声</span></span>
+<span>  <span class="va">line_ele</span> <span class="op">=</span> <span class="fu">cv_getStructuringElement</span><span class="op">(</span><span class="va">MORPH_RECT</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_morphologyEx</span><span class="op">(</span><span class="va">mask</span>,<span class="va">mask</span>,<span class="va">MORPH_OPEN</span>,<span class="va">line_ele</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"mask"</span>,<span class="va">mask</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#检测轮廓</span></span>
+<span>  <span class="va">contours</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">hierarchy</span> <span class="op">=</span> <span class="fu">stdVecOfVec4i</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_findContours</span><span class="op">(</span><span class="va">mask</span>,<span class="va">contours</span>,<span class="va">hierarchy</span>,<span class="va">RETR_EXTERNAL</span>,<span class="va">CHAIN_APPROX_SIMPLE</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">contours</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">area</span> <span class="op">=</span> <span class="fu">cv_contourArea</span><span class="op">(</span><span class="va">contours</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="va">area</span><span class="op">&lt;</span><span class="fl">150</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw">next</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">rct</span> <span class="op">=</span> <span class="fu">cv_minAreaRect</span><span class="op">(</span><span class="va">contours</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="fu">cv_ellipse</span><span class="op">(</span><span class="va">frame</span>,<span class="va">rct</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">cv_circle</span><span class="op">(</span><span class="va">frame</span>,<span class="va">rct</span><span class="op">$</span><span class="va">center</span>,<span class="fl">2</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#设置ret的值为TRUE</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="co">#设置引用变量，用来传递视频流读取的帧数据</span></span>
+<span><span class="va">frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#当视频流为打开状态且ret的值为TRUE是，循环播放视频</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取视频流中的帧，若读取失败（或者视频流结束），则ret的值为FALSE，循环终止</span></span>
+<span>  <span class="co">#若读取成功，则存入frame并显示在标题为frame的窗口中</span></span>
+<span>  <span class="co">#播放过程中按esc键，也会终止循环（即终止播放）</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">getPerson</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame'</span>,<span class="va">frame</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw">break</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="光流" class="section level2" number="10.4">
+<h2>
+<span class="header-section-number">10.4</span> 光流<a class="anchor" aria-label="anchor" href="#%E5%85%89%E6%B5%81"><i class="fas fa-link"></i></a>
+</h2>
+<p>主要流程：</p>
+<ul>
+<li>加载视频；</li>
+<li>调用GoodFeaturesToTrack 函数寻找兴趣点（关键点）；</li>
+<li>调用CalcOpticalFlowPyrLK 函数计算出两帧图像中兴趣点的移动情况；</li>
+<li>删除未移动的兴趣点；</li>
+<li>在两次移动的点之间绘制一条线段。</li>
+</ul>
+<p>其中：calcOpticalFlowFarneback函数的参数如下：</p>
+<ul>
+<li>prev：前一帧图片</li>
+<li>next：下一帧图片，格式与prev相同</li>
+<li>flow：一个CV_32FC2格式的光流图</li>
+<li>pyr_scale： 构建图像金字塔尺度</li>
+<li>levels： 图像金字塔层数</li>
+<li>winsize： 窗口尺寸，值越大探测高速运动的物体越容易，但是越模糊，同时对噪声的容错性越强</li>
+<li>iterations：对每层金字塔的迭代次数</li>
+<li>poly_n：每个像素中找到多项式展开的邻域像素的大小，值越大越光滑，也越稳定</li>
+<li>poly_sigma：高斯标准差，用来平滑倒数，poly_n越大，poly_sigma应该适当增加</li>
+<li>flags：光流的方式，有OPTFLOW_USE_INITIAL_FLOW 和OPTFLOW_FARNEBACK_GAUSSIAN 两种</li>
+</ul>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1387"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取视频文件</span></span>
+<span><span class="co">#cap = cv.VideoCapture("video/slow.flv")</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span><span class="co">#生成随机矩阵，每行表示一个随机颜色</span></span>
+<span><span class="va">colorMat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">255</span>,<span class="fl">3</span>,replace<span class="op">=</span><span class="cn">T</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,nr<span class="op">=</span><span class="fl">100</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#读取第一帧</span></span>
+<span><span class="va">old_frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">old_frame</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"error to read video"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#将帧灰度化</span></span>
+<span><span class="va">old_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">old_frame</span>,<span class="va">old_gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#获取特征点</span></span>
+<span><span class="va">p0</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span><span class="va">old_gray</span>,<span class="va">p0</span>,<span class="fl">100</span>,<span class="fl">0.1</span>,<span class="fl">7</span>,blockSize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<span><span class="va">good_ini</span> <span class="op">=</span> <span class="va">p0</span></span>
+<span></span>
+<span><span class="co">#定义计算两点距离的函数</span></span>
+<span><span class="va">caldist</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x1</span>,<span class="va">y1</span>,<span class="va">x2</span>,<span class="va">y2</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">x2</span><span class="op">-</span><span class="va">x1</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">y2</span><span class="op">-</span><span class="va">y1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#生成一个mask</span></span>
+<span><span class="va">old_frame_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">old_frame</span><span class="op">)</span></span>
+<span><span class="va">mask</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">old_frame_info</span><span class="op">$</span><span class="va">height</span>,<span class="va">old_frame_info</span><span class="op">$</span><span class="va">width</span>,<span class="va">old_frame_info</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#光流跟踪</span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取视频流中的帧，若读取失败（或者视频流结束），则ret的值为FALSE，循环终止</span></span>
+<span>  <span class="co">#若读取成功，则存入frame并显示在标题为frame的窗口中</span></span>
+<span>  <span class="co">#播放过程中按esc键，也会终止循环（即终止播放）</span></span>
+<span>  <span class="va">frame</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>      <span class="va">frame_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">frame</span>,<span class="va">frame_gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span>      </span>
+<span>      <span class="va">p1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">status</span> <span class="op">=</span> <span class="fu">stdVecOfuchar</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">err</span> <span class="op">=</span> <span class="fu">stdVecOffloat</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="fu">cv_calcOpticalFlowPyrLK</span><span class="op">(</span><span class="va">old_gray</span>,<span class="va">frame_gray</span>,<span class="va">p0</span>,<span class="va">p1</span>,<span class="va">status</span>,<span class="va">err</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">15</span>,<span class="fl">15</span><span class="op">)</span>,<span class="fl">2</span>,<span class="fu">TermCriteria</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">10</span>,<span class="fl">0.02</span><span class="op">)</span><span class="op">)</span></span>
+<span>      </span>
+<span>      <span class="co">#status==1</span></span>
+<span>      <span class="va">good_new</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">good_old</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">status</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">status</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>          <span class="va">good_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">p1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>          <span class="va">good_old</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">p0</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>      <span class="op">}</span></span>
+<span>      </span>
+<span>      <span class="co">#删除静止点</span></span>
+<span>      <span class="va">k</span><span class="op">=</span><span class="fl">0</span></span>
+<span>      <span class="va">good_new1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">good_old1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">good_ini1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="kw">while</span><span class="op">(</span><span class="va">k</span><span class="op">&lt;</span><span class="va">good_new</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="va">ddist</span> <span class="op">=</span> <span class="fu">caldist</span><span class="op">(</span><span class="va">good_new</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">good_new</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span>,<span class="va">good_old</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">good_old</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span>        <span class="kw">if</span><span class="op">(</span><span class="va">ddist</span><span class="op">&lt;=</span><span class="fl">2</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>          <span class="va">good_ini1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">good_ini</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>          <span class="va">good_old1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">good_old</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>          <span class="va">good_new1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">good_new</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="op">}</span></span>
+<span>        <span class="va">k</span> <span class="op">=</span> <span class="va">k</span><span class="op">+</span><span class="fl">1</span></span>
+<span>      <span class="op">}</span></span>
+<span>      </span>
+<span>      <span class="co">#绘制跟踪线</span></span>
+<span>      <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">good_new1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="va">sca</span> <span class="op">=</span> <span class="fu">Scalar</span><span class="op">(</span><span class="va">colorMat</span><span class="op">[</span><span class="va">i</span><span class="op">+</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span>,<span class="va">colorMat</span><span class="op">[</span><span class="va">i</span><span class="op">+</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">]</span>,<span class="va">colorMat</span><span class="op">[</span><span class="va">i</span><span class="op">+</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="fu">cv_line</span><span class="op">(</span><span class="va">mask</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">good_new1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">good_new1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">good_old1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">good_old1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="va">sca</span><span class="op">)</span></span>
+<span>        <span class="fu">cv_circle</span><span class="op">(</span><span class="va">frame</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">good_new1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">good_new1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fl">5</span>,<span class="va">sca</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>      <span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="fu">cv_add</span><span class="op">(</span><span class="va">frame</span>,<span class="va">mask</span>,<span class="va">img</span><span class="op">)</span></span>
+<span>      </span>
+<span>      <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame'</span>,<span class="va">img</span><span class="op">)</span></span>
+<span>      <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="kw">break</span></span>
+<span>      <span class="op">}</span></span>
+<span>      </span>
+<span>      <span class="co">#更新</span></span>
+<span>      <span class="va">old_gray</span> <span class="op">=</span> <span class="va">frame_gray</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="va">p0</span> <span class="op">=</span> <span class="va">good_new1</span></span>
+<span>      </span>
+<span>      <span class="kw">if</span><span class="op">(</span><span class="va">good_ini1</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">&lt;</span><span class="fl">40</span><span class="op">)</span><span class="op">{</span></span>
+<span>        <span class="fu">cv_goodFeaturesToTrack</span><span class="op">(</span><span class="va">old_gray</span>,<span class="va">good_ini</span>,<span class="fl">100</span>,<span class="fl">0.1</span>,<span class="fl">7</span>,blockSize <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span>,error<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">{</span></span>
+<span>      </span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">cap</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<div class="sourceCode" id="cb1388"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取视频文件</span></span>
+<span><span class="va">cap</span> <span class="op">=</span> <span class="fu">VideoCapture</span><span class="op">(</span><span class="st">"video/vtest.avi"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#读取第一帧</span></span>
+<span><span class="va">frame1</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame1</span><span class="op">)</span></span>
+<span><span class="va">frame1_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">frame1</span><span class="op">)</span></span>
+<span><span class="va">hsv_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">0</span>,dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">frame1_info</span><span class="op">$</span><span class="va">height</span>,<span class="va">frame1_info</span><span class="op">$</span><span class="va">width</span>,<span class="va">frame1_info</span><span class="op">$</span><span class="va">channels</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">hsv_mat</span><span class="op">[</span>,,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span></span>
+<span><span class="va">prvs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">frame1</span>,<span class="va">prvs</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">while</span><span class="op">(</span><span class="va">cap</span><span class="op">$</span><span class="fu">isOpened</span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="va">ret</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">frame2</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">ret</span> <span class="op">=</span> <span class="va">cap</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">frame2</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">nxt</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">frame2</span>,<span class="va">nxt</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#返回一个两通道的光流向量，实际上是每个点的像素位移值</span></span>
+<span>  <span class="va">flow</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_calcOpticalFlowFarneback</span><span class="op">(</span><span class="va">prvs</span>,<span class="va">nxt</span>,<span class="va">flow</span>,<span class="fl">0.5</span>,<span class="fl">3</span>,<span class="fl">15</span>,<span class="fl">3</span>,<span class="fl">5</span>,<span class="fl">1.2</span>,<span class="fl">0</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">planes</span> <span class="op">=</span> <span class="fu">stdVecOfMat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_split</span><span class="op">(</span><span class="va">flow</span>,<span class="va">planes</span><span class="op">)</span></span>
+<span>  <span class="va">mag</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">angle</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_cartToPolar</span><span class="op">(</span><span class="va">planes</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span>,<span class="va">planes</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="va">mag</span>,<span class="va">angle</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_normalize</span><span class="op">(</span><span class="va">mag</span>,<span class="va">mag</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">NORM_MINMAX</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">mag_mat</span> <span class="op">=</span> <span class="va">mag</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">angle_mat</span> <span class="op">=</span> <span class="va">angle</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">hsv_mat</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">angle_mat</span><span class="op">*</span><span class="fl">180</span><span class="op">/</span><span class="va">pi</span><span class="op">)</span></span>
+<span>  <span class="va">hsv_mat</span><span class="op">[</span>,,<span class="fl">3</span><span class="op">]</span> <span class="op">=</span> <span class="va">mag_mat</span></span>
+<span>  <span class="co"># hsv = cv.mat.r2cv(hsv.mat,"CV_32FC3")</span></span>
+<span>  <span class="va">hsv</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">hsv_mat</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">hsv_mat</span><span class="op">)</span>,<span class="va">frame1_info</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
+<span>  <span class="va">hsv</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">hsv_mat</span><span class="op">)</span></span>
+<span>  <span class="va">bgr</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">hsv</span>,<span class="va">bgr</span>,<span class="va">COLOR_HSV2BGR</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame2'</span>,<span class="va">bgr</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'frame1'</span>,<span class="va">frame2</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">==</span><span class="fl">27</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="kw">break</span></span>
+<span>    <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">cap</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></div>
+<div class="empty"></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+<li><a class="nav-link" href="#%E8%AF%BB%E5%85%A5%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%B9%B6%E6%92%AD%E6%94%BE"><span class="header-section-number">10.1</span> 读入视频文件并播放</a></li>
+<li>
+<a class="nav-link" href="#%E8%A7%86%E9%A2%91%E7%9B%B8%E4%BC%BC%E6%80%A7%E5%BA%A6%E9%87%8F"><span class="header-section-number">10.2</span> 视频相似性度量</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#psnrpeak-signal-to-noise-ratio%E6%96%B9%E6%B3%95"><span class="header-section-number">10.2.1</span> PSNR(Peak signal-to-noise ratio)方法</a></li>
+<li><a class="nav-link" href="#ssim"><span class="header-section-number">10.2.2</span> SSIM</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E5%87%8F%E9%99%A4"><span class="header-section-number">10.3</span> 背景减除</a></li>
+<li><a class="nav-link" href="#%E5%85%89%E6%B5%81"><span class="header-section-number">10.4</span> 光流</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/10-video.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/10-video.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

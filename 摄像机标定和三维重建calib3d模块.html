@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>8 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="8 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content="8.1 创建校准模式（绘制棋盘格） 不使用图像矩阵，直接在R语言中绘制 #设置棋盘宽度 w = 600 #设置棋盘高度 h = 600 #设置横向内连接交错点 ptsnum_horiz = 7 #设置纵向内连接交错点 ptsnum_vert = 9 #计算每个棋盘单元格的宽度和高度 cell_w = floor(w/(ptsnum_horiz+2)) cell_h =...">
+<meta property="og:description" content="8.1 创建校准模式（绘制棋盘格） 不使用图像矩阵，直接在R语言中绘制 #设置棋盘宽度 w = 600 #设置棋盘高度 h = 600 #设置横向内连接交错点 ptsnum_horiz = 7 #设置纵向内连接交错点 ptsnum_vert = 9 #计算每个棋盘单元格的宽度和高度 cell_w = floor(w/(ptsnum_horiz+2)) cell_h =...">
+<meta name="twitter:description" content="8.1 创建校准模式（绘制棋盘格） 不使用图像矩阵，直接在R语言中绘制 #设置棋盘宽度 w = 600 #设置棋盘高度 h = 600 #设置横向内连接交错点 ptsnum_horiz = 7 #设置纵向内连接交错点 ptsnum_vert = 9 #计算每个棋盘单元格的宽度和高度 cell_w = floor(w/(ptsnum_horiz+2)) cell_h =...">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="active" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="摄像机标定和三维重建calib3d模块" class="section level1" number="8">
+<h1>
+<span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）<a class="anchor" aria-label="anchor" href="#%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97"><i class="fas fa-link"></i></a>
+</h1>
+<div id="创建校准模式绘制棋盘格" class="section level2" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> 创建校准模式（绘制棋盘格）<a class="anchor" aria-label="anchor" href="#%E5%88%9B%E5%BB%BA%E6%A0%A1%E5%87%86%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%88%B6%E6%A3%8B%E7%9B%98%E6%A0%BC"><i class="fas fa-link"></i></a>
+</h2>
+<p>不使用图像矩阵，直接在R语言中绘制</p>
+<div class="sourceCode" id="cb1282"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置棋盘宽度</span></span>
+<span><span class="va">w</span> <span class="op">=</span> <span class="fl">600</span></span>
+<span><span class="co">#设置棋盘高度</span></span>
+<span><span class="va">h</span> <span class="op">=</span> <span class="fl">600</span></span>
+<span><span class="co">#设置横向内连接交错点</span></span>
+<span><span class="va">ptsnum_horiz</span> <span class="op">=</span> <span class="fl">7</span></span>
+<span><span class="co">#设置纵向内连接交错点</span></span>
+<span><span class="va">ptsnum_vert</span> <span class="op">=</span> <span class="fl">9</span></span>
+<span><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span><span class="va">cell_w</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">w</span><span class="op">/</span><span class="op">(</span><span class="va">ptsnum_horiz</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">cell_h</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">h</span><span class="op">/</span><span class="op">(</span><span class="va">ptsnum_vert</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成空图</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="va">h</span>,type<span class="op">=</span><span class="st">"n"</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">w</span><span class="op">)</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">h</span><span class="op">)</span>,bty<span class="op">=</span><span class="st">"n"</span>,</span>
+<span>     xlab<span class="op">=</span><span class="st">""</span>,ylab<span class="op">=</span><span class="st">""</span>,xaxt<span class="op">=</span><span class="st">"n"</span>,yaxt<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#isWhite为T时，棋盘单元格为白色，否则为黑色</span></span>
+<span><span class="va">isWhite</span> <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_horiz</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_vert</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">#通过循环绘制各个单元格</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/rect.html">rect</a></span><span class="op">(</span><span class="op">(</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">cell_w</span>,<span class="op">(</span><span class="va">j</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">cell_h</span>,<span class="va">i</span><span class="op">*</span><span class="va">cell_w</span>,<span class="va">j</span><span class="op">*</span><span class="va">cell_h</span>,</span>
+<span>         col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">isWhite</span>,<span class="st">"white"</span>,<span class="st">"black"</span><span class="op">)</span>,border<span class="op">=</span><span class="st">"white"</span><span class="op">)</span></span>
+<span>    <span class="va">isWhite</span> <span class="op">=</span> <span class="op">!</span><span class="va">isWhite</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ptsnum_vert</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">2</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span>    <span class="va">isWhite</span> <span class="op">=</span> <span class="op">!</span><span class="va">isWhite</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-camercalib_files/figure-html/unnamed-chunk-2-1.png" width="672"></div>
+<p>使用图像矩阵：</p>
+<div class="sourceCode" id="cb1283"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#设置棋盘宽度</span></span>
+<span><span class="va">w</span> <span class="op">=</span> <span class="fl">600</span></span>
+<span><span class="co">#设置棋盘高阿杜</span></span>
+<span><span class="va">h</span> <span class="op">=</span> <span class="fl">600</span></span>
+<span><span class="co">#设置横向内连接交错点</span></span>
+<span><span class="va">ptsnum_horiz</span> <span class="op">=</span> <span class="fl">7</span></span>
+<span><span class="co">#设置纵向内连接交错点</span></span>
+<span><span class="va">ptsnum_vert</span> <span class="op">=</span> <span class="fl">9</span></span>
+<span><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span><span class="va">cell_w</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">w</span><span class="op">/</span><span class="op">(</span><span class="va">ptsnum_horiz</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">cell_h</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">h</span><span class="op">/</span><span class="op">(</span><span class="va">ptsnum_vert</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#生成全白图像矩阵</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">h</span>,<span class="va">w</span>,<span class="va">CV_8UC1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#isWhite为T时，棋盘单元格为白色，否则为黑色</span></span>
+<span><span class="va">isWhite</span> <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_horiz</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_vert</span><span class="op">+</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">#通过循环绘制各个单元格</span></span>
+<span>    <span class="va">rct</span> <span class="op">=</span> <span class="fu">Rect</span><span class="op">(</span><span class="op">(</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">cell_w</span>,<span class="op">(</span><span class="va">j</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">cell_h</span>,<span class="va">cell_w</span>,<span class="va">cell_h</span><span class="op">)</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="va">isWhite</span><span class="op">)</span><span class="op">{</span></span>
+<span>      <span class="fu">cv_rectangle</span><span class="op">(</span><span class="va">img</span>,<span class="va">rct</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="kw">else</span><span class="op">{</span></span>
+<span>      <span class="fu">cv_rectangle</span><span class="op">(</span><span class="va">img</span>,<span class="va">rct</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">isWhite</span> <span class="op">=</span> <span class="op">!</span><span class="va">isWhite</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">ptsnum_vert</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">2</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span>    <span class="va">isWhite</span> <span class="op">=</span> <span class="op">!</span><span class="va">isWhite</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'img'</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb1284"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">cv_destroyAllWindows</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">matImgPlot</span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-camercalib_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+</div>
+<div id="方棋盘摄像机标定" class="section level2" number="8.2">
+<h2>
+<span class="header-section-number">8.2</span> 方棋盘摄像机标定<a class="anchor" aria-label="anchor" href="#%E6%96%B9%E6%A3%8B%E7%9B%98%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A"><i class="fas fa-link"></i></a>
+</h2>
+<p><strong>示例</strong></p>
+<p>基于以下方棋盘图像进行相机标定：</p>
+<p><img src="08-camercalib_files/figure-html/unnamed-chunk-6-1.png" width="672"><img src="08-camercalib_files/figure-html/unnamed-chunk-6-2.png" width="672"></p>
+<div class="sourceCode" id="cb1285"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_perrow</span> <span class="op">=</span> <span class="fl">6</span></span>
+<span><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_percolumn</span> <span class="op">=</span> <span class="fl">9</span></span>
+<span></span>
+<span><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
+<span><span class="va">obj_world_pts</span> <span class="op">=</span> <span class="fu">stdVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">x</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_perrow</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">y</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_percolumn</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">obj_world_pts</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="va">y</span>,<span class="va">x</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#指定棋盘文件的路径以及棋盘文件名称</span></span>
+<span><span class="va">image_path</span> <span class="op">=</span> <span class="st">"images/calib"</span></span>
+<span><span class="va">imgfiles</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">image_path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对于每个棋盘图像文件，若能找寻到角点，则将其依次存入img_points列表中</span></span>
+<span><span class="va">img_points</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对于每个棋盘图像文件，若能找寻到角点，则将其对应的三维坐标(obj_world_pts)存入obj_points中</span></span>
+<span><span class="va">obj_points</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># obj_points$push_back(obj_world_pts)</span></span>
+<span></span>
+<span><span class="co">#迭代终止条件，用于寻找亚像素级别的角点</span></span>
+<span><span class="va">criteria</span> <span class="op">=</span> <span class="fu">TermCriteria</span><span class="op">(</span><span class="va">EPS</span><span class="op">+</span><span class="va">MAX_ITER</span>,<span class="fl">30</span>,<span class="fl">0.001</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#循环处理每个棋盘文件    </span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">imgfiles</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#读取图像文件</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">image_path</span>,<span class="st">"/"</span>,<span class="va">imgfiles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="kw">next</span></span>
+<span>  <span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">image_path</span>,<span class="st">"/"</span>,<span class="va">imgfiles</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>,<span class="va">IMREAD_GRAYSCALE</span><span class="op">)</span></span>
+<span>  <span class="co">#检测棋盘角点</span></span>
+<span>  <span class="va">img_corner_points</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">found_success</span> <span class="op">=</span> <span class="fu">cv_findChessboardCorners</span><span class="op">(</span></span>
+<span>    <span class="va">img</span>,</span>
+<span>    <span class="fu">Size</span><span class="op">(</span><span class="va">ptsnum_percolumn</span>,<span class="va">ptsnum_perrow</span><span class="op">)</span>,</span>
+<span>    <span class="va">img_corner_points</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#当检查到棋盘角点时</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">found_success</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="co">#进一步取得亚像素棋盘角点</span></span>
+<span>    <span class="fu">cv_cornerSubPix</span><span class="op">(</span><span class="va">img</span>,<span class="va">img_corner_points</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>,<span class="fl">11</span><span class="op">)</span>,<span class="fu">Size</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="va">criteria</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co">#绘制棋盘检测结果</span></span>
+<span>    <span class="fu">cv_drawChessboardCorners</span><span class="op">(</span><span class="va">img</span>,<span class="fu">Size</span><span class="op">(</span><span class="va">ptsnum_percolumn</span>,<span class="va">ptsnum_perrow</span><span class="op">)</span>,</span>
+<span>                             <span class="va">img_corner_points</span>,<span class="va">found_success</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co">#将棋盘角点的三维坐标存入obj_points中</span></span>
+<span>    <span class="va">obj_points</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">obj_world_pts</span><span class="op">)</span></span>
+<span>    <span class="co">#将棋盘角点的二维坐标存入img_points中</span></span>
+<span>    <span class="va">img_points</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">img_corner_points</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="co">#显示img</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"image"</span>,<span class="va">img</span><span class="op">)</span></span>
+<span>  <span class="co">#暂定0.2秒</span></span>
+<span>  <span class="fu">cv_waitKey</span><span class="op">(</span><span class="fl">200</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#获取img的基本信息</span></span>
+<span><span class="va">img_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img</span><span class="op">)</span></span>
+<span><span class="co">#计算内参和畸变系数</span></span>
+<span><span class="va">cameraMatrix</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">rvecs</span> <span class="op">=</span> <span class="fu">stdVecOfMat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">tvecs</span> <span class="op">=</span> <span class="fu">stdVecOfMat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_calibrateCamera</span><span class="op">(</span><span class="va">obj_points</span>,<span class="va">img_points</span>,</span>
+<span>                     <span class="fu">Size</span><span class="op">(</span><span class="va">img_info</span><span class="op">$</span><span class="va">width</span>,<span class="va">img_info</span><span class="op">$</span><span class="va">height</span><span class="op">)</span>,<span class="va">cameraMatrix</span>,</span>
+<span>                     <span class="va">distCoeffs</span>,<span class="va">rvecs</span>,<span class="va">tvecs</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.4086948</code></pre>
+<div class="sourceCode" id="cb1287"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#查看相机内参</span></span>
+<span><span class="va">cameraMatrix</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##          [,1]     [,2]     [,3]
+## [1,] 536.0735   0.0000 342.3703
+## [2,]   0.0000 536.0164 235.5370
+## [3,]   0.0000   0.0000   1.0000
+## attr(,"depth")
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1289"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#查看畸变系数</span></span>
+<span><span class="va">distCoeffs</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##           [,1]        [,2]        [,3]          [,4]      [,5]
+## [1,] -0.265091 -0.04673906 0.001833023 -0.0003147134 0.2523099
+## attr(,"depth")
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1291"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#查看旋转向量</span></span>
+<span><span class="va">rvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<div class="sourceCode" id="cb1293"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">rvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">rvecs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<pre><code>##           [,1]      [,2]       [,3]
+## [1,] 0.1685359 0.2757533 0.01346808
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]      [,3]
+## [1,] 0.413068 0.6493452 -1.337195
+## attr(,"depth")
+## [1] 6
+##           [,1]     [,2]      [,3]
+## [1,] -0.276975 0.186891 0.3548319
+## attr(,"depth")
+## [1] 6
+##            [,1]      [,2]         [,3]
+## [1,] -0.1108228 0.2397477 -0.002135071
+## attr(,"depth")
+## [1] 6
+##            [,1]      [,2]     [,3]
+## [1,] -0.2918822 0.4282993 1.312699
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]     [,3]
+## [1,] 0.4077295 0.3038477 1.649065
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]    [,3]
+## [1,] 0.1794729 0.3457476 1.86847
+## attr(,"depth")
+## [1] 6
+##             [,1]      [,2]     [,3]
+## [1,] -0.09096634 0.4796589 1.753384
+## attr(,"depth")
+## [1] 6
+##           [,1]       [,2]      [,3]
+## [1,] 0.2029036 -0.4241422 0.1324556
+## attr(,"depth")
+## [1] 6
+##            [,1]       [,2]     [,3]
+## [1,] -0.4192686 -0.4999291 1.335547
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]     [,3]
+## [1,] -0.238499 0.3477754 1.530737
+## attr(,"depth")
+## [1] 6
+##           [,1]       [,2]     [,3]
+## [1,] 0.4630161 -0.2830715 1.238604
+## attr(,"depth")
+## [1] 6
+##            [,1]       [,2]     [,3]
+## [1,] -0.1702039 -0.4713961 1.345986
+## attr(,"depth")
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1295"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#查看平移向量</span></span>
+<span><span class="va">tvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<div class="sourceCode" id="cb1297"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">tvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">tvecs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<pre><code>##           [,1]     [,2]     [,3]
+## [1,] -3.011184 -4.35757 15.99287
+## attr(,"depth")
+## [1] 6
+##           [,1]     [,2]     [,3]
+## [1,] -2.345513 3.319313 14.15396
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]    [,3]
+## [1,] -1.595817 -4.016016 12.7297
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]     [,3]
+## [1,] -3.938391 -2.692421 13.23775
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 2.337668 -4.612076 12.69076
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 6.688136 -2.622048 13.46297
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]     [,3]
+## [1,] 0.7787992 -2.872007 15.58025
+## attr(,"depth")
+## [1] 6
+##          [,1]     [,2]     [,3]
+## [1,] 3.159943 -3.51708 12.67001
+## attr(,"depth")
+## [1] 6
+##           [,1]      [,2]     [,3]
+## [1,] -2.655485 -3.240157 11.13525
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 1.873802 -4.439495 13.52591
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 2.028546 -4.103314 12.89143
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 1.345899 -3.665945 11.66664
+## attr(,"depth")
+## [1] 6
+##          [,1]      [,2]     [,3]
+## [1,] 1.798558 -4.326445 12.50142
+## attr(,"depth")
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1299"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Miachol/configr">configr</a></span><span class="op">)</span></span>
+<span><span class="co">#以yml保存到指定文件</span></span>
+<span><span class="va">cfg</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cfg</span><span class="op">$</span><span class="va">cameraMatrix</span> <span class="op">=</span> <span class="va">cameraMatrix</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cfg</span><span class="op">$</span><span class="va">distCoeffs</span> <span class="op">=</span> <span class="va">distCoeffs</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cfg</span><span class="op">$</span><span class="va">rvecs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">rvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span>,<span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">rvecs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">cfg</span><span class="op">$</span><span class="va">tvecs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">tvecs</span><span class="op">$</span><span class="fu">size</span><span class="op">(</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span>,<span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">tvecs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/configr/man/write.config.html">write.config</a></span><span class="op">(</span><span class="va">cfg</span>,file.path <span class="op">=</span> <span class="st">"data/camera.yaml"</span>, write.type <span class="op">=</span> <span class="st">"yaml"</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>校正图像</p>
+<div class="sourceCode" id="cb1301"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># img.test = cv.imread("images/calib_radial.jpg")</span></span>
+<span><span class="va">img_test</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/calib/left11.jpg"</span><span class="op">)</span></span>
+<span><span class="va">img_test_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img_test</span><span class="op">)</span></span>
+<span><span class="va">h</span> <span class="op">=</span> <span class="va">img_test_info</span><span class="op">$</span><span class="va">height</span></span>
+<span><span class="va">w</span> <span class="op">=</span> <span class="va">img_test_info</span><span class="op">$</span><span class="va">width</span></span>
+<span></span>
+<span><span class="va">roi</span> <span class="op">=</span> <span class="fu">Rect</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix_new</span> <span class="op">=</span> <span class="fu">cv_getOptimalNewCameraMatrix</span><span class="op">(</span><span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="fu">Size</span><span class="op">(</span><span class="va">w</span>,<span class="va">h</span><span class="op">)</span>,<span class="fl">1</span>,<span class="fu">Size</span><span class="op">(</span><span class="va">w</span>,<span class="va">h</span><span class="op">)</span>,<span class="va">roi</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># c(x,y,w,h) %&lt;-% roi</span></span>
+<span></span>
+<span><span class="va">img_undistort</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_undistort</span><span class="op">(</span><span class="va">img_test</span>,<span class="va">img_undistort</span>,<span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="va">cameraMatrix_new</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'undistort'</span>,<span class="va">img_undistort</span><span class="op">)</span></span></code></pre></div>
+<p><img src="08-camercalib_files/figure-html/unnamed-chunk-9-1.png" width="672"><img src="08-camercalib_files/figure-html/unnamed-chunk-9-2.png" width="672"></p>
+</div>
+<div id="单应性矩阵" class="section level2" number="8.3">
+<h2>
+<span class="header-section-number">8.3</span> 单应性矩阵<a class="anchor" aria-label="anchor" href="#%E5%8D%95%E5%BA%94%E6%80%A7%E7%9F%A9%E9%98%B5"><i class="fas fa-link"></i></a>
+</h2>
+<p>简单地说，平面单应关系到两个平面之间的变换（取决于一个比例因子）：</p>
+<p><span class="math display">\[
+s \left[ \begin{matrix} x'\\y'\\1 \end{matrix} \right] = H \left[ \begin{matrix} x\\y\\1 \end{matrix} \right] = \left[ \begin{matrix} h_{11}&amp;h_{12}&amp;h_{13}\\h_{21}&amp;h_{22}&amp;h_{23}\\h_{31}&amp;h_{32}&amp;h_{33} \end{matrix} \right] \left[ \begin{matrix} x\\y\\1 \end{matrix} \right]
+\]</span></p>
+<p>单应矩阵<span class="math inline">\(H\)</span>是一个3x3矩阵，有8个自由度。通常，<span class="math inline">\(h33=1\)</span>或者：</p>
+<p><span class="math display">\[
+\sum_{i,j=1,2,3} h_{ij}^2=1
+\]</span>
+opencv中<strong>cv::getPerspectiveTransform</strong>可以获取单应矩阵：</p>
+<div class="sourceCode" id="cb1302"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pts1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">92</span>,<span class="fl">68</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">262</span>,<span class="fl">116</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">180</span>,<span class="fl">364</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">18</span>,<span class="fl">304</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#透视校正目标区域（也由四个顶点坐标构成）</span></span>
+<span><span class="va">pts2</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">300</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">300</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span><span class="va">M</span> <span class="op">=</span> <span class="fu">cv_getPerspectiveTransform</span><span class="op">(</span><span class="va">pts1</span>,<span class="va">pts2</span><span class="op">)</span></span>
+<span><span class="va">M</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##               [,1]         [,2]       [,3]
+## [1,]  1.7129766660 5.361709e-01 -183.73102
+## [2,] -0.4294580896 1.533213e+00  -54.42592
+## [3,]  0.0003414828 1.218792e-05    1.00000
+## attr(,"depth")
+## [1] 6</code></pre>
+<p>以下示例显示了不同类型单应变换：</p>
+<ul>
+<li>在一个相机下，真实世界平面<span class="math inline">\(\pi\)</span>与与其相机成像平面<span class="math inline">\(\pi'\)</span>之间的变换关系</li>
+</ul>
+<div class="inline-figure"><img src="images/tutorial/homography_transformation_example1.jpg"></div>
+<ul>
+<li>在两个相机下，包含着多个变换关系：真实世界平面与每个相机各自的成像平面的之间的变换关系，两个相机成像平面之间的变换关系</li>
+</ul>
+<div class="inline-figure"><img src="images/tutorial/homography_transformation_example2.jpg"></div>
+<ul>
+<li>在一个旋转相机下，真实世界中“无限远”的平面与各成像平面之间的变换关系</li>
+</ul>
+<div class="inline-figure"><img src="images/tutorial/homography_transformation_example3.jpg"></div>
+<p><strong>示例</strong></p>
+<p>透视图校正</p>
+<div class="inline-figure"><img src="images/pers_correct.png"></div>
+<div class="sourceCode" id="cb1304"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/notebook.jpg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#原图像透视校正区域（由四个顶点坐标构成）</span></span>
+<span><span class="va">pts1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">92</span>,<span class="fl">68</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">262</span>,<span class="fl">116</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">180</span>,<span class="fl">364</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">18</span>,<span class="fl">304</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#透视校正目标区域（也由四个顶点坐标构成）</span></span>
+<span><span class="va">pts2</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">300</span>,<span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">300</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">10</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span><span class="va">M</span> <span class="op">=</span> <span class="fu">cv_getPerspectiveTransform</span><span class="op">(</span><span class="va">pts1</span>,<span class="va">pts2</span><span class="op">)</span></span>
+<span><span class="co">#依据M对img进行透视变换，结果保存在img.pers中</span></span>
+<span><span class="va">img_pers</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_warpPerspective</span><span class="op">(</span><span class="va">img</span>,<span class="va">img_pers</span>,<span class="va">M</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">320</span>,<span class="fl">420</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#显示img_pers</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">"透视变换结果"</span>,<span class="va">img_pers</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<p>可以使用直接线性变换（DLT）算法来估计单应性。由于物体是平面的，物体帧中表示的点和投影到归一化相机帧中表示的图像平面的点之间的变换是单应的。正是因为对象是平面的，所以可以从单应性中检索相机姿势，前提是相机的内在参数已知。当使用棋盘对象和<strong>findChessboardCorners</strong>获得图像中角点位置时，可以很容易地测试这一点。</p>
+<div class="sourceCode" id="cb1305"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_perrow</span> <span class="op">=</span> <span class="fl">6</span></span>
+<span><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_percolumn</span> <span class="op">=</span> <span class="fl">9</span></span>
+<span></span>
+<span><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
+<span><span class="va">obj_world_pts</span> <span class="op">=</span> <span class="fu">stdVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">x</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_perrow</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">y</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_percolumn</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">obj_world_pts</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="va">y</span>,<span class="va">x</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#读取相机参数</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Miachol/configr">configr</a></span><span class="op">)</span></span>
+<span><span class="va">cfg</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/configr/man/read.config.html">read.config</a></span><span class="op">(</span>file<span class="op">=</span><span class="st">"data/camera.yaml"</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">cfg</span><span class="op">$</span><span class="va">cameraMatrix</span>,nr<span class="op">=</span><span class="fl">3</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_64F</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">cameraMatrix_mat</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">cfg</span><span class="op">$</span><span class="va">distCoeffs</span>,nr<span class="op">=</span><span class="fl">1</span>,nc<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">5</span>,<span class="va">CV_64F</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">distCoeffs_mat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#读取位姿估计图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/calib/left14.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#灰度化</span></span>
+<span><span class="va">img_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">img</span>,<span class="va">img_gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#寻找棋盘角点</span></span>
+<span><span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">found</span> <span class="op">=</span> <span class="fu">cv_findChessboardCorners</span><span class="op">(</span><span class="va">img_gray</span>, <span class="fu">Size</span><span class="op">(</span><span class="va">ptsnum_percolumn</span>,<span class="va">ptsnum_perrow</span><span class="op">)</span>, <span class="va">corners</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#确定迭代结束标准</span></span>
+<span><span class="va">criteria</span> <span class="op">=</span> <span class="fu">TermCriteria</span><span class="op">(</span><span class="va">EPS</span><span class="op">+</span><span class="va">MAX_ITER</span>, <span class="fl">30</span>,<span class="fl">0.001</span><span class="op">)</span></span>
+<span><span class="co">#确定三个数轴</span></span>
+<span><span class="co"># aaxis = matrix(c(3,0,0, 0,3,0, 0,0,-3),nr=3,nc=3)</span></span>
+<span><span class="va">obj_points_new</span> <span class="op">=</span> <span class="fu">stdVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="va">found</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#寻找亚像素棋盘角点</span></span>
+<span>  <span class="fu">cv_cornerSubPix</span><span class="op">(</span><span class="va">img_gray</span>,<span class="va">corners</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>,<span class="fl">11</span><span class="op">)</span>,<span class="fu">Size</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="va">criteria</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#计算旋转向量和平移向量</span></span>
+<span>  <span class="va">rvecs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">tvecs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_solvePnPRansac</span><span class="op">(</span><span class="va">obj_world_pts</span>,<span class="va">corners</span>,<span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="va">rvecs</span>,<span class="va">tvecs</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#将真实三维点投影到对应的图像平面上</span></span>
+<span>  <span class="va">imgpts</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_projectPoints</span><span class="op">(</span><span class="va">obj_points_new</span>,<span class="va">rvecs</span>,<span class="va">tvecs</span>,<span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="va">imgpts</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu">cv_line</span><span class="op">(</span><span class="va">img</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">imgpts</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">imgpts</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_line</span><span class="op">(</span><span class="va">img</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">imgpts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">imgpts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_line</span><span class="op">(</span><span class="va">img</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">corners</span><span class="op">[[</span><span class="fl">0</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Point</span><span class="op">(</span><span class="va">imgpts</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">imgpts</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'img'</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<p>进一步，可以基于姿态估计结果渲染立方体：</p>
+<div class="sourceCode" id="cb1306"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_perrow</span> <span class="op">=</span> <span class="fl">6</span></span>
+<span><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
+<span><span class="va">ptsnum_percolumn</span> <span class="op">=</span> <span class="fl">9</span></span>
+<span></span>
+<span><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
+<span><span class="va">obj_world_pts</span> <span class="op">=</span> <span class="fu">stdVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">x</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_perrow</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">y</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">ptsnum_percolumn</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">obj_world_pts</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="va">y</span>,<span class="va">x</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Miachol/configr">configr</a></span><span class="op">)</span></span>
+<span><span class="va">cfg</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/configr/man/read.config.html">read.config</a></span><span class="op">(</span>file<span class="op">=</span><span class="st">"data/camera.yaml"</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">cfg</span><span class="op">$</span><span class="va">cameraMatrix</span>,nr<span class="op">=</span><span class="fl">3</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_64F</span><span class="op">)</span></span>
+<span><span class="va">cameraMatrix</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">cameraMatrix_mat</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">cfg</span><span class="op">$</span><span class="va">distCoeffs</span>,nr<span class="op">=</span><span class="fl">1</span>,nc<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">5</span>,<span class="va">CV_64F</span><span class="op">)</span></span>
+<span><span class="va">distCoeffs</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">distCoeffs_mat</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#读取位姿估计图像文件</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/calib/left14.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#灰度化</span></span>
+<span><span class="va">img_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">img</span>,<span class="va">img_gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#寻找棋盘角点</span></span>
+<span><span class="va">corners</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">found</span> <span class="op">=</span> <span class="fu">cv_findChessboardCorners</span><span class="op">(</span><span class="va">img_gray</span>, <span class="fu">Size</span><span class="op">(</span><span class="va">ptsnum_percolumn</span>,<span class="va">ptsnum_perrow</span><span class="op">)</span>, <span class="va">corners</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#确定迭代结束标准</span></span>
+<span><span class="va">criteria</span> <span class="op">=</span> <span class="fu">TermCriteria</span><span class="op">(</span><span class="va">EPS</span><span class="op">+</span><span class="va">MAX_ITER</span>, <span class="fl">30</span>,<span class="fl">0.001</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#确定三个数轴</span></span>
+<span><span class="co"># aaxis = matrix(c(0,0,0, 0,3,0, 3,3,0, 3,0,0, 0,0,-3, 0,3,-3, 3,3,-3, 3,0,-3),nc=3,byrow=T)</span></span>
+<span><span class="va">obj_points_new</span> <span class="op">=</span> <span class="fu">stdVecOfPoint3f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">3</span>,<span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obj_points_new</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point3f</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">0</span>,<span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="va">found</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#寻找亚像素棋盘角点</span></span>
+<span>  <span class="fu">cv_cornerSubPix</span><span class="op">(</span><span class="va">img_gray</span>,<span class="va">corners</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">11</span>,<span class="fl">11</span><span class="op">)</span>,<span class="fu">Size</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,<span class="va">criteria</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#计算旋转向量和平移向量</span></span>
+<span>  <span class="va">rvecs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">tvecs</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_solvePnPRansac</span><span class="op">(</span><span class="va">obj_world_pts</span>,<span class="va">corners</span>,<span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="va">rvecs</span>,<span class="va">tvecs</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#将真实三维点投影到对应的图像平面上</span></span>
+<span>  <span class="va">imgpts</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_projectPoints</span><span class="op">(</span><span class="va">obj_points_new</span>,<span class="va">rvecs</span>,<span class="va">tvecs</span>,<span class="va">cameraMatrix</span>,<span class="va">distCoeffs</span>,<span class="va">imgpts</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#绘制绿色底面</span></span>
+<span>  <span class="va">cnt1</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">pnt1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">pnt1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point</span><span class="op">(</span><span class="va">imgpts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">imgpts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">cnt1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">pnt1</span><span class="op">)</span></span>
+<span>  <span class="fu">cv_drawContours</span><span class="op">(</span><span class="va">img</span>,<span class="va">cnt1</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">255</span>,<span class="fl">0</span><span class="op">)</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#绘制蓝色柱子</span></span>
+<span>  <span class="va">cnt2</span> <span class="op">=</span> <span class="fu">stdVecOfVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">pnt2</span> <span class="op">=</span> <span class="fu">stdVecOfPoint</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">4</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">pnt2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point</span><span class="op">(</span><span class="va">imgpts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>,<span class="va">imgpts</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">cnt2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="va">pnt2</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">cv_line</span><span class="op">(</span><span class="va">img</span>,<span class="va">pnt1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,<span class="va">pnt2</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="co">#绘制红色顶面</span></span>
+<span>  <span class="fu">cv_drawContours</span><span class="op">(</span><span class="va">img</span>,<span class="va">cnt2</span>,<span class="op">-</span><span class="fl">1</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">255</span><span class="op">)</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'img'</span>,<span class="va">img</span><span class="op">)</span></span></code></pre></div>
+<p><strong>示例</strong></p>
+<p>基于单应矩阵融合如下两个图像：</p>
+<p><img src="08-camercalib_files/figure-html/unnamed-chunk-15-1.png" width="672"><img src="08-camercalib_files/figure-html/unnamed-chunk-15-2.png" width="672"></p>
+<div class="sourceCode" id="cb1307"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#读取待植入广告牌的文件</span></span>
+<span><span class="va">img1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/catoon.jpg"</span><span class="op">)</span></span>
+<span><span class="co">#读取广告牌文件</span></span>
+<span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/advert.jpg"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#获取img1和img2的基本信息</span></span>
+<span><span class="va">img1_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img1</span><span class="op">)</span></span>
+<span><span class="va">img2_info</span> <span class="op">=</span> <span class="fu">rcv_matInfo</span><span class="op">(</span><span class="va">img2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对img1进行边缘扩充，使其尺寸与img2保持一致</span></span>
+<span><span class="fu">cv_copyMakeBorder</span><span class="op">(</span><span class="va">img1</span>,<span class="va">img1</span>,</span>
+<span>                  <span class="fl">0</span>,<span class="va">img2_info</span><span class="op">$</span><span class="va">height</span><span class="op">-</span><span class="va">img1_info</span><span class="op">$</span><span class="va">height</span>,</span>
+<span>                  <span class="fl">0</span>,<span class="va">img2_info</span><span class="op">$</span><span class="va">width</span><span class="op">-</span><span class="va">img1_info</span><span class="op">$</span><span class="va">width</span>,</span>
+<span>                  <span class="va">BORDER_CONSTANT</span></span>
+<span>                 <span class="op">)</span></span>
+<span></span>
+<span><span class="co">#列表pts1包含img1边界上的四个顶点坐标</span></span>
+<span><span class="va">pts1</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="va">img1_info</span><span class="op">$</span><span class="va">width</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="va">img1_info</span><span class="op">$</span><span class="va">width</span>,<span class="va">img1_info</span><span class="op">$</span><span class="va">height</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts1</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">0</span>,<span class="va">img1_info</span><span class="op">$</span><span class="va">height</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#列表pts2包含着广告牌上某区域的四个顶点坐标——该区域就是img1的植入区域</span></span>
+<span><span class="va">pts2</span> <span class="op">=</span> <span class="fu">stdVecOfPoint2f</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">190</span>,<span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">390</span>,<span class="fl">120</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">380</span>,<span class="fl">414</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pts2</span><span class="op">$</span><span class="fu">push_back</span><span class="op">(</span><span class="fu">Point2f</span><span class="op">(</span><span class="fl">180</span>,<span class="fl">440</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#依据pts1和pts2计算单应矩阵M</span></span>
+<span><span class="va">M</span> <span class="op">=</span> <span class="fu">cv_findHomography</span><span class="op">(</span><span class="va">pts1</span>,<span class="va">pts2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对img1进行单应变换，结果保存在dst中</span></span>
+<span><span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_warpPerspective</span><span class="op">(</span><span class="va">img1</span>,<span class="va">dst</span>,<span class="va">M</span>,<span class="fu">Size</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#对dst线进行灰度化，然后进行二值化，形成遮罩矩阵mask</span></span>
+<span><span class="va">dst_gray</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">dst</span>,<span class="va">dst_gray</span>,<span class="va">COLOR_BGR2GRAY</span><span class="op">)</span></span>
+<span><span class="va">mask</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_threshold</span><span class="op">(</span><span class="va">dst_gray</span>,<span class="va">mask</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">THRESH_BINARY</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode" id="cb1309"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#将dst中在遮罩mask下的图像内容复制img2中</span></span>
+<span><span class="va">dst</span><span class="op">$</span><span class="fu">copyTo</span><span class="op">(</span><span class="va">img2</span>,<span class="va">mask</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#显示植入结果</span></span>
+<span><span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'融合效果'</span>,<span class="va">img2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-camercalib_files/figure-html/unnamed-chunk-17-1.png" width="672"></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></div>
+<div class="next"><a href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%A0%A1%E5%87%86%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%88%B6%E6%A3%8B%E7%9B%98%E6%A0%BC"><span class="header-section-number">8.1</span> 创建校准模式（绘制棋盘格）</a></li>
+<li><a class="nav-link" href="#%E6%96%B9%E6%A3%8B%E7%9B%98%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A"><span class="header-section-number">8.2</span> 方棋盘摄像机标定</a></li>
+<li><a class="nav-link" href="#%E5%8D%95%E5%BA%94%E6%80%A7%E7%9F%A9%E9%98%B5"><span class="header-section-number">8.3</span> 单应性矩阵</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/08-camercalib.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/08-camercalib.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

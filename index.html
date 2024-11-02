@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>前言 | ROpenCV — R与OpenCV之间的桥梁</title>
+<meta name="author" content="zpy">
+<meta name="generator" content="bookdown 0.40 with bs4_book()">
+<meta property="og:title" content="前言 | ROpenCV — R与OpenCV之间的桥梁">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前言 | ROpenCV — R与OpenCV之间的桥梁">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.8.0/transition.js"></script><script src="libs/bs3compat-0.8.0/tabs.js"></script><script src="libs/bs3compat-0.8.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-141212623-1"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-141212623-1');
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<meta name="description" content="A book created with bookdown.">
+<meta property="og:description" content="A book created with bookdown.">
+<meta name="twitter:description" content="A book created with bookdown.">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">ROpenCV — R与OpenCV之间的桥梁</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="active" href="index.html">前言</a></li>
+<li><a class="" href="intro.html"><span class="header-section-number">1</span> 简介</a></li>
+<li><a class="" href="RBasis.html"><span class="header-section-number">2</span> R基础</a></li>
+<li><a class="" href="imagebasis.html"><span class="header-section-number">3</span> OpenCV中的图像矩阵类（Mat）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C.html"><span class="header-section-number">4</span> 图像基本操作</a></li>
+<li><a class="" href="%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">5</span> 核心功能（核心模块）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part1.html"><span class="header-section-number">6</span> 图像处理（imgproc模块-PART1）</a></li>
+<li><a class="" href="%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86imgproc%E6%A8%A1%E5%9D%97-part2.html"><span class="header-section-number">7</span> 图像处理（imgproc模块-PART2）</a></li>
+<li><a class="" href="%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A%E5%92%8C%E4%B8%89%E7%BB%B4%E9%87%8D%E5%BB%BAcalib3d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">8</span> 摄像机标定和三维重建（calib3d模块）</a></li>
+<li><a class="" href="d%E7%89%B9%E5%BE%81%E6%A1%86%E6%9E%B6feature2d%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">9</span> 2D特征框架（feature2d模块）</a></li>
+<li><a class="" href="%E8%A7%86%E9%A2%91%E5%A4%84%E7%90%86%E8%A7%86%E9%A2%91io%E4%BB%A5%E5%8F%8Avideo%E6%A8%A1%E5%9D%97.html"><span class="header-section-number">10</span> 视频处理（视频IO以及Video模块）</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><!--bookdown:title:end--><!--bookdown:title:start--><div id="前言" class="section level1 unnumbered">
+<h1>前言<a class="anchor" aria-label="anchor" href="#%E5%89%8D%E8%A8%80"><i class="fas fa-link"></i></a>
+</h1>
+<p>这几年，本科生时不时会讨论图像处理方面的问题，我也爱跟着一起讨论并尝试做一些实验。我个人很喜欢R语言，但R语言目前封装的关于图像处理的工具包功能很有限，所以不得不时而用Python，时而用Visual Studio集成开发环境来做实验，感觉很不顺手，也逐渐间坚定了要在R中使用OpenCV各种功能的想法，打算自己实现一个连接R和OpenCV的桥梁——称之为ROpenCV，并为此做了初步尝试，发现效果还不错，也就不断坚持到了现在，且因此积攒下了一些代码资料。</p>
+<p>比如通过滑动条对蓝、绿、红三种颜色分量的合成控制，进而形成一个调色板功能。</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#实现滑动条滑块拖动时的响应函数</span></span>
+<span><span class="va">colPallete</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">val</span>, <span class="va">param</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="co">#获取蓝色滑动条的刻度值，作为蓝色分量b</span></span>
+<span>  <span class="va">b</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'B'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#获取绿色滑动条的刻度值，作为绿色分量g</span></span>
+<span>  <span class="va">g</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'G'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#获取红色滑动条的刻度值，作为红色分量r</span></span>
+<span>  <span class="va">r</span> <span class="op">=</span> <span class="fu">cv_getTrackbarPos</span><span class="op">(</span><span class="st">'R'</span>,<span class="st">'image'</span><span class="op">)</span></span>
+<span>  <span class="co">#生成512行512列的8位无符号3通道图像img，所有像素值都为(b,g,r)</span></span>
+<span>  <span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">512</span>,<span class="fl">512</span>,<span class="va">CV_8UC3</span>,<span class="fu">Scalar</span><span class="op">(</span><span class="va">b</span>,<span class="va">g</span>,<span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#将img图像显示在标题为image的图形窗口上</span></span>
+<span>  <span class="fu">cv_imshow</span><span class="op">(</span><span class="st">'image'</span>,<span class="va">img</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#生成标题为image的图形窗口</span></span>
+<span><span class="fu">cv_namedWindow</span><span class="op">(</span><span class="st">'image'</span><span class="op">)</span></span>
+<span><span class="co">#在标题为image的图形窗口上生成名为B、G、R的滑动条，最小值都为0，最大值都为255，</span></span>
+<span><span class="co">#滑动条拖动的相应函数都为colPallete</span></span>
+<span><span class="co">#B、G、R滑动条的刻度分别代表蓝色、绿色和红色分量值</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"B"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"G"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span><span class="fu">cv_createTrackbar</span><span class="op">(</span><span class="st">"R"</span>,<span class="st">'image'</span>,<span class="fl">0</span>,<span class="fl">255</span>,<span class="va">colPallete</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">#启用colPallete函数</span></span>
+<span><span class="fu">colPallete</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>在拖动滑动条改变颜色分量时，可以看到相应的蓝、绿、红三种颜色的合成效果：</p>
+<div class="inline-figure"><img src="images/pallette.png" width="60%" style="display: block; margin: auto;"></div>
+<p>当只有一个颜色分量为255，其余两个颜色分量都为0时，可以得到纯色效果，比如(255,0,0)对应着纯蓝、(0,255,0)对应着纯绿，而(0,0,255)对应着纯红（见下图）。</p>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></div>
+<p>又比如，OpenCV的<strong>cv::cvtColor</strong>函数可以实现图像从BGR颜色空间到HSV颜色空间的转换，而通过如下代码则可以快速查看BGR中的纯蓝(255,0,0)映射到HSV颜色空间后的色彩值为(120,255,255)。</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成只含一个像素的OpenCV图像矩阵img</span></span>
+<span><span class="va">img</span><span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="va">CV_8UC3</span><span class="op">)</span></span>
+<span><span class="co">#将像素值设定为纯蓝色</span></span>
+<span><span class="va">img</span><span class="op">[</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">255</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#将img的颜色空间从BGR转为HSV，结果保存在res中</span></span>
+<span><span class="va">res</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">img</span>,<span class="va">res</span>,<span class="va">COLOR_BGR2HSV</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#查看像素的值，结果表明：</span></span>
+<span><span class="co">#BGR颜色空间中的蓝色映射到HSV颜色空间后为c(120,255,255)，</span></span>
+<span><span class="co">#即H分量为120，S和V分量都为255</span></span>
+<span><span class="va">res</span><span class="op">[</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">]</span></span></code></pre></div>
+<pre><code>## [1] 120 255 255</code></pre>
+<p>再比如，OpenCV中在进行诸如边缘检测等图像处理时，会首先扩展图像边缘，而扩展边缘的方式包括BORDER_CONSTANT、BORDER_REPLICATE、BORDER_REFLECT等9种，尽管OpenCV的帮助文档也说明了每种方式的边缘扩展效果，但还是希望能够在R语言中直接观察到相应效果（如下代码展示了BORDER_REFLECT边缘扩展情况）。</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#生成3行3列的矩阵img_mat</span></span>
+<span><span class="va">img_mat</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span>,nr<span class="op">=</span><span class="fl">3</span>,nc<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#通过r2cv函数将img_mat转变为OpenCV图像矩阵img</span></span>
+<span><span class="va">img</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="va">CV_8UC1</span><span class="op">)</span></span>
+<span><span class="va">img</span><span class="op">$</span><span class="fu">r2cv</span><span class="op">(</span><span class="va">img_mat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#设定图像上、下、左、右四侧需要扩展的像素个数</span></span>
+<span><span class="va">sz</span> <span class="op">=</span> <span class="fl">5</span></span>
+<span><span class="co">#扩展图像边缘，扩展结果存入img_borderadded</span></span>
+<span><span class="va">img_borderadded</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">cv_copyMakeBorder</span><span class="op">(</span><span class="va">img</span>,<span class="va">img_borderadded</span>,<span class="va">sz</span>,<span class="va">sz</span>,<span class="va">sz</span>,<span class="va">sz</span>,<span class="va">BORDER_REFLECT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#通过cv2r函数，获得img_borderadded的像素值，存入img_borderadded_mat</span></span>
+<span><span class="va">img_borderadded_mat</span> <span class="op">=</span> <span class="va">img_borderadded</span><span class="op">$</span><span class="fu">cv2r</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">img_borderadded_mat</span></span></code></pre></div>
+<div class="inline-figure"><img src="images/BORDER_REFLECT.png" width="50%" style="display: block; margin: auto;"></div>
+<p>本书中有很多这样的例子，这里就不再枚举了。总之，于我而言，能够在R中使用OpenCV做各种图像处理实验，是一件令人开心的事情。</p>
+<p>原本打算再积累一阵子才成书的，但一则有感于很多学习R的同学因不能在R中完成图像处理实验而不得不倒腾切换各种工具的窘况，二则有感于个人力量难以高效率、高质量完成OpenCV函数的封装，所以想以此书抛砖引玉，吸引R中众多有志于图像处理的用户一起完成ROpenCV的搭建和扩展工作。</p>
+<p>此外，这几年我总是不断吆喝同学们加强积累，冷静思考之后发现自己好像只是一个吆喝者而已，而不是一个践行者。这里也以此书，向同学们表明我也在尽力跑着。
+。</p>
+
+</div>
+  <div class="chapter-nav">
+<div class="empty"></div>
+<div class="next"><a href="intro.html"><span class="header-section-number">1</span> 简介</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#%E5%89%8D%E8%A8%80">前言</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/blob/master/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/master/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>ROpenCV — R与OpenCV之间的桥梁</strong>" was written by zpy. It was last built on 2024-11-02.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
