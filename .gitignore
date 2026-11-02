@@ -1,18 +1,34 @@
+# 本仓库只发布编译好的 gitbook（_book/），Rmd 源文件与素材不上传。
+# 下面所有条目都用前导 / 锚定到仓库根目录，否则会误伤 _book/ 里的同名目录
+# （_book/css/、_book/images/、_book/bookdown_files/ 都是书本身的一部分，必须保留）。
+
+# ---- 源章节与 bookdown 配置 ----
+/*.Rmd
+/_bookdown.yml
+/_output.yml
+/book.bib
+/packages.bib
+/ROpenCVTutorial.Rproj
+/.Rprofile
+/README.md
+/LICENSE
+
+# ---- 源素材 ----
+/images/
+/video/
+/data/
+/css/
+/latex/
+
+# ---- 构建中间产物 ----
+/_bookdown_files/
+/bookdown.tex
+/jss-article-rnw/
+/inst/
+/images4pub/
+
 # ---- R / RStudio ----
-.Rproj.user
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
-
-# ---- bookdown 中间产物 ----
-# _book 是要发布的编译结果，**不能**忽略；只忽略合并文件与缓存目录。
-_bookdown_files/
-bookdown.Rmd
-
-# ---- 与本教程无关的目录 ----
-# jss-article-rnw 是另一篇论文的稿件，inst/ 和 images4pub/ 未被任何章节引用，
-# bookdown.tex 是模板遗留的旧 LaTeX 导出。正文里都没有引用（已 grep 确认）。
-jss-article-rnw/
-inst/
-images4pub/
-bookdown.tex
