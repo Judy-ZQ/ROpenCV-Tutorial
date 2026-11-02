@@ -1,0 +1,430 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+\mainmatter
+
+# 简介 {#intro}
+
+## R简介
+
+R是统计领域广泛使用的诞生于1980年左右的S语言的一个分支。而S语言是由AT&T贝尔实验室开发的一种用来进行数据探索、统计分析和作图的解释型语言。最初S语言的实现版本主要是S-PLUS。S-PLUS是一个商业软件，它基于S语言，并由MathSoft公司的统计科学部进一步完善。后来新西兰奥克兰大学的Robert Gentleman和Ross Ihaka及其他志愿人员开发了一个R系统。R可以看作贝尔实验室开发的S语言的一种实现。在IEEE Spectrum的top编程语言排名中，R排名情况如下：
+
+
+* 2014年：第9名；
+* 2015—2016年：第5名；
+* 2017年：第6名；
+* 2018年：第7名；
+* 2019年：第5名；
+* 2020年：第6名；
+* 2024年：第14名左右；
+* 2025—2026年：出现上升迹象。
+
+```{r echo=FALSE,eval=FALSE}
+library(rvest)
+library(lubridate)
+page = read_html("https://cloud.r-project.org/web/packages/available_packages_by_date.html")
+tb = html_table(page)[[1]]
+str(tb)
+table(year(tb$Date))
+```
+
+R的生态圈很活跃，单就CRAN存放的R的工具包数量，目前就已经达到25610个，其中在2024年至今的三年里发布/更新的数据包分别有2698个、5011个和9957个。
+
+R的功能包括：数据存储和处理系统；数组运算工具（其向量、矩阵运算方面功能非常强大）；完整连贯的统计分析工具；优秀的统计制图功能；简便而强大的编程语言：可操纵数据的输入和输出，可实现分支、循环程序设计，支持用户实现自定义功能。比如，在统计制图功能方面，可以通过一句代码绘制鸢尾花数据集的萼片长度、萼片宽度、花瓣长度和花瓣宽度的箱线图：
+
+```{r}
+boxplot(iris[,-5])
+```
+
+也可以使用如下代码灵活绘制函数曲线图：
+
+```{r}
+#生成自变量向量x
+x = seq(-5,5,by=0.1)
+#依据x计算exp(sin(x))，保存在y1中
+y1 = exp(sin(x))
+#依据x计2^(sin(x))，保存在y2中
+y2 = 2^(sin(x))
+#依据x,y1绘制相应的曲线，颜色为红色
+plot(x,y1,type='l',col="red", 
+     main="两个函数曲线对照图",xlab="",ylab="")
+#依据x,y2绘制相应的曲线，颜色为蓝色
+lines(x,y2,col="blue")
+
+#在y=exp(sin(x))的曲线上标注横坐标为4对应的点
+points(-4,exp(sin(-4)),pch=16,col="red")
+#在标注点附近添加函数关系的说明文本
+text(-4,exp(sin(-4)),expression(y==e^{sin(x)}),adj=c(-0.2,0.5))
+
+#在y=2^(sin(x))的曲线上标注横坐标为2对应的点
+points(2,2^sin(2),pch=16,col="blue")
+#在标注点附近添加函数关系的说明文本
+text(2,2^(sin(2)),expression(y==2^{sin(x)}),adj=c(-0.2,0.5))
+```
+
+
+又比如，可以通过如下代码演示统计学的一个结论：当T分布的自由度趋于无穷大时，其分布逼近于标准正态分布。
+
+```{r}
+#生成自变量向量x
+x = seq(-3,3,by=0.1)
+#依据自变量x计算标准正态分布的概率密度向量y_norm
+y_norm = dnorm(x)
+
+#依据x,y.norm绘制标准正态分布的概率密度曲线（颜色为红色）
+plot(x,y_norm,type="l",col="red")
+#绘制横坐标为0竖直虚线（颜色为绿色）
+abline(v=0,lty="dashed",col="green")
+
+#动态绘制自由度从2变化到20的T分布的概率密度曲线，
+#会发现随着自由度的增加，T分布的概率密度曲线逐渐
+#与标准正态分布曲线重合
+for(degree in 2:20){
+  y_t = dt(x,degree)
+  lines(x,y_t,lty="dashed",col="blue")
+  # Sys.sleep(1)
+  # lines(x,y_t,lty="dashed",col="white")
+}
+# lines(x,y_t,col="blue")
+```
+
+再比如在矩阵计算方面，可以通过qr分解方式求如下矩阵的秩：
+
+$$
+\left[
+\begin{matrix}
+2 & -1 & -1 & 1 & 2 \\
+1 & 1 & -2 & 1 & 4 \\
+4 & -6 & 2 & -2 & 4 \\
+3 & 6 & -9 & 7 & 9
+\end{matrix}
+\right]
+$$
+
+```{r}
+#生成指定矩阵
+m <- matrix(c(2,-1,-1,1,2,1,1,-2,1,4,4,-6,2,-2,4,3,6,-9,7,9),nr=4,byrow = T)
+#从qr分级操作中读取rank（即获得矩阵的秩）
+qr(m)$rank
+```
+
+还可以快速求解如下方程组：
+
+$$
+\begin{cases}
+2x_1+x_2-5x_3+x_4=8\\
+x_1-3x_2-6x_4=9\\
+2x_2-x_3+2x_4=-5\\
+x_1+4x_2-7x_3+6x_4=0
+\end{cases}
+$$
+```{r echo=FALSE}
+#生成方程组的系数矩阵
+A <- matrix(c(2,1,-5,1,1,-3,0,-6,0,2,-1,2,1,4,-7,6),nr=4,byrow = T)
+#生成方程组右侧值向量
+v = c(8,9,-5,0)
+#计算A的行列式，行列式不为0，说明是满秩阵
+det(A)
+#计算A的逆
+solve(A)
+#求解方程组
+solve(A) %*% v
+#或者
+solve(A,v)
+```
+
+
+R是一个免费的自由软件，它有UNIX、LINUX、MacOS和WINDOWS版本，都是可以免费下载和使用的。R语言的下载可以通过CRAN的镜像来查找。R的源代码也可自由下载使用，亦有已编译的执行档版本可以下载，可在多种平台下运行，包括UNIX（也包括FreeBSD和Linux）、Windows和MacOS。 
+
+
+## R中的一些图像工具包
+
+* magick  
+
+```{r message=FALSE,warning=FALSE}
+library(magick)
+#读取图像文件
+frink = image_read("images/frink.png")
+#显示读取的内容
+print(frink)
+
+#将图像背景颜色变成hotpink
+image_background(frink, "hotpink")
+
+#在图像的左右各自添加20像素的边界，以及在图像的上下各自添加10像素的边界
+image_border(frink, "#000000", "20x10")
+
+#截取部分图像
+image_crop(frink, "100x150+50")
+
+#旋转图像
+image_rotate(frink, 45)
+```
+
+
+* imager  
+
+```{r message=FALSE,warning=FALSE}
+library(imager)
+#读取图像文件
+img = load.image("images/peppers.jpg")
+#绘制图像
+plot(img)
+
+#将图像灰度化并绘制结果
+img %>% grayscale() %>% plot()
+```
+
+* imagerExtra  
+
+```{r message=FALSE,warning=FALSE}
+library(imagerExtra)
+
+#对boats图像灰度化，结果保存在boats_g中
+boats_g <- grayscale(boats)
+#在boats_g中添加噪声，结果保存在boats_noisy中
+boats_noisy <- imnoise(dim = dim(boats_g), sd = 0.05) + boats_g 
+
+#绘制添加噪声前后的图像
+op = par(mfrow=c(1,2))
+plot(boats_g)
+plot(boats_noisy)
+
+```
+
+```{r echo=FALSE}
+par(op)
+```
+
+
+* OpenImageR  
+
+```{r message=FALSE,warning=FALSE}
+library(OpenImageR)
+
+#读取图像文件
+img = readImage("images/sunflower.png")
+#查看图像维度信息
+dim(img)
+
+#显示图像
+imageShow(img)
+
+#将图像灰度化并绘制结果
+r2g = rgb_2gray(img)
+imageShow(r2g)
+```
+
+* imagefluency  
+
+```{r message=FALSE,warning=FALSE}
+library(imagefluency)
+
+#加载图像文件
+berries <- img_read("images/berries.jpg")
+#显示图像
+grid::grid.raster(berries)
+#获取图像对比度
+img_contrast(berries)
+```
+
+
+* colorfindr  
+
+```{r message=FALSE,warning=FALSE}
+library(imagefluency)
+library(colorfindr)
+
+#确定图像文件
+pic = "images/tiger.png"
+
+#获取图像使用最多的三种颜色
+get_colors(pic, top_n = 3)
+```
+
+
+* opencv
+
+```{r message=FALSE,warning=FALSE}
+library(opencv)
+```
+
+```{r}
+#读取图像文件
+fish = ocv_read('images/HappyFish.jpg')
+#边缘检测
+ocv_edges(fish)
+```
+
+![](images/ocv_edge.png)
+
+```{r}
+#读取图像文件
+tiger = ocv_read('images/tiger.png')
+#特征点检测
+ocv_markers(tiger)
+```
+
+![](images/ocv_marker.png)
+
+```{r}
+#读取图像文件
+mona = ocv_read('images/mona_small.jpg')
+#人脸检测
+faces = ocv_face(mona)
+#人脸位置（圆半径和圆心坐标）
+facemask <- ocv_facemask(mona)
+attr(facemask, 'faces')
+
+#标注人脸
+ocv_face(mona)
+```
+
+![](images/ocv_face.png)
+
+
+在这些工具中，图形处理的功能较之于OpenCV，都是相对很有限的，即便其中的opencv —— 这是基于OpenCV的一些功能进行封装形成的工具包 —— 到目前为止也仅仅开放了不到30个函数功能。
+
+
+## OpenCV简介
+
+OpenCV(开源的计算机视觉库)是基于BSD协议，因此它可免费用于学术和商业用途。其提供C++、C、Python和Java接口,支持Windows、Linux、Mac OS、iOS和Android。OpenCV致力于高效运算和即时应用开发：因其是用优化的C/C++编写的，可以充分利用多核处理优势；并且还启用了OpenSL,它可以利用底层异构计算平台的硬件加速。OpenCV广泛运用在世界各地，它拥有超过4.7万人的用户社区和超过1400万的下载次数。应用领域包括：
+
+* 人机互动
+* 物体识别
+* 图像分割
+* 人脸识别
+* 动作识别
+* 运动跟踪
+* 机器人
+* 运动分析
+* 机器视觉
+* 结构分析
+* 汽车安全驾驶
+* 等等
+
+OpenCV包含着数百个计算机视觉算法。它有一个模块化的结构，囊括了几个共享的或静态的库，其中包括：
+
+
+* Core functionality（核心功能）：一个简洁基本且模块化的数据结构，包含了多维数组（矩阵）和用于其他模块的基本功能。
+* Image processing（图像处理）：包括线性和非线性的图像滤波、几何图像转换（缩放、仿射和透视调整）、颜色模式转换、直方图等等。
+* Video（视频）：一个视频分析模块，其包含了运动估计、背景消除和目标跟踪算法。
+* Calib3d：提供基本的多视图几何算法、平面和立体影像校正、物体定位、立体通信算法和三维重建。
+* Features2d：显著特征探测器、描述符和描述符匹配器。
+* Objectect：检测对象和预定义的类的实例（例如：脸部、眼睛、杯子、人、车等等）。
+* Highgui（图形界面）：提供一个简单易用的UI。
+* Video I/O：提供一个简单易用的视频捕获和编码解码界面。
+* GPU：来自于不同的OpenCV模块的GPU加速算法。
+* 等等
+
+以下是OpenCV教程中检测霍夫圆的例子：
+
+```
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+using namespace cv;
+using namespace std;
+int main(int argc, char** argv)
+{
+    const char* filename = "smarties.png";
+    // Loads an image
+    Mat src = imread( samples::findFile( filename ), IMREAD_COLOR );
+    
+    Mat gray;
+    cvtColor(src, gray, COLOR_BGR2GRAY);
+    medianBlur(gray, gray, 5);
+    vector<Vec3f> circles;
+    HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
+                 gray.rows/16,  
+                 100, 30, 1, 30
+    );
+    for( size_t i = 0; i < circles.size(); i++ )
+    {
+        Vec3i c = circles[i];
+        Point center = Point(c[0], c[1]);
+        // circle center
+        circle( src, center, 1, Scalar(0,100,100), 3, LINE_AA);
+        // circle outline
+        int radius = c[2];
+        circle( src, center, radius, Scalar(255,0,255), 3, LINE_AA);
+    }
+    imshow("detected circles", src);
+    waitKey();
+    return EXIT_SUCCESS;
+}
+```
+
+## ROpenCV
+
+若能在R和OpenCV中建立桥梁，将OpenCV的功能尽可能移植到R环境中，且在使用过程中尽可能保留OpenCV的函数风格，这对于R的广大用户而言是令人兴奋的事情。为此，本书作者基于RCpp形成了ROpenCV工具包，可以尽可能地在R中使用OpenCV的各种功能。以下代码体现了利用ROpenCV实现的检测霍夫圆的例子：
+
+
+```{r message=FALSE,warning=FALSE}
+#加载图像工具包
+library(ROpenCV)
+
+#读取图像文件
+src = cv_imread("images/smarties.png")
+#获取src的基本信息：依次为行数、列数、通道数、类型码、深度码
+mat_info(src)
+#将src灰度化，结果直接返回
+gray = cv_cvtColor(src,COLOR_BGR2GRAY)
+mat_info(gray)
+#对gray进行中值滤波，结果仍然赋值给gray
+gray = cv_medianBlur(gray,5L)
+
+#检测霍夫圆。结果是一个 1 x N x 3 的矩阵：
+#第1行第i列的前两个数是圆心坐标，第三个数是半径
+circles = cv_HoughCircles(gray,HOUGH_GRADIENT,1,
+                dim(src)[1]/16,
+                100,30,1,30
+               )
+circles
+dim(circles)
+
+#复制一份原图用于绘图（cvMat 不是引用类，$clone() 不存在）
+dst = cv_copyTo(src)
+#绘制检测到的圆
+ca = as_array(circles,numeric=TRUE)
+for(i in seq_len(dim(ca)[2])){
+  #获取圆心坐标
+  center = ca[1,i,1:2]
+  #标注圆心点
+  cv_circle(dst,center,1,c(0,100,100),3L,LINE_AA)
+  #画出圆周
+  rad = ca[1,i,3]
+  cv_circle(dst,center,rad,c(255,0,255),3L,LINE_AA)
+}
+
+#显示检测结果
+plot(src)
+plot(dst)
+```
+
+
+```{r echo=FALSE}
+#并排显示原图与检测结果
+par(mfrow=c(1,2))
+plot(src)
+plot(dst)
+par(mfrow=c(1,1))
+```
+
+
+在这个例子中，OpenCV 函数的处理结果都通过**返回值**交回来：`cv_cvtColor`、
+`cv_medianBlur` 返回新的图像矩阵，`cv_HoughCircles` 返回圆的位置，不需要事先
+准备一个容器再传进去。少数函数（如 `cv_circle`）是原地修改，它们直接改传入的
+矩阵并把它原样返回，所以可以写 `dst = cv_circle(dst, ...)`。若确实需要一份独立
+的副本，用 `cv_copyTo`——直接写 `dst = src` 只是多了一个指向同一块像素内存的名字。
+详见第 \@ref(ROpenCVMechanisim) 章。
+
+## ROpenCV的安装和使用
+
+参加https://github.com/Judy-ZQ/ROpenCV
+
+
+
+

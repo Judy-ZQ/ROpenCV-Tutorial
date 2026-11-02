@@ -1,0 +1,685 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# OpenCV中的图像矩阵类（Mat） {#imagebasis}
+
+最初的OpenCV是通过名为IplImage的C结构来实现图像在内存中的表示与存储，后来到了OpenCV2，图像矩阵类Mat被引入，它在很大程度上改进了图像的内存管理机制。
+
+ROpenCV 把 Mat 包装成 S3 类 `cvMat`：它本身是一个指向 C++ `cv::Mat` 的外部指针，像素数据留在原生内存里，R 侧只拿着一个句柄。所以「把一张图赋给另一个变量」不产生任何像素拷贝，这一点后面「内存管理和引用计数」一节还会再讲。
+
+## 矩阵表示
+
+![](images/lena_lefteyemat.jpg)
+
+在上图中，左眼瞳仁在计算机中被存储为如图所示的一个矩阵。而在这个矩阵中，第一行第一列位置的像素值为56。
+
+图像的所有像素值与像素位置可以形成一个离散的二元函数$y=f(r,c)$，常称这个函数为图像强度函数，其中$r$、$c$分别表示像素所在矩阵的行位置和列位置，$y$为对应位置处的像素值。
+
+注意，OpenCV 的图像矩阵的行和列的编号都是从0开始的，而R语言的矩阵的行和列的编号则是从1开始的。
+
+这件事在 ROpenCV 里必须分清楚，否则每一个下标都会差一位：
+
+* **R 代码里的行列号一律从 1 开始。** `img[1,1]` 是左上角那个像素，`img[dim(img)[1], dim(img)[2]]` 是右下角。因为 `cvMat` 的下标读写是照 R 数组的语义实现的。
+* **OpenCV 自己的 C++ 接口从 0 开始。** 比如 `img.at<uchar>(0,0)`。这层数字不会出现在 R 里，你只需要知道文档里那些「第 0 行第 0 列」的说明对应到 R 就是 `img[1,1]`。
+
+本章后面所有的例子都按 R 的习惯写。
+
+## 像素坐标系
+
+OpenCV中的图像矩阵类（Mat）遵循像素坐标系，即以图像左上角为原点，以x轴为横轴，其正向指向右侧，以y轴为纵轴，其正向指向下侧（如图）。
+
+![](images/lena_coord.jpg)
+
+在像素坐标系下，图像矩阵的列数体现了图像的宽度，而图像矩阵的行数则体现了图像的高度。
+
+由于像素坐标系和常见平面坐标系的y轴是上下反向的，所以常见平面坐标系的左上和左下方位在像素坐标系中则为左下和左上方位。
+
+```{r}
+#在常见平面坐标系下绘制矩形(左下角顶点为坐标为(20,20)，宽度和长度为为60)
+plot(1:100,1:100,type="n",xlab="",ylab="") #生成空图
+rect(20,20,80,80) #绘制矩形
+points(20,20,pch=16,cex=1.2) #标注坐标为(20,20)的点
+```
+
+
+```{r}
+#在像素坐标系下绘制同样的矩形
+img = Mat(100L,100L,CV_8UC1) #生成全黑图像
+#点、标量、矩形在 ROpenCV 里都是普通的数值向量：
+#  点   c(x, y)
+#  标量 c(b, g, r) 或单通道的 255
+#绘图函数原地修改 img 并返回它，invisible() 只是压掉返回值，免得输出里全是 <cvMat> 行
+invisible(cv_rectangle(img,c(20L,20L),c(80L,80L),255,1L)) #绘制矩形
+invisible(cv_circle(img,c(20L,20L),3L,255,-1L)) #标注坐标为(20,20)的点
+plot(img) #显示绘制结果
+```
+
+`plot()` 是 `cvMat` 的 S3 方法：它把 BGR 布局翻成 RGB、按深度归一化，然后当作栅格图打在当前图形设备上。写文档、写报告用它最省事；交互式看图时也可以用 `cv_imshow("矩形", img)` 开一个原生窗口，看完记得 `cv_destroyAllWindows()`。
+
+## 像素存储位数
+
+像素存储位数决定了像素值的颜色表达能力。比如：
+
+* 当每个像素的值用1bit来存储时，像素的颜色取值有$2^1=2$种；
+* 当每个像素的值用4bit来存储时，像素的颜色取值有$2^4=16$种；
+* 当每个像素的值用8bit（即一个字节）来存储时，像素的颜色取值有$2^8=256$种；
+* 当每个像素的值用16bit（即两个字节）来存储时，像素的颜色取值有$2^{16}=65536$种。
+
+以此类推，当存储像素的位数越大，则像素颜色的取值个数就越丰富。
+
+依据图像像素的取值范围，图像可以分为多个类别，其中包括：
+
+**二值图像/黑白图像**
+
+二值图像 (Binary Image): 图像中每个像素的颜色值仅可以取两个值（这两个值在像素取值范围内互为按位取反结果）的图像。
+
+**示例**
+
+下图展示了一个20行、20列的二值图：
+
+```{r echo=FALSE}
+#生成全黑图形（CV_32FC1，取值 0/1）
+img = Mat(20L,20L,CV_32FC1)
+#把中心区域的元素值改为 1：直接按下标写，就地改在原生像素缓冲上，不经过 R 数组
+img[6:15,6:15] = 1
+#绘制图形
+plot(img)
+```
+
+该图的矩阵表示为：
+
+```{r echo=FALSE,eval=FALSE}
+knitr::kable(as_array(img, numeric = TRUE))
+```
+
+![](images/binaryImgMat.png)
+
+**灰度图像**
+
+灰度图像(Gray Scale Image)，也称为灰阶图像: 图像中每个像素的颜色可以由0(黑)到255(白)的整数值表示。
+
+**示例**
+
+下图展示了一个16行、16列的灰度图：
+
+```{r echo=FALSE}
+img = Mat(16L,16L,CV_8UC1)
+#img[] 表示整块：右边是 16x16 的 R 矩阵，写进去之后深度仍是 CV_8UC1
+img[] = matrix(0:255,nr=16,nc=16)
+plot(img)
+```
+
+该图的矩阵表示为：
+
+```{r echo=FALSE,eval=FALSE}
+knitr::kable(as_array(img, numeric = TRUE))
+```
+
+![](images/grayImgMat.png)
+
+**彩色图像**  
+
+彩色图像 (Color Image)：彩色图像的每个像素值是由三个数构成，分别表示蓝色、绿色和红色分量。这三个颜色分量可以分别形成三个矩阵：蓝色分量矩阵、绿色分量矩阵和红色分量矩阵。
+
+**示例**
+
+下图展示了一个10行、10列的彩色图：
+
+```{r echo=FALSE}
+set.seed(123)
+arr = array(sample(0:255,10*10*3,replace = T),dim = c(10,10,3))
+img = Mat(10L,10L,CV_8UC3)
+img[] = arr
+plot(img)
+```
+
+该图的蓝色分量矩阵为：
+
+```{r echo=FALSE,eval=FALSE}
+knitr::kable(arr[,,1])
+```
+
+![](images/blueColMat.png)
+
+该图的绿色分量矩阵为：
+
+```{r echo=FALSE,eval=FALSE}
+knitr::kable(arr[,,2])
+```
+
+![](images/greenColMat.png)
+
+该图的红色分量矩阵为：
+
+```{r echo=FALSE,eval=FALSE}
+knitr::kable(arr[,,3])
+```
+
+![](images/redColMat.png)
+
+可以看到，图像中第一行、第一列位置像素的蓝、绿、红颜色分量分别为158、152和29。
+
+```{r echo=FALSE}
+#按行列读取img的像素值：三通道图的一个像素给回三个数，顺序是 B、G、R
+img[1,1]
+```
+
+在OpenCV的图像矩阵类（Mat）中，像素存储位数被定义为矩阵深度或者图像深度(depth)。OpenCV支持图像深度转换操作，对应的是 `Mat::convertTo`，ROpenCV 里是 `cv_mat_convert()`：
+
+```{r}
+#生成一个32位浮点数矩阵img
+img = Mat(3L,3L,CV_32FC1)
+#把 R 矩阵写进去
+img[] = matrix(seq(1.1,9.1,by=1),nr=3)
+#查看img的元素值（都是浮点数）
+as_array(img, numeric = TRUE)
+
+#将img转变为8位无符号数矩阵，结果保存为img1
+#cv_mat_convert(src, rtype, alpha, beta) 对应 dst = src * alpha + beta，再按 rtype 饱和
+img1 = cv_mat_convert(img, CV_8UC1, 1, 0)
+#查看img1的元素值（都是整数）
+as_array(img1, numeric = TRUE)
+```
+
+转变深度的过程中，超出目标深度的值会被相应调整：
+
+```{r}
+#生成一个32位浮点数矩阵img
+img = Mat(3L,3L,CV_32FC1)
+img[] = matrix(seq(301.1,309.1,by=1),nr=3)
+img[1,1] = -30.1
+#查看img的元素值（都是浮点数）
+as_array(img, numeric = TRUE)
+
+#将img转变为8位无符号数矩阵，结果保存为img1
+img1 = cv_mat_convert(img, CV_8UC1, 1, 0)
+
+#查看img1的元素值：负数落到 0，超过 255 的落到 255（饱和，不是溢出取模）
+as_array(img1, numeric = TRUE)
+```
+
+## 通道数
+
+图像通道数对应于表示图像像素值的向量维数。由于二值图像、灰度图像的像素值都是由一个数表示（即一维向量），所以通道数为1，为此也常称这两类图像为单通道图像。而彩色图像的像素值是由三个数表示（即三维向量），所以通道数为3，为此也常称彩色图像为3通道图像。在OpenCV中，还存在二通道图像、四通道图像等等。
+
+在内存中，一个灰度图像（单通道图像）的矩阵可能是：
+
+![](images/tutorial/tutorial_how_matrix_stored_1.png)
+
+而对于多通道图像，每列包含与通道数相同的子列。例如，一个BGR彩色图像（三通道图像）的矩阵可能是：
+
+![](images/tutorial/tutorial_how_matrix_stored_2.png)
+
+在OpenCV中，通道的顺序依次是B、G、R（不是R、G、B）。
+
+OpenCV的split函数可以拆分图像矩阵的通道，而merge函数则可以将单通道图像矩阵合并为多通道图像矩阵。
+
+```{r}
+#生成3通道矩阵img
+img = Mat(2L,4L,CV_8UC3)
+#把三维数组写进去
+img[] = array(1:24,dim=c(2,4,3))
+
+#查看img的基本信息：行、列、通道数、类型码、深度
+mat_info(img)
+
+#拆分img的通道：cv_split 直接返回一个 cvMat 列表，不用事先准备容器
+planes = cv_split(img)
+length(planes)
+as_array(planes[[1]], numeric = TRUE)  #蓝色分量矩阵
+as_array(planes[[2]], numeric = TRUE)  #绿色分量矩阵
+as_array(planes[[3]], numeric = TRUE)  #红色分量矩阵
+
+#将planes中的前2个单通道图像矩阵合并为双通道图像矩阵img1
+img1 = cv_merge(planes[1:2])
+#查看img1的基本信息（通道数为2）
+mat_info(img1)
+
+#将planes中的3个单通道图像矩阵合并为三通道图像矩阵img2
+img2 = cv_merge(planes)
+#查看img2的基本信息（通道数为3）
+mat_info(img2)
+as_array(img2, numeric = TRUE)
+```
+
+## 存储空间
+
+已知一幅图像的尺寸（屏幕分辨率）为$h\times w$（其中，$h$表示纵向像素点数，$w$表示横向像素点数），像素存储位数为$k$时，则该图像的存储空间$s$可以按如下公式计算：
+
+$$
+\begin{aligned}
+s &= h \times w \times k \,(bit) \\
+&= \frac{h \times w \times k}{8} \,(byte) \\
+&= \frac{h \times w \times k}{8\times 1024} \,(kb) \\
+&= \frac{h \times w \times k}{8\times 1024 \times 1024} \,(mb) \\
+\end{aligned}
+$$
+例如：一幅画的尺寸是1024*768，像素存储位数为16bit，则它的数据量为1.5M。
+
+```{r}
+1024*768*16/(8*1024*1024)
+```
+
+
+## 类型
+
+OpenCV中图像矩阵的类型（type）是结合像素存储位数/深度定义的一系列常量，其命名规则为CV_(深度/位数）+（数据类型）+（通道数）,其中数据类型有U（无符号整数）、S（有符号整数）和F（浮点数）三种。以下是OpenCV中常见的图像矩阵类型列表：
+
+* CV_8UC1、CV_8UC3：分别表示8位无符号整数单通道图像和8位无符号整数三通道图像，颜色取值范围都为[0,255]
+* CV_8SC1、CV_8SC3：分别表示8位有符号整数单通道图像和8位有符号整数三通道图像，颜色取值范围都为[-128,127]
+* CV_16UC1、CV_16UC3：分别表示16位无符号整数单通道图像和16位无符号整数三通道图像，颜色取值范围都为[0,65535]
+* CV_16SC1、CV_16SC3：分别表示16位有符号整数单通道图像和16位有符号整数三通道图像，颜色取值范围都为[-32768,32767]
+* CV_32SC1、CV_32SC3：分别表示32位有符号整数单通道图像和32位有符号整数三通道图像，颜色取值范围都为[-2147483648,2147483647]
+* CV_32FC1、CV_32FC3：分别表示32位浮点数单通道图像和32位浮点数三通道图像
+* CV_64FC1、CV_64FC3：分别表示64位浮点数单通道图像和64位浮点数三通道图像
+
+另外，CV_8UC1、CV_8SC1、CV_16UC1、CV_16SC1、CV_32FC1和CV_64FC1等单通道图像类型，可以简写为：CV_8U、CV_8S、CV_16U、CV_16S、CV_32F和CV_64F等。
+
+这些常量在 ROpenCV 里都有同名的 R 对象，值是编译器从 OpenCV 头文件算出来的整数，不是抄在 R 里的。查一张图用的是哪个类型码，看 `mat_info()` 的第四个元素；第五个元素是深度（把类型码里的通道数去掉之后剩下的那个数）：
+
+```{r}
+img = Mat(2L,4L,CV_8UC3)
+info = mat_info(img)
+info
+c(rows = info[1], cols = info[2], channels = info[3], type = info[4], depth = info[5])
+#类型码 64 对应 CV_8UC3（OpenCV 5 把通道位的起点从 3 挪到了 5，所以不是 16），
+#深度 0 对应 CV_8U。两个数字都从常量读，不要背。
+c(CV_8UC3 = CV_8UC3, CV_8U = CV_8U)
+```
+
+## 创建图像矩阵
+
+OpenCV的图像矩阵类Mat具有非常多的构造函数形式，其中包括：
+
+* Mat()
+* Mat(int rows, int cols, int type)
+* Mat(Size size, int type)
+* Mat(int rows, int cols, int type, const Scalar &s)
+* Mat(Size size, int type, const Scalar &s)
+* Mat(int ndims, const int *sizes, int type)
+* Mat(const std::vector< int > &sizes, int type)
+* Mat(int ndims, const int *sizes, int type, const Scalar &s)
+* Mat(const std::vector< int > &sizes, int type, const Scalar &s) 
+* Mat(const Mat &m)
+* Mat(int rows, int cols, int type, void *data, size_t step=AUTO_STEP)
+* Mat(Size size, int type, void *data, size_t step=AUTO_STEP)
+* Mat(int ndims, const int *sizes, int type, void *data, const size_t *steps=0)
+* Mat(const std::vector< int > &sizes, int type, void *data, const size_t *steps=0)
+* Mat(const Mat &m, const Range &rowRange, const Range &colRange=Range::all())
+* Mat(const Mat &m, const Rect &roi)
+* 等等
+
+ROpenCV 用一个 `Mat()` 覆盖了其中最常用的几种形式，靠参数个数和类型在运行时挑：
+
+* `Mat()` —— 空矩阵
+* `Mat(m)` —— 从 R 的矩阵 / 三维数组 / raw 向量拷贝进来
+* `Mat(rows, cols, type)` —— 按尺寸和类型码新建，初值 0
+* `Mat(rows, cols, type, value)` —— 同上，用标量填充
+
+ROI（`Mat(const Mat&, const Rect&)`）没有放入 `Mat()`，因为它返回的是一个**共享像素**的视图而不是新矩阵，语义和上面几个不一样，单独用 `cv_mat_roi()` 表达，见本章后面的「获取/设置图像子区域」一节。
+
+**生成空图**
+
+```{r}
+# 生成0行、0列的空图img
+img = Mat()
+mat_info(img)
+```
+
+**生成纯色图像**
+
+```{r}
+# 生成100行、100列的8位无符号单通道图像，所有像素值都为0（即黑色）
+img1 = Mat(100L,100L,CV_8UC1,0L)
+
+# 生成100行、100列的8位无符号单通道图像，所有像素值都为128（即灰色）
+img2 = Mat(100L,100L,CV_8UC1,128L)
+
+# 生成100行、100列的8位无符号三通道图像，所有像素值都为(128,0,128)（即紫色）
+img3 = Mat(100L,100L,CV_8UC3,c(128,0,128))
+
+# 生成100行、100列的8位无符号三通道图像，所有像素值都为(255,0,0)（即蓝色）
+img4 = Mat(100L,100L,CV_8UC3,c(255,0,0))
+
+# 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,255,0)（即绿色）
+img5 = Mat(100L,100L,CV_8UC3,c(0,255,0))
+
+# 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,0,255)（即红色）
+img6 = Mat(100L,100L,CV_8UC3,c(0,0,255))
+```
+
+`plot.cvMat` 一次只画一张，多张并排要自己摆版面：
+
+```{r echo=FALSE, fig.width=9, fig.height=6}
+imgs = list(img1,img2,img3,img4,img5,img6)
+labs = c("Scalar(0)","Scalar(128)","Scalar(128,0,128)",
+         "Scalar(255,0,0)","Scalar(0,255,0)","Scalar(0,0,255)")
+old = par(mfrow = c(2,3), mar = c(1,1,2,1))
+for (k in seq_along(imgs)) {
+  plot(imgs[[k]])
+  title(main = labs[k], cex.main = 0.9)
+}
+par(old)
+```
+
+**生成单位矩阵**
+
+```{r}
+#生成5行5列的64位浮点数单通道单位矩阵
+E = cv_setIdentity(Mat(5L,5L,CV_64F), 1)
+as_array(E, numeric = TRUE)
+```
+
+```{r}
+#生成200行200列的64位浮点数单通道单位矩阵
+E = cv_setIdentity(Mat(200L,200L,CV_64F), 1)
+plot(E) #对角线为 1，其余为 0
+```
+
+**生成全1矩阵（所有像素的取值都为1）**
+
+```{r}
+#生成5行5列的32位浮点数单通道全1矩阵
+O = Mat(5L,5L,CV_32F,1)
+as_array(O, numeric = TRUE)
+```
+
+```{r}
+#生成200行200列的32位浮点数单通道全1矩阵
+O = Mat(200L,200L,CV_32F,1)
+plot(O) #显示为白色图像
+```
+
+**生成全0矩阵**
+
+```{r}
+#生成3行3列的单通道全0矩阵
+Z = Mat(3L,3L,CV_8UC1)
+as_array(Z, numeric = TRUE)
+```
+
+```{r}
+#生成200行200列的单通道全0矩阵
+Z = Mat(200L,200L,CV_8UC1)
+plot(Z) #显示为黑色图像
+```
+
+## 读写像素值
+
+`cvMat` 的下标读写分成两条路，这个分工是有意的：
+
+* **读**走 `as_array()`，语义就是「取出来一份 R 数组」。每次读都全量拷一份，所以读出来的东西和原图没有关系，改了也不会影响图像。
+* **写**走 C++ 原地赋值，直接改 `cv::Mat` 的像素缓冲，不产生任何拷贝。这也是为什么 `img[i,j] <- v` 能真正改到图像上。
+
+行列号从 1 开始，和 R 的数组一致。
+
+### 单通道图像
+
+**获取单通道图像的指定像素值**
+
+```{r}
+# 以灰度模式读取图像文件，存放在img变量中
+img = cv_imread("images/baboon.jpg",IMREAD_GRAYSCALE)
+# 获取第11行、第11列像素的值
+img[11,11]
+```
+
+`CV_8U` 的像素读出来是 `raw`（一个字节，省内存），参与算术前先转成数值：
+
+```{r}
+as.numeric(img[11,11])
+```
+
+**修改单通道图像的指定像素值**
+
+```{r}
+#生成100行、100列的8位无符号整数图像img（所有像素值都为0）
+img = Mat(100L,100L,CV_8UC1)
+#将第51行的第41-60列像素和第51列的第41行-60行的像素
+#都从0变为255（即由黑色变为白色）
+img[51,41:60] = 255
+img[41:60,51] = 255
+#显示结果
+plot(img)
+```
+
+修改完成后显示图像，可以发现图像中部区域有一个白色小十字形。
+
+**获取单通道图像的指定区域的像素值**
+
+```{r}
+#以灰度图模式读入图像数据
+img = cv_imread("images/HappyFish.jpg",IMREAD_GRAYSCALE)
+#获取图像指定区域(第21行~35行、第31列~45列)的像素值，返回一个 15x15 的 R 矩阵
+img[21:35,31:45]
+```
+
+**修改单通道图像的指定区域的像素值**
+
+```{r}
+#将图像指定区域(第21行~35行、第31列~45列)的像素值更改为黑色
+img[21:35,31:45] = 0
+```
+
+修改成功后，可以发现图像左上角出现了一个小的黑色方块。
+```{r echo=FALSE}
+plot(img)
+```
+
+### 三通道图像
+
+**获取三通道图像的指定像素值**
+
+```{r}
+# 以默认方式读取图像文件
+img = cv_imread("images/cat.jpg")
+# 获取第11行、第11列像素的值
+img[11,11]
+```
+
+可以看到，返回的是一个三维向量，三个值依次表示第11行、第11列像素的蓝色、绿色和红色分量值。进一步，可以用如下代码提取各个颜色分量：
+
+```{r}
+# 提取第11行、第11列像素的各个颜色分量
+px = as.numeric(img[11,11])
+c(blue = px[1], green = px[2], red = px[3])
+```
+
+**修改三通道图像的指定像素值**
+
+```{r}
+#生成100行、100列的8位无符号整数图像img（所有像素值都为(0,0,0)）
+img = Mat(100L,100L,CV_8UC3)
+
+#一个像素：三个分量，长度正好对上，直接写
+img[51,51,] = c(0,0,255)
+
+#一条横线 + 一条竖线：三个通道分开写，读代码的人一眼就知道在做什么
+img[51,41:60,1] = 0; img[51,41:60,2] = 0; img[51,41:60,3] = 255
+img[41:60,51,1] = 0; img[41:60,51,2] = 0; img[41:60,51,3] = 255
+
+#显示结果
+plot(img)
+```
+
+修改完成后显示图像，可以发现图像中部区域有一个小红十字。
+
+这里有个坑值得单独说：一条线如果写成一个语句 `img[51,41:60,] = c(0,0,255)`，得到的**不是**一条红线。选中的是 20 个像素 × 3 个通道 = 60 个元素，而右边只有 3 个数，R 会循环补齐；补齐的顺序按 `(行, 列, 通道)` 列优先展开、通道在最外层，于是 255 在三个通道之间轮转——第 41 列是绿、第 42 列是红、第 43 列是蓝，如此往复：
+
+```{r}
+bad = Mat(100L,100L,CV_8UC3)
+bad[51,41:60,] = c(0,0,255)
+# 第 51 行第 41~43 列：三行分别是第 41、42、43 列，三列分别是 B、G、R
+# 结果是绿、红、蓝轮流出现——255 在三个通道之间轮转，不是一条红线
+as_array(bad, numeric = TRUE)[51,41:43,]
+```
+
+要给一整块区域涂同一个颜色，要么让颜色的长度对上（通道在最外层，所以用 `each` 按像素数展开），要么就像上面那样按通道分开写：
+
+```{r}
+img[51,41:60,] = rep(c(0,0,255), each = 20)
+as_array(img, numeric = TRUE)[51,41:43,]
+```
+
+**获取三通道图像的指定区域的像素值**
+
+```{r}
+#读入图像数据
+img = cv_imread("images/HappyFish.jpg")
+
+#获取图像指定区域(第21行~25行、第31列~35列)的像素值，返回 5x5x3 的三维数组
+img[21:25,31:35,]
+```
+
+**修改三通道图像指定区域的像素值**
+
+```{r}
+#将图像指定区域(第21行~35行、第31列~45列)的像素值改为蓝色
+img[21:35,31:45,1] = 255
+img[21:35,31:45,2] = 0
+img[21:35,31:45,3] = 0
+```
+
+修改成功后，可以发现图像左上角出现了一个小的蓝色方块。
+```{r echo=FALSE}
+plot(img)
+```
+
+
+## 内存管理和引用计数
+
+OpenCV中的图像矩阵类（Mat）本质上是由两个部分组成的类：
+
+* 一部分矩阵头：包含信息有矩阵的大小、矩阵的像素位数/矩阵深度、矩阵通道数、矩阵存储的地址等，矩阵头部的大小是恒定的。  
+* 另一部分是矩阵数据指针：指向包含了像素值的矩阵，矩阵本身的大小因图像的不同而不同，通常具有较大的数量级。
+
+在基于OpenCV进行很多图像处理时，多个图像矩阵可以具有不同的矩阵头，却会共享相同矩阵数据（即它们的矩阵数据指针所指向的内存区域有重叠部分）。OpenCV会维护一个引用计数器，用来监测这种数据共享情况，每增加一次共享情况，OpenCV就会累加一次引用计数。只要图像内存区域的引用计数大于0，相应的内存就不会被销毁回收。
+
+在 ROpenCV 里，这件事的第一层表现非常直接：`cvMat` 是外部指针，`img2 = img1` 只是给同一个指针起了第二个名字，连矩阵头都没有复制。
+
+```{r}
+#创建无符号整数三通道图像img1
+img1 = Mat(2L,3L,CV_8UC3)
+img1[] = array(1:18,dim = c(2,3,3))
+
+#获取img1图像的基本信息（行、列、通道数、类型码、深度）
+mat_info(img1)
+#按行、列顺序输出img1的各个像素值
+as_array(img1, numeric = TRUE)
+
+#直接将img1赋值给img2：两个名字，一个矩阵
+img2 = img1
+identical(img1, img2)
+
+#将img2的第1行、第1列像素值的蓝色分量改为255(绿色和红色分量保持不变)
+v = as.numeric(img2[1,1,])
+img2[1,1,] = c(255, v[2], v[3])
+
+#查看img2的各个像素值
+as_array(img2, numeric = TRUE)
+#查看img1的各个像素值：跟着一起变了
+as_array(img1, numeric = TRUE)
+```
+
+可以看到，img1的第1行、第1列像素值的蓝色分量也变成了255。
+
+第二层表现是「矩阵头复制」：`cv_mat_roi()` 返回的子矩阵、`cv_copyTo()` 之外的很多 OpenCV 函数返回值，都是共享同一块像素缓冲的新矩阵头，引用计数加一。这一层才是「Mat 很轻」这句话真正的含义，下一节和本章最后两节会分别用到它。
+
+## 获取/设置图像子区域或者感兴趣区域
+
+很多时候，需要提取出图像的部分区域进行操作。比如，下面的例子会提取出狒狒的眼部区域：
+
+```{r}
+#读取狒狒的图片文件
+img = cv_imread("images/baboon.jpg")
+#获取img指定区域smallImg：c(x, y, w, h)，左上角坐标 + 宽高，按像素坐标系（0 起算）
+smallImg = cv_mat_roi(img,c(120,30,260,70))
+dim(smallImg)
+```
+
+```{r echo=FALSE}
+plot(smallImg)
+```
+
+这里要注意，smallImg和img是共享数据的：`cv_mat_roi()` 返回的只是原图的一个新矩阵头，像素缓冲还是同一块，引用计数加一。
+
+```{r}
+#在smallImg上绘制红色填充矩形
+invisible(cv_rectangle(smallImg,c(110L,25L),c(150L,45L),c(0,0,255),-1L))
+#显示smallImg
+plot(smallImg)
+#显示img
+plot(img)
+```
+
+```{r echo=FALSE}
+#同一块数据，两处一起变：这里直接查原图的像素（ROI 里的 (110,25) 对应原图的 (230,55)）
+as.numeric(img[56,231,])
+```
+
+可以看到，在smallImg上添加一个红色填充矩形后，img上的相应位置也出现了红色填充矩形。
+
+需要一块独立的区域时，加一步 `cv_copyTo()`：
+
+```{r}
+#独立副本：之后改copy不会影响img
+copy = cv_copyTo(smallImg)
+invisible(cv_rectangle(copy,c(0L,0L),c(20L,20L),c(255,0,0),-1L))
+#copy 的左上角变蓝了
+as.numeric(copy[5,5,])
+#img 的对应位置没变（ROI 的 (5,5) 对应原图的 1-based [35,125]）
+as.numeric(img[35,125,])
+```
+
+## 图像拷贝与克隆
+
+通过拷贝和克隆操作，可以生成一个图像的独立副本。在 OpenCV 里 `copyTo` 和 `clone` 做的是同一件事——分配一块新内存再把像素拷过去——所以 ROpenCV 只留了一个入口：`cv_copyTo()`。
+
+```{r}
+#创建8位无符号整数三通道图像img1
+img1 = Mat(2L,3L,CV_8UC3)
+img1[] = array(1:18,dim = c(2,3,3))
+#获取img1图像的基本信息
+mat_info(img1)
+#输出img1的各个像素值
+as_array(img1, numeric = TRUE)
+
+#通过拷贝方式从img1生成img2
+img2 = cv_copyTo(img1)
+#输出img2的各个像素值
+as_array(img2, numeric = TRUE)
+
+#再拷一份，当作「克隆」
+img3 = cv_copyTo(img1)
+#输出img3的各个像素值
+as_array(img3, numeric = TRUE)
+```
+
+从输出内容看，img2和img3都与img1有相同的像素值。此外，在拷贝方式下，图像矩阵之间是不存在共享数据的。
+
+```{r}
+#将img1第1行、第1列像素值的蓝色分量改为255
+v = as.numeric(img1[1,1,])
+img1[1,1,] = c(255, v[2], v[3])
+
+#输出img1的各个像素值
+as_array(img1, numeric = TRUE)
+#输出img2的各个像素值：不受影响
+as_array(img2, numeric = TRUE)
+#输出img3的各个像素值：不受影响
+as_array(img3, numeric = TRUE)
+```
+
+可以看到，修改img1之后，img2和img3都没有受到影响。
+
+最后把三者放在一起对比，共享和独立两种关系的区别就很清楚了：
+
+| 写法 | 数据 | 改一个会不会影响另一个 |
+| --- | --- | --- |
+| `img2 = img1` | 同一个外部指针 | 会，本来就是一个对象 |
+| `cv_mat_roi(img, rect)` | 新的矩阵头，同一块像素缓冲 | 会，写的是同一块内存 |
+| `cv_copyTo(img)` | 新的矩阵头和新的像素缓冲 | 不会 |

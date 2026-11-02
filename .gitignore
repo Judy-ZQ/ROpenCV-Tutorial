@@ -1,0 +1,18 @@
+# ---- R / RStudio ----
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# ---- bookdown 中间产物 ----
+# _book 是要发布的编译结果，**不能**忽略；只忽略合并文件与缓存目录。
+_bookdown_files/
+bookdown.Rmd
+
+# ---- 与本教程无关的目录 ----
+# jss-article-rnw 是另一篇论文的稿件，inst/ 和 images4pub/ 未被任何章节引用，
+# bookdown.tex 是模板遗留的旧 LaTeX 导出。正文里都没有引用（已 grep 确认）。
+jss-article-rnw/
+inst/
+images4pub/
+bookdown.tex
