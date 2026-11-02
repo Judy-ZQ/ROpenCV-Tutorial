@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>第 10 章 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程</title>
+  <meta name="description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="第 10 章 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  <meta name="github-repo" content="Judy-ZQ/ROpenCV-Tutorial" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="第 10 章 摄像机标定和三维重建（calib3d模块） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程" />
+  
+  <meta name="twitter:description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  
+
+<meta name="author" content="zpy" />
+
+
+<meta name="date" content="2026-11-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="imgproc3.html"/>
+<link rel="next" href="feature2d.html"/>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">ROpenCV 教程</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#%E8%87%B4%E8%B0%A2"><i class="fa fa-check"></i>致谢</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="author.html"><a href="author.html"><i class="fa fa-check"></i>作者简介</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> 简介</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#r%E7%AE%80%E4%BB%8B"><i class="fa fa-check"></i><b>1.1</b> R简介</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#r%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9B%BE%E5%83%8F%E5%B7%A5%E5%85%B7%E5%8C%85"><i class="fa fa-check"></i><b>1.2</b> R中的一些图像工具包</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#opencv%E7%AE%80%E4%BB%8B"><i class="fa fa-check"></i><b>1.3</b> OpenCV简介</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#ropencv"><i class="fa fa-check"></i><b>1.4</b> ROpenCV</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#ropencv%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><i class="fa fa-check"></i><b>1.5</b> ROpenCV的安装和使用</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="RBasis.html"><a href="RBasis.html"><i class="fa fa-check"></i><b>2</b> R基础</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="RBasis.html"><a href="RBasis.html#r%E7%9A%84%E5%AE%89%E8%A3%85"><i class="fa fa-check"></i><b>2.1</b> R的安装</a></li>
+<li class="chapter" data-level="2.2" data-path="RBasis.html"><a href="RBasis.html#%E5%90%91%E9%87%8F%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.2</b> 向量操作</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E5%90%91%E9%87%8F"><i class="fa fa-check"></i><b>2.2.1</b> 生成向量</a></li>
+<li class="chapter" data-level="2.2.2" data-path="RBasis.html"><a href="RBasis.html#%E8%AF%BB%E5%86%99%E5%90%91%E9%87%8F%E7%9A%84%E5%85%83%E7%B4%A0"><i class="fa fa-check"></i><b>2.2.2</b> 读写向量的元素</a></li>
+<li class="chapter" data-level="2.2.3" data-path="RBasis.html"><a href="RBasis.html#%E5%90%91%E9%87%8F%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.2.3</b> 向量的运算</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="RBasis.html"><a href="RBasis.html#factors%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.3</b> Factors操作</a></li>
+<li class="chapter" data-level="2.4" data-path="RBasis.html"><a href="RBasis.html#%E5%88%97%E8%A1%A8%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.4</b> 列表操作</a></li>
+<li class="chapter" data-level="2.5" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E6%8D%AE%E6%A1%86%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.5</b> 数据框操作</a></li>
+<li class="chapter" data-level="2.6" data-path="RBasis.html"><a href="RBasis.html#%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.6</b> 矩阵操作</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>2.6.1</b> 生成矩阵</a></li>
+<li class="chapter" data-level="2.6.2" data-path="RBasis.html"><a href="RBasis.html#%E8%AF%BB%E5%86%99%E7%9F%A9%E9%98%B5%E7%9A%84%E5%85%83%E7%B4%A0"><i class="fa fa-check"></i><b>2.6.2</b> 读写矩阵的元素</a></li>
+<li class="chapter" data-level="2.6.3" data-path="RBasis.html"><a href="RBasis.html#%E7%9F%A9%E9%98%B5%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.6.3</b> 矩阵的运算</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.7</b> 数组操作</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E6%95%B0%E7%BB%84"><i class="fa fa-check"></i><b>2.7.1</b> 生成数组</a></li>
+<li class="chapter" data-level="2.7.2" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E7%9A%84%E8%AE%BF%E9%97%AE"><i class="fa fa-check"></i><b>2.7.2</b> 数组元素的访问</a></li>
+<li class="chapter" data-level="2.7.3" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.7.3</b> 数组的运算</a></li>
+<li class="chapter" data-level="2.7.4" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E7%94%A8%E4%BA%8E%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>2.7.4</b> 数组用于图像处理</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="RBasis.html"><a href="RBasis.html#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.8</b> 文件操作</a></li>
+<li class="chapter" data-level="2.9" data-path="RBasis.html"><a href="RBasis.html#%E5%87%BD%E6%95%B0%E5%B0%81%E8%A3%85"><i class="fa fa-check"></i><b>2.9</b> 函数封装</a></li>
+<li class="chapter" data-level="2.10" data-path="RBasis.html"><a href="RBasis.html#%E5%9F%BA%E7%A1%80%E7%BB%98%E5%9B%BE"><i class="fa fa-check"></i><b>2.10</b> 基础绘图</a></li>
+<li class="chapter" data-level="2.11" data-path="RBasis.html"><a href="RBasis.html#%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.11</b> 按位运算</a></li>
+<li class="chapter" data-level="2.12" data-path="RBasis.html"><a href="RBasis.html#%E5%B9%B6%E8%A1%8C%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.12</b> 并行运算</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html"><i class="fa fa-check"></i><b>3</b> ROpenCV的核心处理机制</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E9%87%8D%E8%BD%BD%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.1</b> 重载函数的处理</a></li>
+<li class="chapter" data-level="3.2" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#opencv%E5%87%BD%E6%95%B0%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.2</b> OpenCV函数输出参数的处理</a></li>
+<li class="chapter" data-level="3.3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#opencv%E7%B1%BB%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.3</b> OpenCV类实例的处理</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-cvmat"><i class="fa fa-check"></i><b>3.3.1</b> 图像矩阵 cvMat</a></li>
+<li class="chapter" data-level="3.3.2" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E7%82%B9%E5%B0%BA%E5%AF%B8%E6%A0%87%E9%87%8F%E7%9F%A9%E5%BD%A2%E6%99%AE%E9%80%9A%E6%95%B0%E5%80%BC%E5%90%91%E9%87%8F"><i class="fa fa-check"></i><b>3.3.2</b> 点、尺寸、标量、矩形：普通数值向量</a></li>
+<li class="chapter" data-level="3.3.3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E8%AE%BF%E9%97%AE%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E4%BF%A1%E6%81%AF"><i class="fa fa-check"></i><b>3.3.3</b> 访问图像矩阵的信息</a></li>
+<li class="chapter" data-level="3.3.4" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2"><i class="fa fa-check"></i><b>3.3.4</b> 旋转矩形</a></li>
+<li class="chapter" data-level="3.3.5" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#as_array-%E5%92%8C-matr-%E4%B8%8E-opencv-%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2"><i class="fa fa-check"></i><b>3.3.5</b> as_array 和 Mat：R 与 OpenCV 的数据交换</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="imagebasis.html"><a href="imagebasis.html"><i class="fa fa-check"></i><b>4</b> OpenCV中的图像矩阵类（Mat）</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="imagebasis.html"><a href="imagebasis.html#%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><i class="fa fa-check"></i><b>4.1</b> 矩阵表示</a></li>
+<li class="chapter" data-level="4.2" data-path="imagebasis.html"><a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%9D%90%E6%A0%87%E7%B3%BB"><i class="fa fa-check"></i><b>4.2</b> 像素坐标系</a></li>
+<li class="chapter" data-level="4.3" data-path="imagebasis.html"><a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%AD%98%E5%82%A8%E4%BD%8D%E6%95%B0"><i class="fa fa-check"></i><b>4.3</b> 像素存储位数</a></li>
+<li class="chapter" data-level="4.4" data-path="imagebasis.html"><a href="imagebasis.html#%E9%80%9A%E9%81%93%E6%95%B0"><i class="fa fa-check"></i><b>4.4</b> 通道数</a></li>
+<li class="chapter" data-level="4.5" data-path="imagebasis.html"><a href="imagebasis.html#%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4"><i class="fa fa-check"></i><b>4.5</b> 存储空间</a></li>
+<li class="chapter" data-level="4.6" data-path="imagebasis.html"><a href="imagebasis.html#%E7%B1%BB%E5%9E%8B"><i class="fa fa-check"></i><b>4.6</b> 类型</a></li>
+<li class="chapter" data-level="4.7" data-path="imagebasis.html"><a href="imagebasis.html#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>4.7</b> 创建图像矩阵</a></li>
+<li class="chapter" data-level="4.8" data-path="imagebasis.html"><a href="imagebasis.html#%E8%AF%BB%E5%86%99%E5%83%8F%E7%B4%A0%E5%80%BC"><i class="fa fa-check"></i><b>4.8</b> 读写像素值</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="imagebasis.html"><a href="imagebasis.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>4.8.1</b> 单通道图像</a></li>
+<li class="chapter" data-level="4.8.2" data-path="imagebasis.html"><a href="imagebasis.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>4.8.2</b> 三通道图像</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="imagebasis.html"><a href="imagebasis.html#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%92%8C%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><i class="fa fa-check"></i><b>4.9</b> 内存管理和引用计数</a></li>
+<li class="chapter" data-level="4.10" data-path="imagebasis.html"><a href="imagebasis.html#%E8%8E%B7%E5%8F%96%E8%AE%BE%E7%BD%AE%E5%9B%BE%E5%83%8F%E5%AD%90%E5%8C%BA%E5%9F%9F%E6%88%96%E8%80%85%E6%84%9F%E5%85%B4%E8%B6%A3%E5%8C%BA%E5%9F%9F"><i class="fa fa-check"></i><b>4.10</b> 获取/设置图像子区域或者感兴趣区域</a></li>
+<li class="chapter" data-level="4.11" data-path="imagebasis.html"><a href="imagebasis.html#%E5%9B%BE%E5%83%8F%E6%8B%B7%E8%B4%9D%E4%B8%8E%E5%85%8B%E9%9A%86"><i class="fa fa-check"></i><b>4.11</b> 图像拷贝与克隆</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="firstshow.html"><a href="firstshow.html"><i class="fa fa-check"></i><b>5</b> 图像基本操作</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.1</b> 输入图像</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="firstshow.html"><a href="firstshow.html#%E5%8A%A0%E8%BD%BD%E5%9B%BE%E5%83%8F%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>5.1.1</b> 加载图像文件</a></li>
+<li class="chapter" data-level="5.1.2" data-path="firstshow.html"><a href="firstshow.html#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-1"><i class="fa fa-check"></i><b>5.1.2</b> 创建图像矩阵</a></li>
+<li class="chapter" data-level="5.1.3" data-path="firstshow.html"><a href="firstshow.html#%E4%BD%BF%E7%94%A8-mat-%E5%92%8C-img-%E8%BD%AC%E6%8D%A2-r-%E7%9A%84%E6%95%B0%E7%BB%84"><i class="fa fa-check"></i><b>5.1.3</b> 使用 Mat() 和 img[] 转换 R 的数组</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="firstshow.html"><a href="firstshow.html#%E8%8E%B7%E5%8F%96%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><i class="fa fa-check"></i><b>5.2</b> 获取图像基本信息</a></li>
+<li class="chapter" data-level="5.3" data-path="firstshow.html"><a href="firstshow.html#%E4%BF%AE%E6%94%B9%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.3</b> 修改图像</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="firstshow.html"><a href="firstshow.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fa fa-check"></i><b>5.3.1</b> 单通道图像</a></li>
+<li class="chapter" data-level="5.3.2" data-path="firstshow.html"><a href="firstshow.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fa fa-check"></i><b>5.3.2</b> 三通道图像</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.4</b> 输出图像</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E5%9B%BE%E5%BD%A2%E7%AA%97%E5%8F%A3"><i class="fa fa-check"></i><b>5.4.1</b> 输出到图形窗口</a></li>
+<li class="chapter" data-level="5.4.2" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E5%91%BD%E4%BB%A4%E8%A1%8C"><i class="fa fa-check"></i><b>5.4.2</b> 输出到命令行</a></li>
+<li class="chapter" data-level="5.4.3" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>5.4.3</b> 输出到磁盘文件</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="firstshow.html"><a href="firstshow.html#%E5%9B%BE%E5%83%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>5.5</b> 图像的基本运算</a></li>
+<li class="chapter" data-level="5.6" data-path="firstshow.html"><a href="firstshow.html#%E6%9F%A5%E7%9C%8B%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE"><i class="fa fa-check"></i><b>5.6</b> 查看图像的直方图</a></li>
+<li class="chapter" data-level="5.7" data-path="firstshow.html"><a href="firstshow.html#%E7%AD%89%E5%BE%85%E7%94%A8%E6%88%B7%E6%8C%89%E9%94%AE"><i class="fa fa-check"></i><b>5.7</b> 等待用户按键</a></li>
+<li class="chapter" data-level="5.8" data-path="firstshow.html"><a href="firstshow.html#%E6%B7%BB%E5%8A%A0%E6%BB%91%E5%8A%A8%E6%9D%A1%E6%8E%A7%E5%88%B6"><i class="fa fa-check"></i><b>5.8</b> 添加滑动条控制</a></li>
+<li class="chapter" data-level="5.9" data-path="firstshow.html"><a href="firstshow.html#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>5.9</b> 推荐使用方式</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="coremodule.html"><a href="coremodule.html"><i class="fa fa-check"></i><b>6</b> 核心功能（核心模块）</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="coremodule.html"><a href="coremodule.html#%E9%81%8D%E5%8E%86%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E5%83%8F%E7%B4%A0"><i class="fa fa-check"></i><b>6.1</b> 遍历图像矩阵的像素</a></li>
+<li class="chapter" data-level="6.2" data-path="coremodule.html"><a href="coremodule.html#%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E8%A1%A8"><i class="fa fa-check"></i><b>6.2</b> 使用查询表</a></li>
+<li class="chapter" data-level="6.3" data-path="coremodule.html"><a href="coremodule.html#%E8%AE%A1%E7%AE%97%E6%93%8D%E4%BD%9C%E6%97%B6%E9%97%B4"><i class="fa fa-check"></i><b>6.3</b> 计算操作时间</a></li>
+<li class="chapter" data-level="6.4" data-path="coremodule.html"><a href="coremodule.html#%E6%89%A9%E5%B1%95%E5%9B%BE%E5%83%8F%E8%BE%B9%E7%BC%98"><i class="fa fa-check"></i><b>6.4</b> 扩展图像边缘</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="coremodule.html"><a href="coremodule.html#border_replicate%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.1</b> BORDER_REPLICATE方式</a></li>
+<li class="chapter" data-level="6.4.2" data-path="coremodule.html"><a href="coremodule.html#border_reflect%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.2</b> BORDER_REFLECT方式</a></li>
+<li class="chapter" data-level="6.4.3" data-path="coremodule.html"><a href="coremodule.html#border_wrap%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.3</b> BORDER_WRAP方式</a></li>
+<li class="chapter" data-level="6.4.4" data-path="coremodule.html"><a href="coremodule.html#border_constant%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.4</b> BORDER_CONSTANT方式</a></li>
+<li class="chapter" data-level="6.4.5" data-path="coremodule.html"><a href="coremodule.html#border_default%E6%88%96%E8%80%85border_reflect_101%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.5</b> BORDER_DEFAULT或者BORDER_REFLECT_101方式</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E6%A0%87%E5%87%86%E5%8C%96%E5%BD%92%E4%B8%80%E5%8C%96"><i class="fa fa-check"></i><b>6.5</b> 图像矩阵标准化/归一化</a></li>
+<li class="chapter" data-level="6.6" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>6.6</b> 图像矩阵的按位运算</a></li>
+<li class="chapter" data-level="6.7" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E6%8E%A9%E7%A0%81%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>6.7</b> 图像矩阵的掩码运算</a></li>
+<li class="chapter" data-level="6.8" data-path="coremodule.html"><a href="coremodule.html#%E8%9E%8D%E5%90%88%E4%B8%A4%E4%B8%AA%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>6.8</b> 融合两个图像</a></li>
+<li class="chapter" data-level="6.9" data-path="coremodule.html"><a href="coremodule.html#%E6%94%B9%E5%8F%98%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AF%B9%E6%AF%94%E5%BA%A6%E5%92%8C%E4%BA%AE%E5%BA%A6"><i class="fa fa-check"></i><b>6.9</b> 改变图像的对比度和亮度</a>
+<ul>
+<li class="chapter" data-level="6.9.1" data-path="coremodule.html"><a href="coremodule.html#%E9%87%87%E7%94%A8%E7%BA%BF%E6%80%A7%E8%BF%90%E7%AE%97%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.9.1</b> 采用线性运算方式</a></li>
+<li class="chapter" data-level="6.9.2" data-path="coremodule.html"><a href="coremodule.html#%E9%87%87%E7%94%A8%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%BF%90%E7%AE%97%E6%96%B9%E5%BC%8F%E4%BC%BD%E9%A9%AC%E6%A0%A1%E6%AD%A3"><i class="fa fa-check"></i><b>6.9.2</b> 采用非线性运算方式：伽马校正</a></li>
+</ul></li>
+<li class="chapter" data-level="6.10" data-path="coremodule.html"><a href="coremodule.html#%E6%8B%86%E5%88%86%E6%88%96%E8%80%85%E5%90%88%E5%B9%B6%E5%9B%BE%E5%83%8F%E9%80%9A%E9%81%93"><i class="fa fa-check"></i><b>6.10</b> 拆分或者合并图像通道</a></li>
+<li class="chapter" data-level="6.11" data-path="coremodule.html"><a href="coremodule.html#%E7%A6%BB%E6%95%A3%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2dft"><i class="fa fa-check"></i><b>6.11</b> 离散傅里叶变换（DFT）</a></li>
+<li class="chapter" data-level="6.12" data-path="coremodule.html"><a href="coremodule.html#%E4%BD%BF%E7%94%A8xml%E5%92%8Cyaml%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA"><i class="fa fa-check"></i><b>6.12</b> 使用XML和YAML文件进行文件输入和输出</a>
+<ul>
+<li class="chapter" data-level="6.12.1" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-filestorage-%E5%86%99%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>6.12.1</b> 用 FileStorage 写文件</a></li>
+<li class="chapter" data-level="6.12.2" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-filestorage-%E8%AF%BB%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>6.12.2</b> 用 FileStorage 读文件</a></li>
+<li class="chapter" data-level="6.12.3" data-path="coremodule.html"><a href="coremodule.html#%E5%B5%8C%E5%A5%97%E7%BB%93%E6%9E%84"><i class="fa fa-check"></i><b>6.12.3</b> 嵌套结构</a></li>
+<li class="chapter" data-level="6.12.4" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-r-%E7%9A%84-xml-%E5%8C%85%E5%A4%84%E7%90%86%E4%BB%BB%E6%84%8F-xml"><i class="fa fa-check"></i><b>6.12.4</b> 用 R 的 XML 包处理任意 XML</a></li>
+<li class="chapter" data-level="6.12.5" data-path="coremodule.html"><a href="coremodule.html#yaml-%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>6.12.5</b> YAML 文件处理</a></li>
+</ul></li>
+<li class="chapter" data-level="6.13" data-path="coremodule.html"><a href="coremodule.html#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8opencv-parallel%E6%9D%A5%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%82%A8%E7%9A%84%E4%BB%A3%E7%A0%81"><i class="fa fa-check"></i><b>6.13</b> 如何使用OpenCV parallel来并行化您的代码</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="imgproc1.html"><a href="imgproc1.html"><i class="fa fa-check"></i><b>7</b> 图像处理（一）：颜色、几何变换与形态学</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="imgproc1.html"><a href="imgproc1.html#%E7%81%B0%E5%BA%A6%E5%8C%96"><i class="fa fa-check"></i><b>7.1</b> 灰度化</a></li>
+<li class="chapter" data-level="7.2" data-path="imgproc1.html"><a href="imgproc1.html#%E5%87%A0%E4%BD%95%E5%B0%BA%E5%AF%B8%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.2</b> 几何尺寸变换</a></li>
+<li class="chapter" data-level="7.3" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.3</b> 仿射变换</a></li>
+<li class="chapter" data-level="7.4" data-path="imgproc1.html"><a href="imgproc1.html#%E9%80%8F%E8%A7%86%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.4</b> 透视变换</a></li>
+<li class="chapter" data-level="7.5" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9F%BA%E7%A1%80%E7%BB%98%E5%9B%BE-1"><i class="fa fa-check"></i><b>7.5</b> 基础绘图</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="imgproc1.html"><a href="imgproc1.html#point%E4%B8%8Escalar"><i class="fa fa-check"></i><b>7.5.1</b> Point与Scalar</a></li>
+<li class="chapter" data-level="7.5.2" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E7%9B%B4%E7%BA%BF%E6%AE%B5"><i class="fa fa-check"></i><b>7.5.2</b> 绘制直线（段）</a></li>
+<li class="chapter" data-level="7.5.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.3</b> 绘制矩形</a></li>
+<li class="chapter" data-level="7.5.4" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%9C%86"><i class="fa fa-check"></i><b>7.5.4</b> 绘制圆</a></li>
+<li class="chapter" data-level="7.5.5" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E6%A4%AD%E5%9C%86%E5%BC%A7"><i class="fa fa-check"></i><b>7.5.5</b> 绘制椭圆弧</a></li>
+<li class="chapter" data-level="7.5.6" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%A4%9A%E8%BE%B9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.6</b> 绘制多边形</a></li>
+<li class="chapter" data-level="7.5.7" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%A1%AB%E5%85%85%E5%A4%9A%E8%BE%B9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.7</b> 绘制填充多边形</a></li>
+<li class="chapter" data-level="7.5.8" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E6%96%87%E6%9C%AC"><i class="fa fa-check"></i><b>7.5.8</b> 绘制文本</a></li>
+<li class="chapter" data-level="7.5.9" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E4%B8%80%E5%8E%9F%E5%AD%90%E4%B8%8E%E8%BD%A6"><i class="fa fa-check"></i><b>7.5.9</b> 综合示例一：原子与车</a></li>
+<li class="chapter" data-level="7.5.10" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E4%BA%8C%E9%9A%8F%E6%9C%BA%E7%BB%98%E5%9B%BE%E5%8A%A8%E7%94%BB"><i class="fa fa-check"></i><b>7.5.10</b> 综合示例二：随机绘图动画</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9F%BA%E6%9C%AC%E9%98%88%E5%80%BC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.6</b> 基本阈值运算</a>
+<ul>
+<li class="chapter" data-level="7.6.1" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%8C%E5%80%BC%E5%8C%96%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.1</b> 二值化阈值</a></li>
+<li class="chapter" data-level="7.6.2" data-path="imgproc1.html"><a href="imgproc1.html#%E9%80%86%E4%BA%8C%E5%80%BC%E5%8C%96%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.2</b> 逆二值化阈值</a></li>
+<li class="chapter" data-level="7.6.3" data-path="imgproc1.html"><a href="imgproc1.html#%E6%88%AA%E6%96%AD"><i class="fa fa-check"></i><b>7.6.3</b> 截断</a></li>
+<li class="chapter" data-level="7.6.4" data-path="imgproc1.html"><a href="imgproc1.html#%E4%B8%8B%E6%8A%98%E6%96%AD%E9%98%88%E5%80%BC%E4%BB%A5%E4%B8%8B%E4%B8%BA-0"><i class="fa fa-check"></i><b>7.6.4</b> 下折断（阈值以下为 0）</a></li>
+<li class="chapter" data-level="7.6.5" data-path="imgproc1.html"><a href="imgproc1.html#%E4%B8%8A%E6%8A%98%E6%96%AD%E9%98%88%E5%80%BC%E4%BB%A5%E4%B8%8A%E4%B8%BA-0"><i class="fa fa-check"></i><b>7.6.5</b> 上折断（阈值以上为 0）</a></li>
+<li class="chapter" data-level="7.6.6" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%94%E7%A7%8D%E6%A8%A1%E5%BC%8F%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9C%8B"><i class="fa fa-check"></i><b>7.6.6</b> 五种模式放在一起看</a></li>
+<li class="chapter" data-level="7.6.7" data-path="imgproc1.html"><a href="imgproc1.html#%E9%98%88%E5%80%BC%E5%87%BD%E6%95%B0%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8A%E6%8C%82%E7%9D%80%E5%AE%9E%E9%99%85%E7%94%A8%E7%9A%84%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.7</b> 阈值函数的返回值上挂着实际用的阈值</a></li>
+<li class="chapter" data-level="7.6.8" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E6%BB%91%E5%8A%A8%E6%9D%A1%E5%AE%9E%E6%97%B6%E8%B0%83%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.8</b> 综合示例：滑动条实时调阈值</a></li>
+<li class="chapter" data-level="7.6.9" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E5%8F%AA%E5%AF%B9%E5%B1%80%E9%83%A8%E5%8C%BA%E5%9F%9F%E5%81%9A%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.9</b> 综合示例：只对局部区域做阈值</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BD%BF%E7%94%A8inrange%E8%BF%9B%E8%A1%8C%E9%98%88%E5%80%BC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.7</b> 使用inRange进行阈值运算</a>
+<ul>
+<li class="chapter" data-level="7.7.1" data-path="imgproc1.html"><a href="imgproc1.html#hsv%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4"><i class="fa fa-check"></i><b>7.7.1</b> HSV色彩空间</a></li>
+<li class="chapter" data-level="7.7.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%AE%A1%E7%AE%97bgr%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E4%B8%AD%E6%8C%87%E5%AE%9A%E9%A2%9C%E8%89%B2%E5%AF%B9%E5%BA%94%E7%9A%84hsv%E9%A2%9C%E8%89%B2%E5%80%BC"><i class="fa fa-check"></i><b>7.7.2</b> 计算BGR颜色空间中指定颜色对应的HSV颜色值</a></li>
+<li class="chapter" data-level="7.7.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%94%A8-inrange-%E6%8F%90%E5%8F%96%E6%8C%87%E5%AE%9A%E9%A2%9C%E8%89%B2"><i class="fa fa-check"></i><b>7.7.3</b> 用 inRange 提取指定颜色</a></li>
+<li class="chapter" data-level="7.7.4" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%B0%83%E5%8F%82"><i class="fa fa-check"></i><b>7.7.4</b> 交互式调参</a></li>
+</ul></li>
+<li class="chapter" data-level="7.8" data-path="imgproc1.html"><a href="imgproc1.html#%E6%BC%AB%E6%B0%B4%E5%A1%AB%E5%85%85"><i class="fa fa-check"></i><b>7.8</b> 漫水填充</a></li>
+<li class="chapter" data-level="7.9" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9B%BE%E5%83%8F%E5%B9%B3%E6%BB%91"><i class="fa fa-check"></i><b>7.9</b> 图像平滑</a>
+<ul>
+<li class="chapter" data-level="7.9.1" data-path="imgproc1.html"><a href="imgproc1.html#%E5%B8%B8%E7%94%A8%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>7.9.1</b> 常用滤波器</a></li>
+<li class="chapter" data-level="7.9.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>7.9.2</b> 自定义滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="7.10" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BD%A2%E6%80%81%E5%AD%A6%E7%9A%84%E7%BB%93%E6%9E%84%E6%A0%B8"><i class="fa fa-check"></i><b>7.10</b> 形态学的结构核</a></li>
+<li class="chapter" data-level="7.11" data-path="imgproc1.html"><a href="imgproc1.html#%E8%85%90%E8%9A%80%E4%B8%8E%E8%86%A8%E8%83%80"><i class="fa fa-check"></i><b>7.11</b> 腐蚀与膨胀</a>
+<ul>
+<li class="chapter" data-level="7.11.1" data-path="imgproc1.html"><a href="imgproc1.html#%E8%86%A8%E8%83%80"><i class="fa fa-check"></i><b>7.11.1</b> 膨胀</a></li>
+<li class="chapter" data-level="7.11.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%85%90%E8%9A%80"><i class="fa fa-check"></i><b>7.11.2</b> 腐蚀</a></li>
+</ul></li>
+<li class="chapter" data-level="7.12" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BC%80%E8%BF%90%E7%AE%97%E9%97%AD%E8%BF%90%E7%AE%97%E5%92%8C%E5%BD%A2%E6%80%81%E5%AD%A6%E6%A2%AF%E5%BA%A6"><i class="fa fa-check"></i><b>7.12</b> 开运算、闭运算和形态学梯度</a>
+<ul>
+<li class="chapter" data-level="7.12.1" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BC%80%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.12.1</b> 开运算</a></li>
+<li class="chapter" data-level="7.12.2" data-path="imgproc1.html"><a href="imgproc1.html#%E9%97%AD%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.12.2</b> 闭运算</a></li>
+<li class="chapter" data-level="7.12.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%A4%BC%E5%B8%BD"><i class="fa fa-check"></i><b>7.12.3</b> 礼帽</a></li>
+<li class="chapter" data-level="7.12.4" data-path="imgproc1.html"><a href="imgproc1.html#%E9%BB%91%E5%B8%BD"><i class="fa fa-check"></i><b>7.12.4</b> 黑帽</a></li>
+<li class="chapter" data-level="7.12.5" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BD%A2%E6%80%81%E5%AD%A6%E6%A2%AF%E5%BA%A6"><i class="fa fa-check"></i><b>7.12.5</b> 形态学梯度</a></li>
+</ul></li>
+<li class="chapter" data-level="7.13" data-path="imgproc1.html"><a href="imgproc1.html#%E5%87%BB%E4%B8%AD-%E5%87%BB%E4%B8%8D%E4%B8%AD%E5%8F%98%E6%8D%A2hit-miss"><i class="fa fa-check"></i><b>7.13</b> 击中-击不中变换（hit-miss）</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="imgproc2.html"><a href="imgproc2.html"><i class="fa fa-check"></i><b>8</b> 图像处理（二）：边缘、霍夫变换与直方图</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="imgproc2.html"><a href="imgproc2.html#%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94"><i class="fa fa-check"></i><b>8.1</b> 图像金字塔</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="imgproc2.html"><a href="imgproc2.html#%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94gaussian-pyramid"><i class="fa fa-check"></i><b>8.1.1</b> 高斯金字塔（Gaussian pyramid）</a></li>
+<li class="chapter" data-level="8.1.2" data-path="imgproc2.html"><a href="imgproc2.html#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94laplacian-pyramid"><i class="fa fa-check"></i><b>8.1.2</b> 拉普拉斯金字塔（Laplacian pyramid）</a></li>
+<li class="chapter" data-level="8.1.3" data-path="imgproc2.html"><a href="imgproc2.html#dog%E9%87%91%E5%AD%97%E5%A1%94difference-of-gaussian-dog"><i class="fa fa-check"></i><b>8.1.3</b> DOG金字塔(Difference of Gaussian-DOG)</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="imgproc2.html"><a href="imgproc2.html#%E5%9B%BE%E5%83%8F%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>8.2</b> 图像边缘检测</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="imgproc2.html"><a href="imgproc2.html#sobel%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.1</b> Sobel算子</a></li>
+<li class="chapter" data-level="8.2.2" data-path="imgproc2.html"><a href="imgproc2.html#scharr%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.2</b> Scharr算子</a></li>
+<li class="chapter" data-level="8.2.3" data-path="imgproc2.html"><a href="imgproc2.html#laplace%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.3</b> Laplace算子</a></li>
+<li class="chapter" data-level="8.2.4" data-path="imgproc2.html"><a href="imgproc2.html#canny%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.4</b> Canny算子</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="imgproc2.html"><a href="imgproc2.html#%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>8.3</b> 霍夫直线变换</a></li>
+<li class="chapter" data-level="8.4" data-path="imgproc2.html"><a href="imgproc2.html#%E9%9C%8D%E5%A4%AB%E5%9C%86%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>8.4</b> 霍夫圆变换</a></li>
+<li class="chapter" data-level="8.5" data-path="imgproc2.html"><a href="imgproc2.html#%E9%87%8D%E6%98%A0%E5%B0%84"><i class="fa fa-check"></i><b>8.5</b> 重映射</a></li>
+<li class="chapter" data-level="8.6" data-path="imgproc2.html"><a href="imgproc2.html#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2-1"><i class="fa fa-check"></i><b>8.6</b> 仿射变换</a></li>
+<li class="chapter" data-level="8.7" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E8%AE%A1%E7%AE%97"><i class="fa fa-check"></i><b>8.7</b> 直方图计算</a></li>
+<li class="chapter" data-level="8.8" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%9D%87%E8%A1%A1%E5%8C%96"><i class="fa fa-check"></i><b>8.8</b> 直方图均衡化</a></li>
+<li class="chapter" data-level="8.9" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E6%AF%94%E8%BE%83"><i class="fa fa-check"></i><b>8.9</b> 直方图比较</a></li>
+<li class="chapter" data-level="8.10" data-path="imgproc2.html"><a href="imgproc2.html#%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10</b> 反向投影</a>
+<ul>
+<li class="chapter" data-level="8.10.1" data-path="imgproc2.html"><a href="imgproc2.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%80%9A%E9%81%93%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%9A%84%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10.1</b> 单通道图像基于单通道直方图的反向投影</a></li>
+<li class="chapter" data-level="8.10.2" data-path="imgproc2.html"><a href="imgproc2.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F%E5%9F%BA%E4%BA%8E%E5%8F%8C%E9%80%9A%E9%81%93%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%9A%84%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10.2</b> 三通道图像基于双通道直方图的反向投影</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="imgproc3.html"><a href="imgproc3.html"><i class="fa fa-check"></i><b>9</b> 图像处理（三）：轮廓、几何拟合与图像分割</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="imgproc3.html"><a href="imgproc3.html#%E6%A8%A1%E6%9D%BF%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>9.1</b> 模板匹配</a></li>
+<li class="chapter" data-level="9.2" data-path="imgproc3.html"><a href="imgproc3.html#%E6%9F%A5%E6%89%BE%E8%BD%AE%E5%BB%93"><i class="fa fa-check"></i><b>9.2</b> 查找轮廓</a></li>
+<li class="chapter" data-level="9.3" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E5%87%B8%E9%9B%86%E5%87%B8%E5%8C%85"><i class="fa fa-check"></i><b>9.3</b> 计算最小包含凸集（凸包）</a></li>
+<li class="chapter" data-level="9.4" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E7%9F%A9%E5%BD%A2%E5%9C%86%E5%BD%A2%E6%88%96%E8%80%85%E4%B8%89%E8%A7%92%E5%BD%A2"><i class="fa fa-check"></i><b>9.4</b> 计算最小包含矩形、圆形或者三角形</a></li>
+<li class="chapter" data-level="9.5" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E6%88%96%E8%80%85%E6%A4%AD%E5%9C%86"><i class="fa fa-check"></i><b>9.5</b> 计算最小包含旋转矩形或者椭圆</a></li>
+<li class="chapter" data-level="9.6" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9F%A9"><i class="fa fa-check"></i><b>9.6</b> 图像的矩</a></li>
+<li class="chapter" data-level="9.7" data-path="imgproc3.html"><a href="imgproc3.html#point-polygon%E6%B5%8B%E8%AF%95"><i class="fa fa-check"></i><b>9.7</b> Point Polygon测试</a></li>
+<li class="chapter" data-level="9.8" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9F%BA%E4%BA%8E%E8%B7%9D%E7%A6%BB%E5%8F%98%E6%8D%A2%E5%92%8C%E5%88%86%E6%B0%B4%E5%B2%AD%E7%AE%97%E6%B3%95%E7%9A%84%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>9.8</b> 基于距离变换和分水岭算法的图像分割</a>
+<ul>
+<li class="chapter" data-level="9.8.1" data-path="imgproc3.html"><a href="imgproc3.html#%E6%A8%A1%E7%B3%8A%E9%80%80%E5%8C%96%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>9.8.1</b> 模糊（退化）图像</a></li>
+<li class="chapter" data-level="9.8.2" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9B%BE%E5%83%8F%E5%8E%BB%E6%A8%A1%E7%B3%8A"><i class="fa fa-check"></i><b>9.8.2</b> 图像去模糊</a></li>
+<li class="chapter" data-level="9.8.3" data-path="imgproc3.html"><a href="imgproc3.html#%E7%BB%B4%E7%BA%B3%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.8.3</b> 维纳滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="9.9" data-path="imgproc3.html"><a href="imgproc3.html#%E8%BF%90%E5%8A%A8%E5%8E%BB%E6%A8%A1%E7%B3%8A%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.9</b> 运动去模糊滤波器</a>
+<ul>
+<li class="chapter" data-level="9.9.1" data-path="imgproc3.html"><a href="imgproc3.html#%E7%94%9F%E6%88%90%E8%BF%90%E5%8A%A8%E6%A8%A1%E7%B3%8A"><i class="fa fa-check"></i><b>9.9.1</b> 生成运动模糊</a></li>
+<li class="chapter" data-level="9.9.2" data-path="imgproc3.html"><a href="imgproc3.html#%E8%BF%90%E5%8A%A8%E6%A8%A1%E7%B3%8A%E5%9B%BE%E5%83%8F%E7%9A%84psf"><i class="fa fa-check"></i><b>9.9.2</b> 运动模糊图像的PSF</a></li>
+</ul></li>
+<li class="chapter" data-level="9.10" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9F%BA%E4%BA%8E%E6%A2%AF%E5%BA%A6%E7%BB%93%E6%9E%84%E5%BC%A0%E9%87%8F%E7%9A%84%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>9.10</b> 基于梯度结构张量的各向异性图像分割</a></li>
+<li class="chapter" data-level="9.11" data-path="imgproc3.html"><a href="imgproc3.html#%E5%91%A8%E6%9C%9F%E5%8E%BB%E5%99%AA%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.11</b> 周期去噪滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="calib.html"><a href="calib.html"><i class="fa fa-check"></i><b>10</b> 摄像机标定和三维重建（calib3d模块）</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="calib.html"><a href="calib.html#%E5%88%9B%E5%BB%BA%E6%A0%A1%E5%87%86%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%88%B6%E6%A3%8B%E7%9B%98%E6%A0%BC"><i class="fa fa-check"></i><b>10.1</b> 创建校准模式（绘制棋盘格）</a></li>
+<li class="chapter" data-level="10.2" data-path="calib.html"><a href="calib.html#%E6%96%B9%E6%A3%8B%E7%9B%98%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A"><i class="fa fa-check"></i><b>10.2</b> 方棋盘摄像机标定</a></li>
+<li class="chapter" data-level="10.3" data-path="calib.html"><a href="calib.html#%E5%8D%95%E5%BA%94%E6%80%A7%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>10.3</b> 单应性矩阵</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="calib.html"><a href="calib.html#%E5%8D%95%E5%BA%94%E5%8F%98%E6%8D%A2%E7%9A%84%E7%94%A8%E9%80%94"><i class="fa fa-check"></i><b>10.3.1</b> 单应变换的用途？</a></li>
+<li class="chapter" data-level="10.3.2" data-path="calib.html"><a href="calib.html#%E5%85%B1%E9%9D%A2%E7%82%B9%E7%9A%84%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1"><i class="fa fa-check"></i><b>10.3.2</b> 共面点的姿态估计</a></li>
+<li class="chapter" data-level="10.3.3" data-path="calib.html"><a href="calib.html#%E5%9B%BE%E5%83%8F%E8%9E%8D%E5%90%88"><i class="fa fa-check"></i><b>10.3.3</b> 图像融合</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="feature2d.html"><a href="feature2d.html"><i class="fa fa-check"></i><b>11</b> 2D特征框架（feature2d模块）</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="feature2d.html"><a href="feature2d.html#%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><i class="fa fa-check"></i><b>11.1</b> 角点检测基本思想</a></li>
+<li class="chapter" data-level="11.2" data-path="feature2d.html"><a href="feature2d.html#harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%99%A8"><i class="fa fa-check"></i><b>11.2</b> Harris角点检测器</a></li>
+<li class="chapter" data-level="11.3" data-path="feature2d.html"><a href="feature2d.html#shi-tomasi%E8%A7%92%E7%82%B9%E6%8E%A2%E6%B5%8B%E5%99%A8"><i class="fa fa-check"></i><b>11.3</b> Shi-Tomasi角点探测器</a></li>
+<li class="chapter" data-level="11.4" data-path="feature2d.html"><a href="feature2d.html#%E9%80%9A%E8%BF%87cornereigenvalsandvecs%E5%AE%9E%E7%8E%B0harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.4</b> 通过cornerEigenValsAndVecs实现Harris角点检测</a></li>
+<li class="chapter" data-level="11.5" data-path="feature2d.html"><a href="feature2d.html#%E9%80%9A%E8%BF%87cornermineigenval%E5%AE%9E%E7%8E%B0shitomasi%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.5</b> 通过cornerMinEigenVal实现ShiTomasi角点检测</a></li>
+<li class="chapter" data-level="11.6" data-path="feature2d.html"><a href="feature2d.html#%E4%BA%9A%E5%83%8F%E7%B4%A0%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.6</b> 亚像素角点检测</a></li>
+<li class="chapter" data-level="11.7" data-path="feature2d.html"><a href="feature2d.html#featuredetector%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.7</b> FeatureDetector关键点检测</a></li>
+<li class="chapter" data-level="11.8" data-path="feature2d.html"><a href="feature2d.html#orb%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.8</b> ORB关键点检测</a></li>
+<li class="chapter" data-level="11.9" data-path="feature2d.html"><a href="feature2d.html#surf%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.9</b> SURF关键点检测</a></li>
+<li class="chapter" data-level="11.10" data-path="feature2d.html"><a href="feature2d.html#sift%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.10</b> SIFT关键点检测</a></li>
+<li class="chapter" data-level="11.11" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Ebfmatcher%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.11</b> 基于BFMatcher的特征匹配</a></li>
+<li class="chapter" data-level="11.12" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Eflann%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.12</b> 基于FLANN的特征匹配</a></li>
+<li class="chapter" data-level="11.13" data-path="feature2d.html"><a href="feature2d.html#%E7%BB%93%E5%90%88%E5%8D%95%E5%BA%94%E7%9F%A9%E9%98%B5%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87"><i class="fa fa-check"></i><b>11.13</b> 结合单应矩阵定位目标</a></li>
+<li class="chapter" data-level="11.14" data-path="feature2d.html"><a href="feature2d.html#akaze%E5%B1%80%E9%83%A8%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.14</b> AKAZE局部特征匹配</a></li>
+<li class="chapter" data-level="11.15" data-path="feature2d.html"><a href="feature2d.html#akaze%E5%92%8Corb%E5%B9%B3%E9%9D%A2%E8%B7%9F%E8%B8%AA"><i class="fa fa-check"></i><b>11.15</b> AKAZE和ORB平面跟踪</a></li>
+<li class="chapter" data-level="11.16" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Ehogdescriptor%E7%9A%84%E5%B9%B3%E9%9D%A2%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.16</b> 基于HOGDescriptor的平面目标检测</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="video.html"><a href="video.html"><i class="fa fa-check"></i><b>12</b> 视频处理（视频IO以及Video模块）</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="video.html"><a href="video.html#%E8%AF%BB%E5%85%A5%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%B9%B6%E6%89%93%E5%BC%80"><i class="fa fa-check"></i><b>12.1</b> 读入视频文件并打开</a></li>
+<li class="chapter" data-level="12.2" data-path="video.html"><a href="video.html#%E8%A7%86%E9%A2%91%E7%9B%B8%E4%BC%BC%E6%80%A7%E5%BA%A6%E9%87%8F"><i class="fa fa-check"></i><b>12.2</b> 视频相似性度量</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="video.html"><a href="video.html#psnr%E5%B3%B0%E5%80%BC%E4%BF%A1%E5%99%AA%E6%AF%94"><i class="fa fa-check"></i><b>12.2.1</b> PSNR（峰值信噪比）</a></li>
+<li class="chapter" data-level="12.2.2" data-path="video.html"><a href="video.html#ssim%E7%BB%93%E6%9E%84%E7%9B%B8%E4%BC%BC%E6%80%A7"><i class="fa fa-check"></i><b>12.2.2</b> SSIM（结构相似性）</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="video.html"><a href="video.html#%E8%83%8C%E6%99%AF%E5%87%8F%E9%99%A4"><i class="fa fa-check"></i><b>12.3</b> 背景减除</a></li>
+<li class="chapter" data-level="12.4" data-path="video.html"><a href="video.html#meanshift-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>12.4</b> MeanShift 图像分割</a></li>
+<li class="chapter" data-level="12.5" data-path="video.html"><a href="video.html#camshift-%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA"><i class="fa fa-check"></i><b>12.5</b> CamShift 目标跟踪</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="video.html"><a href="video.html#%E5%85%88%E8%AF%B4%E6%B8%85%E6%A5%9A%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E7%9B%AE%E6%A0%87%E8%83%BD%E8%A2%AB%E8%B7%9F%E4%BD%8F"><i class="fa fa-check"></i><b>12.5.1</b> 先说清楚：什么样的目标能被跟住</a></li>
+<li class="chapter" data-level="12.5.2" data-path="video.html"><a href="video.html#%E4%B8%80%E4%B8%AA%E8%83%BD%E8%B7%9F%E4%BD%8F%E7%9A%84%E4%BE%8B%E5%AD%90"><i class="fa fa-check"></i><b>12.5.2</b> 一个能跟住的例子</a></li>
+</ul></li>
+<li class="chapter" data-level="12.6" data-path="video.html"><a href="video.html#%E5%85%89%E6%B5%81"><i class="fa fa-check"></i><b>12.6</b> 光流</a>
+<ul>
+<li class="chapter" data-level="12.6.1" data-path="video.html"><a href="video.html#%E7%A8%80%E7%96%8F%E5%85%89%E6%B5%81lucas-kanade"><i class="fa fa-check"></i><b>12.6.1</b> 稀疏光流：Lucas-Kanade</a></li>
+<li class="chapter" data-level="12.6.2" data-path="video.html"><a href="video.html#%E7%A8%A0%E5%AF%86%E5%85%89%E6%B5%81farneback"><i class="fa fa-check"></i><b>12.6.2</b> 稠密光流：Farneback</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="postscript.html"><a href="postscript.html"><i class="fa fa-check"></i>后记</a></li>
+<li class="appendix"><span><b>附录</b></span></li>
+<li class="chapter" data-level="A" data-path="sound.html"><a href="sound.html"><i class="fa fa-check"></i><b>A</b> 余音绕梁</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>参考文献</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">本书由 bookdown 强力驱动</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ROpenCV — R与OpenCV之间的桥梁 — 之基础教程</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="calib" class="section level1 hasAnchor" number="10">
+<h1><span class="header-section-number">第 10 章</span> 摄像机标定和三维重建（calib3d模块）<a href="calib.html#calib" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>本章反复要把「点的列表」交给 OpenCV，而 OpenCV 那边的类型是 <code>vector&lt;Point2f&gt;</code>、
+<code>vector&lt;Point3f&gt;</code>，到了 R 侧必须变成<strong>多通道 Mat</strong>。先定义两个小工具，后面一直用：</p>
+<div class="sourceCode" id="cb1657"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1657-1"><a href="calib.html#cb1657-1" tabindex="-1"></a><span class="co">#把 n×2 的 R 矩阵（每行一个 (x,y)）转成 OpenCV 要的 CV_32FC2 Mat</span></span>
+<span id="cb1657-2"><a href="calib.html#cb1657-2" tabindex="-1"></a>pts2f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
+<span id="cb1657-3"><a href="calib.html#cb1657-3" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC2)</span>
+<span id="cb1657-4"><a href="calib.html#cb1657-4" tabindex="-1"></a>  <span class="co">#注意这一行：多通道 Mat 的 [] 赋值是**按通道**铺开的，</span></span>
+<span id="cb1657-5"><a href="calib.html#cb1657-5" tabindex="-1"></a>  <span class="co">#先写完全部 x、再写完全部 y，不是 (x1,y1,x2,y2) 那样交错</span></span>
+<span id="cb1657-6"><a href="calib.html#cb1657-6" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>])</span>
+<span id="cb1657-7"><a href="calib.html#cb1657-7" tabindex="-1"></a>  out</span>
+<span id="cb1657-8"><a href="calib.html#cb1657-8" tabindex="-1"></a>}</span>
+<span id="cb1657-9"><a href="calib.html#cb1657-9" tabindex="-1"></a></span>
+<span id="cb1657-10"><a href="calib.html#cb1657-10" tabindex="-1"></a><span class="co">#把 n×3 的 R 矩阵（每行一个 (x,y,z)）转成 CV_32FC3 Mat</span></span>
+<span id="cb1657-11"><a href="calib.html#cb1657-11" tabindex="-1"></a>pts3f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
+<span id="cb1657-12"><a href="calib.html#cb1657-12" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC3)</span>
+<span id="cb1657-13"><a href="calib.html#cb1657-13" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>],m[,<span class="dv">3</span>])</span>
+<span id="cb1657-14"><a href="calib.html#cb1657-14" tabindex="-1"></a>  out</span>
+<span id="cb1657-15"><a href="calib.html#cb1657-15" tabindex="-1"></a>}</span></code></pre></div>
+<blockquote>
+<p><strong>为什么不能直接传 R 矩阵？</strong></p>
+<p><code>matrix(...,ncol=2)</code> 建出来是 <code>CV_64FC1</code> 的 4×2 矩阵，不是一个「点集」。
+<code>calibrateCamera</code>、<code>solvePnP</code>、<code>findHomography</code> 这一族要的是
+<code>CV_32FC2</code> 且 <code>checkVector(2, CV_32F) == 点数</code>，类型或布局。</p>
+<p>而 <code>cv_findChessboardCorners</code> 这类<strong>输出</strong>角点的函数，交回来的是
+<code>1 × N × 2</code> 的 cvMat，取数据要用
+<code>matrix(as_array(x, numeric = TRUE), ncol = 2)</code> 才能变成「每行一个点」。</p>
+</blockquote>
+<div id="创建校准模式绘制棋盘格" class="section level2 hasAnchor" number="10.1">
+<h2><span class="header-section-number">10.1</span> 创建校准模式（绘制棋盘格）<a href="calib.html#%E5%88%9B%E5%BB%BA%E6%A0%A1%E5%87%86%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%88%B6%E6%A3%8B%E7%9B%98%E6%A0%BC" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>标定要用棋盘格。可以不用图像矩阵，直接在 R 里画：</p>
+<div class="sourceCode" id="cb1658"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1658-1"><a href="calib.html#cb1658-1" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
+<span id="cb1658-2"><a href="calib.html#cb1658-2" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb1658-3"><a href="calib.html#cb1658-3" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
+<span id="cb1658-4"><a href="calib.html#cb1658-4" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb1658-5"><a href="calib.html#cb1658-5" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
+<span id="cb1658-6"><a href="calib.html#cb1658-6" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
+<span id="cb1658-7"><a href="calib.html#cb1658-7" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
+<span id="cb1658-8"><a href="calib.html#cb1658-8" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb1658-9"><a href="calib.html#cb1658-9" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span id="cb1658-10"><a href="calib.html#cb1658-10" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb1658-11"><a href="calib.html#cb1658-11" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb1658-12"><a href="calib.html#cb1658-12" tabindex="-1"></a></span>
+<span id="cb1658-13"><a href="calib.html#cb1658-13" tabindex="-1"></a><span class="co">#生成空图</span></span>
+<span id="cb1658-14"><a href="calib.html#cb1658-14" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span>h,<span class="at">type =</span> <span class="st">&quot;n&quot;</span>,<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,w),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,h),<span class="at">bty =</span> <span class="st">&quot;n&quot;</span>,</span>
+<span id="cb1658-15"><a href="calib.html#cb1658-15" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>,<span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,<span class="at">xaxt =</span> <span class="st">&quot;n&quot;</span>,<span class="at">yaxt =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb1658-16"><a href="calib.html#cb1658-16" tabindex="-1"></a></span>
+<span id="cb1658-17"><a href="calib.html#cb1658-17" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
+<span id="cb1658-18"><a href="calib.html#cb1658-18" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
+<span id="cb1658-19"><a href="calib.html#cb1658-19" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb1658-20"><a href="calib.html#cb1658-20" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb1658-21"><a href="calib.html#cb1658-21" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格</span></span>
+<span id="cb1658-22"><a href="calib.html#cb1658-22" tabindex="-1"></a>    <span class="fu">rect</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,i<span class="sc">*</span>cell_w,j<span class="sc">*</span>cell_h,</span>
+<span id="cb1658-23"><a href="calib.html#cb1658-23" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">ifelse</span>(isWhite,<span class="st">&quot;white&quot;</span>,<span class="st">&quot;black&quot;</span>),<span class="at">border =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb1658-24"><a href="calib.html#cb1658-24" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb1658-25"><a href="calib.html#cb1658-25" tabindex="-1"></a>  }</span>
+<span id="cb1658-26"><a href="calib.html#cb1658-26" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb1658-27"><a href="calib.html#cb1658-27" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span id="cb1658-28"><a href="calib.html#cb1658-28" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb1658-29"><a href="calib.html#cb1658-29" tabindex="-1"></a>  }</span>
+<span id="cb1658-30"><a href="calib.html#cb1658-30" tabindex="-1"></a>}</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-801-1.png" alt="" width="672" /></p>
+<p>也可以生成一张图像矩阵，用 <code>cv_rectangle</code> 一格一格填：</p>
+<div class="sourceCode" id="cb1659"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1659-1"><a href="calib.html#cb1659-1" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
+<span id="cb1659-2"><a href="calib.html#cb1659-2" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb1659-3"><a href="calib.html#cb1659-3" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
+<span id="cb1659-4"><a href="calib.html#cb1659-4" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb1659-5"><a href="calib.html#cb1659-5" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
+<span id="cb1659-6"><a href="calib.html#cb1659-6" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
+<span id="cb1659-7"><a href="calib.html#cb1659-7" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
+<span id="cb1659-8"><a href="calib.html#cb1659-8" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb1659-9"><a href="calib.html#cb1659-9" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span id="cb1659-10"><a href="calib.html#cb1659-10" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb1659-11"><a href="calib.html#cb1659-11" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb1659-12"><a href="calib.html#cb1659-12" tabindex="-1"></a></span>
+<span id="cb1659-13"><a href="calib.html#cb1659-13" tabindex="-1"></a><span class="co">#生成全白图像矩阵（Mat 的第 4 个参数是初始值）</span></span>
+<span id="cb1659-14"><a href="calib.html#cb1659-14" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(h,w,CV_8UC1,<span class="dv">255</span>)</span>
+<span id="cb1659-15"><a href="calib.html#cb1659-15" tabindex="-1"></a></span>
+<span id="cb1659-16"><a href="calib.html#cb1659-16" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
+<span id="cb1659-17"><a href="calib.html#cb1659-17" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
+<span id="cb1659-18"><a href="calib.html#cb1659-18" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb1659-19"><a href="calib.html#cb1659-19" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb1659-20"><a href="calib.html#cb1659-20" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格：Rect 就是 c(x, y, width, height)</span></span>
+<span id="cb1659-21"><a href="calib.html#cb1659-21" tabindex="-1"></a>    rct <span class="ot">=</span> <span class="fu">c</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,cell_w,cell_h)</span>
+<span id="cb1659-22"><a href="calib.html#cb1659-22" tabindex="-1"></a>    <span class="cf">if</span>(isWhite){</span>
+<span id="cb1659-23"><a href="calib.html#cb1659-23" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">255</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb1659-24"><a href="calib.html#cb1659-24" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb1659-25"><a href="calib.html#cb1659-25" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb1659-26"><a href="calib.html#cb1659-26" tabindex="-1"></a>    }</span>
+<span id="cb1659-27"><a href="calib.html#cb1659-27" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb1659-28"><a href="calib.html#cb1659-28" tabindex="-1"></a>  }</span>
+<span id="cb1659-29"><a href="calib.html#cb1659-29" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb1659-30"><a href="calib.html#cb1659-30" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span id="cb1659-31"><a href="calib.html#cb1659-31" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb1659-32"><a href="calib.html#cb1659-32" tabindex="-1"></a>  }</span>
+<span id="cb1659-33"><a href="calib.html#cb1659-33" tabindex="-1"></a>}</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-803-1.png" alt="" width="672" /></p>
+</div>
+<div id="方棋盘摄像机标定" class="section level2 hasAnchor" number="10.2">
+<h2><span class="header-section-number">10.2</span> 方棋盘摄像机标定<a href="calib.html#%E6%96%B9%E6%A3%8B%E7%9B%98%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>示例</strong></p>
+<p>基于以下方棋盘图像进行相机标定（<code>images/calib/</code> 下有 13 张）：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-804-1.png" alt="" width="672" /></p>
+<p>接下来做标定。分四步：造世界坐标 → 找角点 → 标定 → 存参数。</p>
+<p><strong>第一步：世界坐标</strong></p>
+<p>棋盘是平面，所以每个角点的三维坐标可以取 <span class="math inline">\(z=0\)</span> 的整数格点：</p>
+<div class="sourceCode" id="cb1660"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1660-1"><a href="calib.html#cb1660-1" tabindex="-1"></a><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
+<span id="cb1660-2"><a href="calib.html#cb1660-2" tabindex="-1"></a>ptsnum_perrow <span class="ot">=</span> <span class="dv">6</span></span>
+<span id="cb1660-3"><a href="calib.html#cb1660-3" tabindex="-1"></a><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
+<span id="cb1660-4"><a href="calib.html#cb1660-4" tabindex="-1"></a>ptsnum_percolumn <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb1660-5"><a href="calib.html#cb1660-5" tabindex="-1"></a></span>
+<span id="cb1660-6"><a href="calib.html#cb1660-6" tabindex="-1"></a><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
+<span id="cb1660-7"><a href="calib.html#cb1660-7" tabindex="-1"></a><span class="co">#外层走 x（行），内层走 y（列），和 findChessboardCorners 的返回顺序一致</span></span>
+<span id="cb1660-8"><a href="calib.html#cb1660-8" tabindex="-1"></a>obj_world_pts <span class="ot">=</span> <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_perrow<span class="dv">-1</span>),<span class="cf">function</span>(x){</span>
+<span id="cb1660-9"><a href="calib.html#cb1660-9" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_percolumn<span class="dv">-1</span>),<span class="cf">function</span>(y) <span class="fu">c</span>(y,x,<span class="dv">0</span>)))</span>
+<span id="cb1660-10"><a href="calib.html#cb1660-10" tabindex="-1"></a>}))</span>
+<span id="cb1660-11"><a href="calib.html#cb1660-11" tabindex="-1"></a></span>
+<span id="cb1660-12"><a href="calib.html#cb1660-12" tabindex="-1"></a><span class="fu">dim</span>(obj_world_pts)</span></code></pre></div>
+<pre><code>## [1] 54  3</code></pre>
+<div class="sourceCode" id="cb1662"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1662-1"><a href="calib.html#cb1662-1" tabindex="-1"></a><span class="fu">head</span>(obj_world_pts,<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0    0    0
+## [2,]    1    0    0
+## [3,]    2    0    0</code></pre>
+<div class="sourceCode" id="cb1664"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1664-1"><a href="calib.html#cb1664-1" tabindex="-1"></a><span class="fu">tail</span>(obj_world_pts,<span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3]
+## [53,]    7    5    0
+## [54,]    8    5    0</code></pre>
+<blockquote>
+<p>一共 <code>6 × 9 = 54</code> 个点，坐标从 <code>(0,0,0)</code> 到 <code>(8,5,0)</code>。</p>
+<p><strong>顺序不能随便改。</strong> <code>findChessboardCorners</code> 返回的角点是按「逐行、从左到右」
+排的，世界坐标必须按同样的顺序排，否则解出来的位姿是转了个身的。
+这里外层 <code>x</code>、内层 <code>y</code> 正是原书 <code>for(x...) for(y...)</code> 的顺序。</p>
+</blockquote>
+<p><strong>第二步：逐张找角点</strong></p>
+<div class="sourceCode" id="cb1666"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1666-1"><a href="calib.html#cb1666-1" tabindex="-1"></a><span class="co">#指定棋盘文件的路径以及棋盘文件名称</span></span>
+<span id="cb1666-2"><a href="calib.html#cb1666-2" tabindex="-1"></a>image_path <span class="ot">=</span> <span class="st">&quot;images/calib&quot;</span></span>
+<span id="cb1666-3"><a href="calib.html#cb1666-3" tabindex="-1"></a>imgfiles <span class="ot">=</span> <span class="fu">list.files</span>(image_path)</span>
+<span id="cb1666-4"><a href="calib.html#cb1666-4" tabindex="-1"></a></span>
+<span id="cb1666-5"><a href="calib.html#cb1666-5" tabindex="-1"></a><span class="co">#对于每个棋盘图像文件，若能找寻到角点，则将其依次存入img_points列表中</span></span>
+<span id="cb1666-6"><a href="calib.html#cb1666-6" tabindex="-1"></a>img_points <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb1666-7"><a href="calib.html#cb1666-7" tabindex="-1"></a><span class="co">#对应的三维坐标（每张图都一样，就是 obj_world_pts）</span></span>
+<span id="cb1666-8"><a href="calib.html#cb1666-8" tabindex="-1"></a>obj_points <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb1666-9"><a href="calib.html#cb1666-9" tabindex="-1"></a></span>
+<span id="cb1666-10"><a href="calib.html#cb1666-10" tabindex="-1"></a><span class="co">#先把世界坐标转成 CV_32FC3 的 Mat，13 张图共用这一个</span></span>
+<span id="cb1666-11"><a href="calib.html#cb1666-11" tabindex="-1"></a>obj_world_mat <span class="ot">=</span> <span class="fu">pts3f</span>(obj_world_pts)</span>
+<span id="cb1666-12"><a href="calib.html#cb1666-12" tabindex="-1"></a></span>
+<span id="cb1666-13"><a href="calib.html#cb1666-13" tabindex="-1"></a><span class="co">#迭代终止条件，用于寻找亚像素级别的角点：c(类型, 最大次数, 精度)</span></span>
+<span id="cb1666-14"><a href="calib.html#cb1666-14" tabindex="-1"></a><span class="co">#EPS + MAX_ITER = 2 + 1 = 3，即 COUNT|EPS</span></span>
+<span id="cb1666-15"><a href="calib.html#cb1666-15" tabindex="-1"></a>criteria <span class="ot">=</span> <span class="fu">c</span>(EPS<span class="sc">+</span>MAX_ITER,<span class="dv">30</span>,<span class="fl">0.001</span>)</span>
+<span id="cb1666-16"><a href="calib.html#cb1666-16" tabindex="-1"></a></span>
+<span id="cb1666-17"><a href="calib.html#cb1666-17" tabindex="-1"></a><span class="co">#循环处理每个棋盘文件</span></span>
+<span id="cb1666-18"><a href="calib.html#cb1666-18" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(imgfiles)){</span>
+<span id="cb1666-19"><a href="calib.html#cb1666-19" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="fu">paste0</span>(image_path,<span class="st">&quot;/&quot;</span>,imgfiles[i]),IMREAD_GRAYSCALE)</span>
+<span id="cb1666-20"><a href="calib.html#cb1666-20" tabindex="-1"></a></span>
+<span id="cb1666-21"><a href="calib.html#cb1666-21" tabindex="-1"></a>  <span class="co">#检测棋盘角点：patternSize 是 c(每行角点数, 每列角点数)</span></span>
+<span id="cb1666-22"><a href="calib.html#cb1666-22" tabindex="-1"></a>  r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span><span class="dt">L</span>)</span>
+<span id="cb1666-23"><a href="calib.html#cb1666-23" tabindex="-1"></a>  <span class="co">#「找到没有」不在返回值上，在 attr(, &quot;value&quot;) 上</span></span>
+<span id="cb1666-24"><a href="calib.html#cb1666-24" tabindex="-1"></a>  found_success <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">&quot;value&quot;</span>)</span>
+<span id="cb1666-25"><a href="calib.html#cb1666-25" tabindex="-1"></a></span>
+<span id="cb1666-26"><a href="calib.html#cb1666-26" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">isTRUE</span>(found_success)){</span>
+<span id="cb1666-27"><a href="calib.html#cb1666-27" tabindex="-1"></a>    <span class="co">#把 1×54×2 的 cvMat 摊成 54×2 的矩阵，再转回 CV_32FC2 交给 cornerSubPix</span></span>
+<span id="cb1666-28"><a href="calib.html#cb1666-28" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1666-29"><a href="calib.html#cb1666-29" tabindex="-1"></a>    <span class="co">#进一步取得亚像素棋盘角点</span></span>
+<span id="cb1666-30"><a href="calib.html#cb1666-30" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb1666-31"><a href="calib.html#cb1666-31" tabindex="-1"></a></span>
+<span id="cb1666-32"><a href="calib.html#cb1666-32" tabindex="-1"></a>    <span class="co">#将棋盘角点的三维坐标存入obj_points中</span></span>
+<span id="cb1666-33"><a href="calib.html#cb1666-33" tabindex="-1"></a>    obj_points[[<span class="fu">length</span>(obj_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> obj_world_mat</span>
+<span id="cb1666-34"><a href="calib.html#cb1666-34" tabindex="-1"></a>    <span class="co">#将棋盘角点的二维坐标存入img_points中</span></span>
+<span id="cb1666-35"><a href="calib.html#cb1666-35" tabindex="-1"></a>    img_points[[<span class="fu">length</span>(img_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> corners</span>
+<span id="cb1666-36"><a href="calib.html#cb1666-36" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb1666-37"><a href="calib.html#cb1666-37" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">&quot;没找到角点：&quot;</span>,imgfiles[i])</span>
+<span id="cb1666-38"><a href="calib.html#cb1666-38" tabindex="-1"></a>  }</span>
+<span id="cb1666-39"><a href="calib.html#cb1666-39" tabindex="-1"></a>}</span>
+<span id="cb1666-40"><a href="calib.html#cb1666-40" tabindex="-1"></a></span>
+<span id="cb1666-41"><a href="calib.html#cb1666-41" tabindex="-1"></a><span class="fu">length</span>(obj_points)</span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<div class="sourceCode" id="cb1668"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1668-1"><a href="calib.html#cb1668-1" tabindex="-1"></a><span class="fu">length</span>(img_points)</span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<p>把检测结果画出来看看：</p>
+<div class="sourceCode" id="cb1670"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1670-1"><a href="calib.html#cb1670-1" tabindex="-1"></a><span class="co">#挑一张有角点的图，把角点画上去</span></span>
+<span id="cb1670-2"><a href="calib.html#cb1670-2" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/calib/left01.jpg&quot;</span>)</span>
+<span id="cb1670-3"><a href="calib.html#cb1670-3" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),</span>
+<span id="cb1670-4"><a href="calib.html#cb1670-4" tabindex="-1"></a>                             <span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span><span class="dt">L</span>)</span>
+<span id="cb1670-5"><a href="calib.html#cb1670-5" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1670-6"><a href="calib.html#cb1670-6" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),<span class="fu">pts2f</span>(corners),</span>
+<span id="cb1670-7"><a href="calib.html#cb1670-7" tabindex="-1"></a>                          <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb1670-8"><a href="calib.html#cb1670-8" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_drawChessboardCorners</span>(img_draw,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),</span>
+<span id="cb1670-9"><a href="calib.html#cb1670-9" tabindex="-1"></a>                                    corners,<span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-808-1.png" alt="" width="672" /></p>
+<p><strong>第三步：标定</strong></p>
+<div class="sourceCode" id="cb1671"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1671-1"><a href="calib.html#cb1671-1" tabindex="-1"></a><span class="co">#获取图像的尺寸（mat_info 返回 c(行, 列, 通道, 类型码, 深度码)）</span></span>
+<span id="cb1671-2"><a href="calib.html#cb1671-2" tabindex="-1"></a>img_info <span class="ot">=</span> <span class="fu">mat_info</span>(<span class="fu">cv_imread</span>(<span class="st">&quot;images/calib/left01.jpg&quot;</span>))</span>
+<span id="cb1671-3"><a href="calib.html#cb1671-3" tabindex="-1"></a></span>
+<span id="cb1671-4"><a href="calib.html#cb1671-4" tabindex="-1"></a><span class="co">#计算内参和畸变系数；rvecs/tvecs 不传就一并返回</span></span>
+<span id="cb1671-5"><a href="calib.html#cb1671-5" tabindex="-1"></a>calib <span class="ot">=</span> <span class="fu">cv_calibrateCamera</span>(obj_points,img_points,<span class="fu">c</span>(img_info[<span class="dv">2</span>],img_info[<span class="dv">1</span>]))</span>
+<span id="cb1671-6"><a href="calib.html#cb1671-6" tabindex="-1"></a></span>
+<span id="cb1671-7"><a href="calib.html#cb1671-7" tabindex="-1"></a><span class="co">#RMS 重投影误差，越小越好</span></span>
+<span id="cb1671-8"><a href="calib.html#cb1671-8" tabindex="-1"></a>calib<span class="sc">$</span>value</span></code></pre></div>
+<pre><code>## [1] 0.4087</code></pre>
+<div class="sourceCode" id="cb1673"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1673-1"><a href="calib.html#cb1673-1" tabindex="-1"></a><span class="co">#相机内参</span></span>
+<span id="cb1673-2"><a href="calib.html#cb1673-2" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##       [,1] [,2]  [,3]
+## [1,] 536.1    0 342.4
+## [2,]   0.0  536 235.5
+## [3,]   0.0    0   1.0
+## attr(,&quot;depth&quot;)
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1675"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1675-1"><a href="calib.html#cb1675-1" tabindex="-1"></a><span class="co">#畸变系数 k1 k2 p1 p2 k3</span></span>
+<span id="cb1675-2"><a href="calib.html#cb1675-2" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##         [,1]     [,2]     [,3]       [,4]   [,5]
+## [1,] -0.2651 -0.04673 0.001833 -0.0003147 0.2523
+## attr(,&quot;depth&quot;)
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb1677"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1677-1"><a href="calib.html#cb1677-1" tabindex="-1"></a><span class="co">#每张图的旋转向量、平移向量</span></span>
+<span id="cb1677-2"><a href="calib.html#cb1677-2" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>rvecs)</span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<div class="sourceCode" id="cb1679"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1679-1"><a href="calib.html#cb1679-1" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>tvecs)</span></code></pre></div>
+<pre><code>## [1] 13</code></pre>
+<p>内参的物理含义，对照着看：</p>
+<div class="sourceCode" id="cb1681"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1681-1"><a href="calib.html#cb1681-1" tabindex="-1"></a>K <span class="ot">=</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1681-2"><a href="calib.html#cb1681-2" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fx =</span> K[<span class="dv">1</span>,<span class="dv">1</span>],<span class="at">fy =</span> K[<span class="dv">2</span>,<span class="dv">2</span>],<span class="at">cx =</span> K[<span class="dv">1</span>,<span class="dv">3</span>],<span class="at">cy =</span> K[<span class="dv">2</span>,<span class="dv">3</span>])</span></code></pre></div>
+<pre><code>##    fx    fy    cx    cy 
+## 536.1 536.0 342.4 235.5</code></pre>
+<p><code>fx</code>、<code>fy</code> 是焦距（以像素为单位），<code>cx</code>、<code>cy</code> 是主点，理论上应该接近图像中心。
+图像是 640×480，中心是 <code>(320,240)</code>——上面这几个数正好在附近。</p>
+<p>把每张图的位姿列出来：</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">图像</th>
+<th align="right">rx</th>
+<th align="right">ry</th>
+<th align="right">rz</th>
+<th align="right">tx</th>
+<th align="right">ty</th>
+<th align="right">tz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">left01.jpg</td>
+<td align="right">0.169</td>
+<td align="right">0.276</td>
+<td align="right">0.013</td>
+<td align="right">-3.01</td>
+<td align="right">-4.36</td>
+<td align="right">15.99</td>
+</tr>
+<tr class="even">
+<td align="left">left02.jpg</td>
+<td align="right">0.413</td>
+<td align="right">0.649</td>
+<td align="right">-1.337</td>
+<td align="right">-2.35</td>
+<td align="right">3.32</td>
+<td align="right">14.15</td>
+</tr>
+<tr class="odd">
+<td align="left">left03.jpg</td>
+<td align="right">-0.277</td>
+<td align="right">0.187</td>
+<td align="right">0.355</td>
+<td align="right">-1.60</td>
+<td align="right">-4.02</td>
+<td align="right">12.73</td>
+</tr>
+<tr class="even">
+<td align="left">left04.jpg</td>
+<td align="right">-0.111</td>
+<td align="right">0.240</td>
+<td align="right">-0.002</td>
+<td align="right">-3.94</td>
+<td align="right">-2.69</td>
+<td align="right">13.24</td>
+</tr>
+<tr class="odd">
+<td align="left">left05.jpg</td>
+<td align="right">-0.292</td>
+<td align="right">0.428</td>
+<td align="right">1.313</td>
+<td align="right">2.34</td>
+<td align="right">-4.61</td>
+<td align="right">12.69</td>
+</tr>
+<tr class="even">
+<td align="left">left06.jpg</td>
+<td align="right">0.408</td>
+<td align="right">0.304</td>
+<td align="right">1.649</td>
+<td align="right">6.69</td>
+<td align="right">-2.62</td>
+<td align="right">13.46</td>
+</tr>
+<tr class="odd">
+<td align="left">left07.jpg</td>
+<td align="right">0.179</td>
+<td align="right">0.346</td>
+<td align="right">1.868</td>
+<td align="right">0.78</td>
+<td align="right">-2.87</td>
+<td align="right">15.58</td>
+</tr>
+<tr class="even">
+<td align="left">left08.jpg</td>
+<td align="right">-0.091</td>
+<td align="right">0.480</td>
+<td align="right">1.753</td>
+<td align="right">3.16</td>
+<td align="right">-3.52</td>
+<td align="right">12.67</td>
+</tr>
+<tr class="odd">
+<td align="left">left09.jpg</td>
+<td align="right">0.203</td>
+<td align="right">-0.424</td>
+<td align="right">0.132</td>
+<td align="right">-2.66</td>
+<td align="right">-3.24</td>
+<td align="right">11.14</td>
+</tr>
+<tr class="even">
+<td align="left">left11.jpg</td>
+<td align="right">-0.419</td>
+<td align="right">-0.500</td>
+<td align="right">1.336</td>
+<td align="right">1.87</td>
+<td align="right">-4.44</td>
+<td align="right">13.53</td>
+</tr>
+<tr class="odd">
+<td align="left">left12.jpg</td>
+<td align="right">-0.238</td>
+<td align="right">0.348</td>
+<td align="right">1.531</td>
+<td align="right">2.03</td>
+<td align="right">-4.10</td>
+<td align="right">12.89</td>
+</tr>
+<tr class="even">
+<td align="left">left13.jpg</td>
+<td align="right">0.463</td>
+<td align="right">-0.283</td>
+<td align="right">1.239</td>
+<td align="right">1.35</td>
+<td align="right">-3.67</td>
+<td align="right">11.67</td>
+</tr>
+<tr class="odd">
+<td align="left">left14.jpg</td>
+<td align="right">-0.170</td>
+<td align="right">-0.471</td>
+<td align="right">1.346</td>
+<td align="right">1.80</td>
+<td align="right">-4.33</td>
+<td align="right">12.50</td>
+</tr>
+</tbody>
+</table>
+<p><strong>第四步：保存参数</strong></p>
+<div class="sourceCode" id="cb1683"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1683-1"><a href="calib.html#cb1683-1" tabindex="-1"></a><span class="co">#把标定结果存起来，后面几节直接用</span></span>
+<span id="cb1683-2"><a href="calib.html#cb1683-2" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;data&quot;</span>,<span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1683-3"><a href="calib.html#cb1683-3" tabindex="-1"></a></span>
+<span id="cb1683-4"><a href="calib.html#cb1683-4" tabindex="-1"></a><span class="co">#注意：存的是**普通 R 数组**，不是 cvMat 本身</span></span>
+<span id="cb1683-5"><a href="calib.html#cb1683-5" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb1683-6"><a href="calib.html#cb1683-6" tabindex="-1"></a>  <span class="at">cameraMatrix =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1683-7"><a href="calib.html#cb1683-7" tabindex="-1"></a>  <span class="at">distCoeffs   =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1683-8"><a href="calib.html#cb1683-8" tabindex="-1"></a>  <span class="at">rvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>rvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb1683-9"><a href="calib.html#cb1683-9" tabindex="-1"></a>  <span class="at">tvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>tvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb1683-10"><a href="calib.html#cb1683-10" tabindex="-1"></a>  <span class="at">rms          =</span> calib<span class="sc">$</span>value</span>
+<span id="cb1683-11"><a href="calib.html#cb1683-11" tabindex="-1"></a>)</span>
+<span id="cb1683-12"><a href="calib.html#cb1683-12" tabindex="-1"></a><span class="fu">saveRDS</span>(cam_cfg,<span class="st">&quot;data/camera.rds&quot;</span>)</span>
+<span id="cb1683-13"><a href="calib.html#cb1683-13" tabindex="-1"></a><span class="fu">file.info</span>(<span class="st">&quot;data/camera.rds&quot;</span>)<span class="sc">$</span>size</span></code></pre></div>
+<pre><code>## [1] 980</code></pre>
+<p><strong>校正图像</strong></p>
+<div class="sourceCode" id="cb1685"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1685-1"><a href="calib.html#cb1685-1" tabindex="-1"></a>img_test <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/calib/left11.jpg&quot;</span>)</span>
+<span id="cb1685-2"><a href="calib.html#cb1685-2" tabindex="-1"></a>img_test_info <span class="ot">=</span> <span class="fu">mat_info</span>(img_test)</span>
+<span id="cb1685-3"><a href="calib.html#cb1685-3" tabindex="-1"></a>h <span class="ot">=</span> img_test_info[<span class="dv">1</span>]</span>
+<span id="cb1685-4"><a href="calib.html#cb1685-4" tabindex="-1"></a>w <span class="ot">=</span> img_test_info[<span class="dv">2</span>]</span>
+<span id="cb1685-5"><a href="calib.html#cb1685-5" tabindex="-1"></a></span>
+<span id="cb1685-6"><a href="calib.html#cb1685-6" tabindex="-1"></a><span class="co">#计算「最优新内参」：alpha = 1 表示保留所有有效像素</span></span>
+<span id="cb1685-7"><a href="calib.html#cb1685-7" tabindex="-1"></a>cameraMatrix_new <span class="ot">=</span> <span class="fu">cv_getOptimalNewCameraMatrix</span>(</span>
+<span id="cb1685-8"><a href="calib.html#cb1685-8" tabindex="-1"></a>  calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,<span class="fu">c</span>(w,h),<span class="dv">1</span>)</span>
+<span id="cb1685-9"><a href="calib.html#cb1685-9" tabindex="-1"></a></span>
+<span id="cb1685-10"><a href="calib.html#cb1685-10" tabindex="-1"></a><span class="co">#去畸变</span></span>
+<span id="cb1685-11"><a href="calib.html#cb1685-11" tabindex="-1"></a>img_undistort <span class="ot">=</span> <span class="fu">cv_undistort</span>(img_test,calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,</span>
+<span id="cb1685-12"><a href="calib.html#cb1685-12" tabindex="-1"></a>                             cameraMatrix_new)</span>
+<span id="cb1685-13"><a href="calib.html#cb1685-13" tabindex="-1"></a></span>
+<span id="cb1685-14"><a href="calib.html#cb1685-14" tabindex="-1"></a><span class="fu">dim</span>(img_test)</span></code></pre></div>
+<pre><code>## [1] 480 640   3</code></pre>
+<div class="sourceCode" id="cb1687"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1687-1"><a href="calib.html#cb1687-1" tabindex="-1"></a><span class="fu">dim</span>(img_undistort)</span></code></pre></div>
+<pre><code>## [1] 480 640   3</code></pre>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-814-1.png" alt="" width="672" /></p>
+<blockquote>
+<p><code>cv_getOptimalNewCameraMatrix</code> 在 C++ 里还有一个 <code>roi</code> 输出参数（有效区域），
+当前的版本没有把它暴露出来，只返回新内参，后面再设法改进。</p>
+</blockquote>
+</div>
+<div id="单应性矩阵" class="section level2 hasAnchor" number="10.3">
+<h2><span class="header-section-number">10.3</span> 单应性矩阵<a href="calib.html#%E5%8D%95%E5%BA%94%E6%80%A7%E7%9F%A9%E9%98%B5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>简单地说，平面单应关系到两个平面之间的变换（取决于一个比例因子）：</p>
+<p><span class="math display">\[
+s \left[ \begin{matrix} x&#39;\\y&#39;\\1 \end{matrix} \right] = H \left[ \begin{matrix} x\\y\\1 \end{matrix} \right] = \left[ \begin{matrix} h_{11}&amp;h_{12}&amp;h_{13}\\h_{21}&amp;h_{22}&amp;h_{23}\\h_{31}&amp;h_{32}&amp;h_{33} \end{matrix} \right] \left[ \begin{matrix} x\\y\\1 \end{matrix} \right]
+\]</span></p>
+<p>单应矩阵 <span class="math inline">\(H\)</span> 是一个 3×3 矩阵，有 8 个自由度。通常取 <span class="math inline">\(h_{33}=1\)</span>，或者约束：</p>
+<p><span class="math display">\[
+\sum_{i,j=1,2,3} h_{ij}^2=1
+\]</span></p>
+<p>opencv 中 <strong>cv::getPerspectiveTransform</strong> 可以获取单应矩阵：</p>
+<div class="sourceCode" id="cb1689"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1689-1"><a href="calib.html#cb1689-1" tabindex="-1"></a><span class="co">#原图像上的四个点</span></span>
+<span id="cb1689-2"><a href="calib.html#cb1689-2" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
+<span id="cb1689-3"><a href="calib.html#cb1689-3" tabindex="-1"></a><span class="co">#透视校正目标区域（也由四个顶点坐标构成）</span></span>
+<span id="cb1689-4"><a href="calib.html#cb1689-4" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
+<span id="cb1689-5"><a href="calib.html#cb1689-5" tabindex="-1"></a></span>
+<span id="cb1689-6"><a href="calib.html#cb1689-6" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span id="cb1689-7"><a href="calib.html#cb1689-7" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb1689-8"><a href="calib.html#cb1689-8" tabindex="-1"></a><span class="fu">as_array</span>(M,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##            [,1]      [,2]    [,3]
+## [1,]  1.7129767 5.362e-01 -183.73
+## [2,] -0.4294581 1.533e+00  -54.43
+## [3,]  0.0003415 1.219e-05    1.00
+## attr(,&quot;depth&quot;)
+## [1] 6</code></pre>
+<blockquote>
+<p>注意这里用的是 <code>cv_getPerspectiveTransform</code>（4 点精确解），
+不是 <code>cv_findHomography</code>（多点最小二乘 + RANSAC）。四个点用前者，
+多于四个点用后者，两者都要求 <code>CV_32FC2</code> 的点集。</p>
+</blockquote>
+<p>以下示例显示了不同类型单应变换：</p>
+<ul>
+<li>在一个相机下，真实世界平面 <span class="math inline">\(\pi\)</span> 与其相机成像平面 <span class="math inline">\(\pi&#39;\)</span> 之间的变换关系</li>
+</ul>
+<p><img src="images/tutorial/homography_transformation_example1.jpg" /></p>
+<ul>
+<li>在两个相机下，包含着多个变换关系：真实世界平面与每个相机各自的成像平面之间的变换关系，两个相机成像平面之间的变换关系</li>
+</ul>
+<p><img src="images/tutorial/homography_transformation_example2.jpg" /></p>
+<ul>
+<li>在一个旋转相机下，真实世界中”无限远”的平面与各成像平面之间的变换关系</li>
+</ul>
+<p><img src="images/tutorial/homography_transformation_example3.jpg" /></p>
+<div id="单应变换的用途" class="section level3 hasAnchor" number="10.3.1">
+<h3><span class="header-section-number">10.3.1</span> 单应变换的用途？<a href="calib.html#%E5%8D%95%E5%BA%94%E5%8F%98%E6%8D%A2%E7%9A%84%E7%94%A8%E9%80%94" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>基于共面点的增强现实摄像机姿态估计</p>
+<p><img src="images/tutorial/homography_pose_estimation.jpg" /></p>
+<ul>
+<li>透视图校正</li>
+</ul>
+<p><img src="images/pers_correct.png" /></p>
+<p>把笔记本封面「拉平」：</p>
+<div class="sourceCode" id="cb1691"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1691-1"><a href="calib.html#cb1691-1" tabindex="-1"></a><span class="co">#读取图像文件</span></span>
+<span id="cb1691-2"><a href="calib.html#cb1691-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/notebook.jpg&quot;</span>)</span>
+<span id="cb1691-3"><a href="calib.html#cb1691-3" tabindex="-1"></a></span>
+<span id="cb1691-4"><a href="calib.html#cb1691-4" tabindex="-1"></a><span class="co">#原图像透视校正区域（由四个顶点坐标构成）</span></span>
+<span id="cb1691-5"><a href="calib.html#cb1691-5" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
+<span id="cb1691-6"><a href="calib.html#cb1691-6" tabindex="-1"></a><span class="co">#透视校正目标区域</span></span>
+<span id="cb1691-7"><a href="calib.html#cb1691-7" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
+<span id="cb1691-8"><a href="calib.html#cb1691-8" tabindex="-1"></a></span>
+<span id="cb1691-9"><a href="calib.html#cb1691-9" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span id="cb1691-10"><a href="calib.html#cb1691-10" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb1691-11"><a href="calib.html#cb1691-11" tabindex="-1"></a><span class="co">#依据M对img进行透视变换</span></span>
+<span id="cb1691-12"><a href="calib.html#cb1691-12" tabindex="-1"></a>img_pers <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img,M,<span class="fu">c</span>(<span class="dv">320</span>,<span class="dv">420</span>))</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-818-1.png" alt="" width="672" /></p>
+</div>
+<div id="共面点的姿态估计" class="section level3 hasAnchor" number="10.3.2">
+<h3><span class="header-section-number">10.3.2</span> 共面点的姿态估计<a href="calib.html#%E5%85%B1%E9%9D%A2%E7%82%B9%E7%9A%84%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>例如，可以使用直接线性变换（DLT）算法来估计单应性。由于物体是平面的，物体帧中表示的点和投影到归一化相机帧中表示的图像平面的点之间的变换是单应的。正是因为对象是平面的，所以可以从单应性中检索相机姿势，前提是相机的内在参数已知。当使用棋盘对象和 <code>findChessboardCorners()</code> 获得图像中角点位置时，可以很容易地测试这一点。</p>
+<p>先读回上一节存下来的内参：</p>
+<div class="sourceCode" id="cb1692"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1692-1"><a href="calib.html#cb1692-1" tabindex="-1"></a><span class="co">#读取相机参数：存的是数值数组，读回来要重建 Mat</span></span>
+<span id="cb1692-2"><a href="calib.html#cb1692-2" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">file.exists</span>(<span class="st">&quot;data/camera.rds&quot;</span>))</span>
+<span id="cb1692-3"><a href="calib.html#cb1692-3" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="st">&quot;data/camera.rds&quot;</span>)</span>
+<span id="cb1692-4"><a href="calib.html#cb1692-4" tabindex="-1"></a>cameraMatrix <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>cameraMatrix)</span>
+<span id="cb1692-5"><a href="calib.html#cb1692-5" tabindex="-1"></a>distCoeffs   <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>distCoeffs)</span>
+<span id="cb1692-6"><a href="calib.html#cb1692-6" tabindex="-1"></a></span>
+<span id="cb1692-7"><a href="calib.html#cb1692-7" tabindex="-1"></a><span class="fu">dim</span>(cameraMatrix)</span></code></pre></div>
+<pre><code>## [1] 3 3</code></pre>
+<div class="sourceCode" id="cb1694"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1694-1"><a href="calib.html#cb1694-1" tabindex="-1"></a><span class="fu">dim</span>(distCoeffs)</span></code></pre></div>
+<pre><code>## [1] 1 5</code></pre>
+<p>估计姿态，并把坐标轴画上去：</p>
+<div class="sourceCode" id="cb1696"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1696-1"><a href="calib.html#cb1696-1" tabindex="-1"></a><span class="co">#确定三个数轴端点的三维坐标（z 取负，让轴朝相机方向伸出来）</span></span>
+<span id="cb1696-2"><a href="calib.html#cb1696-2" tabindex="-1"></a>obj_points_new <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
+<span id="cb1696-3"><a href="calib.html#cb1696-3" tabindex="-1"></a></span>
+<span id="cb1696-4"><a href="calib.html#cb1696-4" tabindex="-1"></a><span class="co">#读取位姿估计图像文件</span></span>
+<span id="cb1696-5"><a href="calib.html#cb1696-5" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/calib/left14.jpg&quot;</span>)</span>
+<span id="cb1696-6"><a href="calib.html#cb1696-6" tabindex="-1"></a>img_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY)</span>
+<span id="cb1696-7"><a href="calib.html#cb1696-7" tabindex="-1"></a></span>
+<span id="cb1696-8"><a href="calib.html#cb1696-8" tabindex="-1"></a><span class="co">#寻找棋盘角点</span></span>
+<span id="cb1696-9"><a href="calib.html#cb1696-9" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img_gray,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span><span class="dt">L</span>)</span>
+<span id="cb1696-10"><a href="calib.html#cb1696-10" tabindex="-1"></a>found <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">&quot;value&quot;</span>)</span>
+<span id="cb1696-11"><a href="calib.html#cb1696-11" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1696-12"><a href="calib.html#cb1696-12" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img_gray,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb1696-13"><a href="calib.html#cb1696-13" tabindex="-1"></a></span>
+<span id="cb1696-14"><a href="calib.html#cb1696-14" tabindex="-1"></a><span class="co">#计算旋转向量和平移向量</span></span>
+<span id="cb1696-15"><a href="calib.html#cb1696-15" tabindex="-1"></a>pn <span class="ot">=</span> <span class="fu">cv_solvePnPRansac</span>(<span class="fu">pts3f</span>(obj_world_pts),corners,cameraMatrix,distCoeffs)</span>
+<span id="cb1696-16"><a href="calib.html#cb1696-16" tabindex="-1"></a></span>
+<span id="cb1696-17"><a href="calib.html#cb1696-17" tabindex="-1"></a><span class="co">#将真实三维点投影到对应的图像平面上</span></span>
+<span id="cb1696-18"><a href="calib.html#cb1696-18" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(obj_points_new),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
+<span id="cb1696-19"><a href="calib.html#cb1696-19" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
+<span id="cb1696-20"><a href="calib.html#cb1696-20" tabindex="-1"></a>xyz <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1696-21"><a href="calib.html#cb1696-21" tabindex="-1"></a></span>
+<span id="cb1696-22"><a href="calib.html#cb1696-22" tabindex="-1"></a><span class="co">#棋盘第一个角点，作为三根轴的公共起点</span></span>
+<span id="cb1696-23"><a href="calib.html#cb1696-23" tabindex="-1"></a>origin <span class="ot">=</span> corners[<span class="dv">1</span>,]</span>
+<span id="cb1696-24"><a href="calib.html#cb1696-24" tabindex="-1"></a><span class="co">#BGR：c(255,0,0) 蓝、c(0,255,0) 绿、c(0,0,255) 红</span></span>
+<span id="cb1696-25"><a href="calib.html#cb1696-25" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">1</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
+<span id="cb1696-26"><a href="calib.html#cb1696-26" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">2</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
+<span id="cb1696-27"><a href="calib.html#cb1696-27" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">3</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">5</span>)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-821-1.png" alt="" width="672" /></p>
+<p>进一步，可以基于姿态估计结果渲染一个立方体：</p>
+<div class="sourceCode" id="cb1697"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1697-1"><a href="calib.html#cb1697-1" tabindex="-1"></a><span class="co">#立方体的 8 个顶点：底面 4 个 z=0，顶面 4 个 z=-3</span></span>
+<span id="cb1697-2"><a href="calib.html#cb1697-2" tabindex="-1"></a>cube <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb1697-3"><a href="calib.html#cb1697-3" tabindex="-1"></a>             <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
+<span id="cb1697-4"><a href="calib.html#cb1697-4" tabindex="-1"></a></span>
+<span id="cb1697-5"><a href="calib.html#cb1697-5" tabindex="-1"></a><span class="co">#投影到图像平面</span></span>
+<span id="cb1697-6"><a href="calib.html#cb1697-6" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(cube),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
+<span id="cb1697-7"><a href="calib.html#cb1697-7" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
+<span id="cb1697-8"><a href="calib.html#cb1697-8" tabindex="-1"></a>xy <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb1697-9"><a href="calib.html#cb1697-9" tabindex="-1"></a></span>
+<span id="cb1697-10"><a href="calib.html#cb1697-10" tabindex="-1"></a><span class="co">#绘制绿色底面（填充）</span></span>
+<span id="cb1697-11"><a href="calib.html#cb1697-11" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,]),<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1697-12"><a href="calib.html#cb1697-12" tabindex="-1"></a><span class="co">#绘制蓝色柱子（四条侧棱）</span></span>
+<span id="cb1697-13"><a href="calib.html#cb1697-13" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>){</span>
+<span id="cb1697-14"><a href="calib.html#cb1697-14" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_line</span>(img,xy[i,],xy[i<span class="sc">+</span><span class="dv">4</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">3</span>)</span>
+<span id="cb1697-15"><a href="calib.html#cb1697-15" tabindex="-1"></a>}</span>
+<span id="cb1697-16"><a href="calib.html#cb1697-16" tabindex="-1"></a><span class="co">#绘制红色顶面（只描边）</span></span>
+<span id="cb1697-17"><a href="calib.html#cb1697-17" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,]),<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">3</span><span class="dt">L</span>)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-823-1.png" alt="" width="672" /></p>
+</div>
+<div id="图像融合" class="section level3 hasAnchor" number="10.3.3">
+<h3><span class="header-section-number">10.3.3</span> 图像融合<a href="calib.html#%E5%9B%BE%E5%83%8F%E8%9E%8D%E5%90%88" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>基于单应矩阵，把一张图「贴」到另一张图指定的四边形区域里：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-824-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb1698"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1698-1"><a href="calib.html#cb1698-1" tabindex="-1"></a><span class="co">#读取待植入广告牌的文件</span></span>
+<span id="cb1698-2"><a href="calib.html#cb1698-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/catoon.jpg&quot;</span>)</span>
+<span id="cb1698-3"><a href="calib.html#cb1698-3" tabindex="-1"></a><span class="co">#读取广告牌文件</span></span>
+<span id="cb1698-4"><a href="calib.html#cb1698-4" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/advert.jpg&quot;</span>)</span>
+<span id="cb1698-5"><a href="calib.html#cb1698-5" tabindex="-1"></a></span>
+<span id="cb1698-6"><a href="calib.html#cb1698-6" tabindex="-1"></a><span class="co">#获取img1和img2的基本信息</span></span>
+<span id="cb1698-7"><a href="calib.html#cb1698-7" tabindex="-1"></a>img1_info <span class="ot">=</span> <span class="fu">mat_info</span>(img1)</span>
+<span id="cb1698-8"><a href="calib.html#cb1698-8" tabindex="-1"></a>img2_info <span class="ot">=</span> <span class="fu">mat_info</span>(img2)</span>
+<span id="cb1698-9"><a href="calib.html#cb1698-9" tabindex="-1"></a></span>
+<span id="cb1698-10"><a href="calib.html#cb1698-10" tabindex="-1"></a><span class="co">#对img1进行边缘扩充，使其尺寸与img2保持一致</span></span>
+<span id="cb1698-11"><a href="calib.html#cb1698-11" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_copyMakeBorder</span>(img1,</span>
+<span id="cb1698-12"><a href="calib.html#cb1698-12" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">1</span>]<span class="sc">-</span>img1_info[<span class="dv">1</span>],</span>
+<span id="cb1698-13"><a href="calib.html#cb1698-13" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">2</span>]<span class="sc">-</span>img1_info[<span class="dv">2</span>],</span>
+<span id="cb1698-14"><a href="calib.html#cb1698-14" tabindex="-1"></a>                         BORDER_CONSTANT)</span>
+<span id="cb1698-15"><a href="calib.html#cb1698-15" tabindex="-1"></a></span>
+<span id="cb1698-16"><a href="calib.html#cb1698-16" tabindex="-1"></a><span class="co">#img1 边界上的四个顶点（用扩充后的尺寸）</span></span>
+<span id="cb1698-17"><a href="calib.html#cb1698-17" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(img1_info[<span class="dv">2</span>],<span class="dv">0</span>),</span>
+<span id="cb1698-18"><a href="calib.html#cb1698-18" tabindex="-1"></a>             <span class="fu">c</span>(img1_info[<span class="dv">2</span>],img1_info[<span class="dv">1</span>]),<span class="fu">c</span>(<span class="dv">0</span>,img1_info[<span class="dv">1</span>]))</span>
+<span id="cb1698-19"><a href="calib.html#cb1698-19" tabindex="-1"></a><span class="co">#广告牌上要植入的区域</span></span>
+<span id="cb1698-20"><a href="calib.html#cb1698-20" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">190</span>,<span class="dv">100</span>),<span class="fu">c</span>(<span class="dv">390</span>,<span class="dv">120</span>),<span class="fu">c</span>(<span class="dv">380</span>,<span class="dv">414</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">440</span>))</span>
+<span id="cb1698-21"><a href="calib.html#cb1698-21" tabindex="-1"></a></span>
+<span id="cb1698-22"><a href="calib.html#cb1698-22" tabindex="-1"></a><span class="co">#依据pts1和pts2计算单应矩阵M</span></span>
+<span id="cb1698-23"><a href="calib.html#cb1698-23" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_findHomography</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb1698-24"><a href="calib.html#cb1698-24" tabindex="-1"></a></span>
+<span id="cb1698-25"><a href="calib.html#cb1698-25" tabindex="-1"></a><span class="co">#对img1进行单应变换</span></span>
+<span id="cb1698-26"><a href="calib.html#cb1698-26" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img1,M,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb1698-27"><a href="calib.html#cb1698-27" tabindex="-1"></a></span>
+<span id="cb1698-28"><a href="calib.html#cb1698-28" tabindex="-1"></a><span class="co">#灰度化后二值化，形成遮罩：有内容的地方为 255</span></span>
+<span id="cb1698-29"><a href="calib.html#cb1698-29" tabindex="-1"></a>dst_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(dst,COLOR_BGR2GRAY)</span>
+<span id="cb1698-30"><a href="calib.html#cb1698-30" tabindex="-1"></a>mask <span class="ot">=</span> <span class="fu">cv_threshold</span>(dst_gray,<span class="dv">0</span>,<span class="dv">255</span>,THRESH_BINARY)</span>
+<span id="cb1698-31"><a href="calib.html#cb1698-31" tabindex="-1"></a></span>
+<span id="cb1698-32"><a href="calib.html#cb1698-32" tabindex="-1"></a><span class="co">#把 dst 中遮罩覆盖的内容复制到 img2 上</span></span>
+<span id="cb1698-33"><a href="calib.html#cb1698-33" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_copyTo</span>(dst,mask,img2)</span>
+<span id="cb1698-34"><a href="calib.html#cb1698-34" tabindex="-1"></a></span>
+<span id="cb1698-35"><a href="calib.html#cb1698-35" tabindex="-1"></a><span class="fu">dim</span>(mask)</span></code></pre></div>
+<pre><code>## [1] 490 500</code></pre>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-826-1.png" alt="" width="672" /></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="imgproc3.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="feature2d.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": true,
+    "facebook": false,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/main/08-camercalib.Rmd",
+    "text": "编辑"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "none"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

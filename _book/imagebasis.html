@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>第 4 章 OpenCV中的图像矩阵类（Mat） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程</title>
+  <meta name="description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="第 4 章 OpenCV中的图像矩阵类（Mat） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  <meta name="github-repo" content="Judy-ZQ/ROpenCV-Tutorial" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="第 4 章 OpenCV中的图像矩阵类（Mat） | ROpenCV — R与OpenCV之间的桥梁 — 之基础教程" />
+  
+  <meta name="twitter:description" content="ROpenCV — R用户也能直接使用OpenCV做图像处理实验了。" />
+  
+
+<meta name="author" content="zpy" />
+
+
+<meta name="date" content="2026-11-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="ROpenCVMechanisim.html"/>
+<link rel="next" href="firstshow.html"/>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">ROpenCV 教程</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>前言</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#%E8%87%B4%E8%B0%A2"><i class="fa fa-check"></i>致谢</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="author.html"><a href="author.html"><i class="fa fa-check"></i>作者简介</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> 简介</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#r%E7%AE%80%E4%BB%8B"><i class="fa fa-check"></i><b>1.1</b> R简介</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#r%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9B%BE%E5%83%8F%E5%B7%A5%E5%85%B7%E5%8C%85"><i class="fa fa-check"></i><b>1.2</b> R中的一些图像工具包</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#opencv%E7%AE%80%E4%BB%8B"><i class="fa fa-check"></i><b>1.3</b> OpenCV简介</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#ropencv"><i class="fa fa-check"></i><b>1.4</b> ROpenCV</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#ropencv%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><i class="fa fa-check"></i><b>1.5</b> ROpenCV的安装和使用</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="RBasis.html"><a href="RBasis.html"><i class="fa fa-check"></i><b>2</b> R基础</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="RBasis.html"><a href="RBasis.html#r%E7%9A%84%E5%AE%89%E8%A3%85"><i class="fa fa-check"></i><b>2.1</b> R的安装</a></li>
+<li class="chapter" data-level="2.2" data-path="RBasis.html"><a href="RBasis.html#%E5%90%91%E9%87%8F%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.2</b> 向量操作</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E5%90%91%E9%87%8F"><i class="fa fa-check"></i><b>2.2.1</b> 生成向量</a></li>
+<li class="chapter" data-level="2.2.2" data-path="RBasis.html"><a href="RBasis.html#%E8%AF%BB%E5%86%99%E5%90%91%E9%87%8F%E7%9A%84%E5%85%83%E7%B4%A0"><i class="fa fa-check"></i><b>2.2.2</b> 读写向量的元素</a></li>
+<li class="chapter" data-level="2.2.3" data-path="RBasis.html"><a href="RBasis.html#%E5%90%91%E9%87%8F%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.2.3</b> 向量的运算</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="RBasis.html"><a href="RBasis.html#factors%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.3</b> Factors操作</a></li>
+<li class="chapter" data-level="2.4" data-path="RBasis.html"><a href="RBasis.html#%E5%88%97%E8%A1%A8%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.4</b> 列表操作</a></li>
+<li class="chapter" data-level="2.5" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E6%8D%AE%E6%A1%86%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.5</b> 数据框操作</a></li>
+<li class="chapter" data-level="2.6" data-path="RBasis.html"><a href="RBasis.html#%E7%9F%A9%E9%98%B5%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.6</b> 矩阵操作</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>2.6.1</b> 生成矩阵</a></li>
+<li class="chapter" data-level="2.6.2" data-path="RBasis.html"><a href="RBasis.html#%E8%AF%BB%E5%86%99%E7%9F%A9%E9%98%B5%E7%9A%84%E5%85%83%E7%B4%A0"><i class="fa fa-check"></i><b>2.6.2</b> 读写矩阵的元素</a></li>
+<li class="chapter" data-level="2.6.3" data-path="RBasis.html"><a href="RBasis.html#%E7%9F%A9%E9%98%B5%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.6.3</b> 矩阵的运算</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.7</b> 数组操作</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="RBasis.html"><a href="RBasis.html#%E7%94%9F%E6%88%90%E6%95%B0%E7%BB%84"><i class="fa fa-check"></i><b>2.7.1</b> 生成数组</a></li>
+<li class="chapter" data-level="2.7.2" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E7%9A%84%E8%AE%BF%E9%97%AE"><i class="fa fa-check"></i><b>2.7.2</b> 数组元素的访问</a></li>
+<li class="chapter" data-level="2.7.3" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E7%9A%84%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.7.3</b> 数组的运算</a></li>
+<li class="chapter" data-level="2.7.4" data-path="RBasis.html"><a href="RBasis.html#%E6%95%B0%E7%BB%84%E7%94%A8%E4%BA%8E%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>2.7.4</b> 数组用于图像处理</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="RBasis.html"><a href="RBasis.html#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><i class="fa fa-check"></i><b>2.8</b> 文件操作</a></li>
+<li class="chapter" data-level="2.9" data-path="RBasis.html"><a href="RBasis.html#%E5%87%BD%E6%95%B0%E5%B0%81%E8%A3%85"><i class="fa fa-check"></i><b>2.9</b> 函数封装</a></li>
+<li class="chapter" data-level="2.10" data-path="RBasis.html"><a href="RBasis.html#%E5%9F%BA%E7%A1%80%E7%BB%98%E5%9B%BE"><i class="fa fa-check"></i><b>2.10</b> 基础绘图</a></li>
+<li class="chapter" data-level="2.11" data-path="RBasis.html"><a href="RBasis.html#%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.11</b> 按位运算</a></li>
+<li class="chapter" data-level="2.12" data-path="RBasis.html"><a href="RBasis.html#%E5%B9%B6%E8%A1%8C%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>2.12</b> 并行运算</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html"><i class="fa fa-check"></i><b>3</b> ROpenCV的核心处理机制</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E9%87%8D%E8%BD%BD%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.1</b> 重载函数的处理</a></li>
+<li class="chapter" data-level="3.2" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#opencv%E5%87%BD%E6%95%B0%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.2</b> OpenCV函数输出参数的处理</a></li>
+<li class="chapter" data-level="3.3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#opencv%E7%B1%BB%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>3.3</b> OpenCV类实例的处理</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-cvmat"><i class="fa fa-check"></i><b>3.3.1</b> 图像矩阵 cvMat</a></li>
+<li class="chapter" data-level="3.3.2" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E7%82%B9%E5%B0%BA%E5%AF%B8%E6%A0%87%E9%87%8F%E7%9F%A9%E5%BD%A2%E6%99%AE%E9%80%9A%E6%95%B0%E5%80%BC%E5%90%91%E9%87%8F"><i class="fa fa-check"></i><b>3.3.2</b> 点、尺寸、标量、矩形：普通数值向量</a></li>
+<li class="chapter" data-level="3.3.3" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E8%AE%BF%E9%97%AE%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E4%BF%A1%E6%81%AF"><i class="fa fa-check"></i><b>3.3.3</b> 访问图像矩阵的信息</a></li>
+<li class="chapter" data-level="3.3.4" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2"><i class="fa fa-check"></i><b>3.3.4</b> 旋转矩形</a></li>
+<li class="chapter" data-level="3.3.5" data-path="ROpenCVMechanisim.html"><a href="ROpenCVMechanisim.html#as_array-%E5%92%8C-matr-%E4%B8%8E-opencv-%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2"><i class="fa fa-check"></i><b>3.3.5</b> as_array 和 Mat：R 与 OpenCV 的数据交换</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="imagebasis.html"><a href="imagebasis.html"><i class="fa fa-check"></i><b>4</b> OpenCV中的图像矩阵类（Mat）</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="imagebasis.html"><a href="imagebasis.html#%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><i class="fa fa-check"></i><b>4.1</b> 矩阵表示</a></li>
+<li class="chapter" data-level="4.2" data-path="imagebasis.html"><a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%9D%90%E6%A0%87%E7%B3%BB"><i class="fa fa-check"></i><b>4.2</b> 像素坐标系</a></li>
+<li class="chapter" data-level="4.3" data-path="imagebasis.html"><a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%AD%98%E5%82%A8%E4%BD%8D%E6%95%B0"><i class="fa fa-check"></i><b>4.3</b> 像素存储位数</a></li>
+<li class="chapter" data-level="4.4" data-path="imagebasis.html"><a href="imagebasis.html#%E9%80%9A%E9%81%93%E6%95%B0"><i class="fa fa-check"></i><b>4.4</b> 通道数</a></li>
+<li class="chapter" data-level="4.5" data-path="imagebasis.html"><a href="imagebasis.html#%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4"><i class="fa fa-check"></i><b>4.5</b> 存储空间</a></li>
+<li class="chapter" data-level="4.6" data-path="imagebasis.html"><a href="imagebasis.html#%E7%B1%BB%E5%9E%8B"><i class="fa fa-check"></i><b>4.6</b> 类型</a></li>
+<li class="chapter" data-level="4.7" data-path="imagebasis.html"><a href="imagebasis.html#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>4.7</b> 创建图像矩阵</a></li>
+<li class="chapter" data-level="4.8" data-path="imagebasis.html"><a href="imagebasis.html#%E8%AF%BB%E5%86%99%E5%83%8F%E7%B4%A0%E5%80%BC"><i class="fa fa-check"></i><b>4.8</b> 读写像素值</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="imagebasis.html"><a href="imagebasis.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>4.8.1</b> 单通道图像</a></li>
+<li class="chapter" data-level="4.8.2" data-path="imagebasis.html"><a href="imagebasis.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>4.8.2</b> 三通道图像</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="imagebasis.html"><a href="imagebasis.html#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%92%8C%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><i class="fa fa-check"></i><b>4.9</b> 内存管理和引用计数</a></li>
+<li class="chapter" data-level="4.10" data-path="imagebasis.html"><a href="imagebasis.html#%E8%8E%B7%E5%8F%96%E8%AE%BE%E7%BD%AE%E5%9B%BE%E5%83%8F%E5%AD%90%E5%8C%BA%E5%9F%9F%E6%88%96%E8%80%85%E6%84%9F%E5%85%B4%E8%B6%A3%E5%8C%BA%E5%9F%9F"><i class="fa fa-check"></i><b>4.10</b> 获取/设置图像子区域或者感兴趣区域</a></li>
+<li class="chapter" data-level="4.11" data-path="imagebasis.html"><a href="imagebasis.html#%E5%9B%BE%E5%83%8F%E6%8B%B7%E8%B4%9D%E4%B8%8E%E5%85%8B%E9%9A%86"><i class="fa fa-check"></i><b>4.11</b> 图像拷贝与克隆</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="firstshow.html"><a href="firstshow.html"><i class="fa fa-check"></i><b>5</b> 图像基本操作</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.1</b> 输入图像</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="firstshow.html"><a href="firstshow.html#%E5%8A%A0%E8%BD%BD%E5%9B%BE%E5%83%8F%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>5.1.1</b> 加载图像文件</a></li>
+<li class="chapter" data-level="5.1.2" data-path="firstshow.html"><a href="firstshow.html#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5-1"><i class="fa fa-check"></i><b>5.1.2</b> 创建图像矩阵</a></li>
+<li class="chapter" data-level="5.1.3" data-path="firstshow.html"><a href="firstshow.html#%E4%BD%BF%E7%94%A8-mat-%E5%92%8C-img-%E8%BD%AC%E6%8D%A2-r-%E7%9A%84%E6%95%B0%E7%BB%84"><i class="fa fa-check"></i><b>5.1.3</b> 使用 Mat() 和 img[] 转换 R 的数组</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="firstshow.html"><a href="firstshow.html#%E8%8E%B7%E5%8F%96%E5%9B%BE%E5%83%8F%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><i class="fa fa-check"></i><b>5.2</b> 获取图像基本信息</a></li>
+<li class="chapter" data-level="5.3" data-path="firstshow.html"><a href="firstshow.html#%E4%BF%AE%E6%94%B9%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.3</b> 修改图像</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="firstshow.html"><a href="firstshow.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fa fa-check"></i><b>5.3.1</b> 单通道图像</a></li>
+<li class="chapter" data-level="5.3.2" data-path="firstshow.html"><a href="firstshow.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F-1"><i class="fa fa-check"></i><b>5.3.2</b> 三通道图像</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>5.4</b> 输出图像</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E5%9B%BE%E5%BD%A2%E7%AA%97%E5%8F%A3"><i class="fa fa-check"></i><b>5.4.1</b> 输出到图形窗口</a></li>
+<li class="chapter" data-level="5.4.2" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E5%91%BD%E4%BB%A4%E8%A1%8C"><i class="fa fa-check"></i><b>5.4.2</b> 输出到命令行</a></li>
+<li class="chapter" data-level="5.4.3" data-path="firstshow.html"><a href="firstshow.html#%E8%BE%93%E5%87%BA%E5%88%B0%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>5.4.3</b> 输出到磁盘文件</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="firstshow.html"><a href="firstshow.html#%E5%9B%BE%E5%83%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>5.5</b> 图像的基本运算</a></li>
+<li class="chapter" data-level="5.6" data-path="firstshow.html"><a href="firstshow.html#%E6%9F%A5%E7%9C%8B%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE"><i class="fa fa-check"></i><b>5.6</b> 查看图像的直方图</a></li>
+<li class="chapter" data-level="5.7" data-path="firstshow.html"><a href="firstshow.html#%E7%AD%89%E5%BE%85%E7%94%A8%E6%88%B7%E6%8C%89%E9%94%AE"><i class="fa fa-check"></i><b>5.7</b> 等待用户按键</a></li>
+<li class="chapter" data-level="5.8" data-path="firstshow.html"><a href="firstshow.html#%E6%B7%BB%E5%8A%A0%E6%BB%91%E5%8A%A8%E6%9D%A1%E6%8E%A7%E5%88%B6"><i class="fa fa-check"></i><b>5.8</b> 添加滑动条控制</a></li>
+<li class="chapter" data-level="5.9" data-path="firstshow.html"><a href="firstshow.html#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>5.9</b> 推荐使用方式</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="coremodule.html"><a href="coremodule.html"><i class="fa fa-check"></i><b>6</b> 核心功能（核心模块）</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="coremodule.html"><a href="coremodule.html#%E9%81%8D%E5%8E%86%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E5%83%8F%E7%B4%A0"><i class="fa fa-check"></i><b>6.1</b> 遍历图像矩阵的像素</a></li>
+<li class="chapter" data-level="6.2" data-path="coremodule.html"><a href="coremodule.html#%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E8%A1%A8"><i class="fa fa-check"></i><b>6.2</b> 使用查询表</a></li>
+<li class="chapter" data-level="6.3" data-path="coremodule.html"><a href="coremodule.html#%E8%AE%A1%E7%AE%97%E6%93%8D%E4%BD%9C%E6%97%B6%E9%97%B4"><i class="fa fa-check"></i><b>6.3</b> 计算操作时间</a></li>
+<li class="chapter" data-level="6.4" data-path="coremodule.html"><a href="coremodule.html#%E6%89%A9%E5%B1%95%E5%9B%BE%E5%83%8F%E8%BE%B9%E7%BC%98"><i class="fa fa-check"></i><b>6.4</b> 扩展图像边缘</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="coremodule.html"><a href="coremodule.html#border_replicate%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.1</b> BORDER_REPLICATE方式</a></li>
+<li class="chapter" data-level="6.4.2" data-path="coremodule.html"><a href="coremodule.html#border_reflect%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.2</b> BORDER_REFLECT方式</a></li>
+<li class="chapter" data-level="6.4.3" data-path="coremodule.html"><a href="coremodule.html#border_wrap%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.3</b> BORDER_WRAP方式</a></li>
+<li class="chapter" data-level="6.4.4" data-path="coremodule.html"><a href="coremodule.html#border_constant%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.4</b> BORDER_CONSTANT方式</a></li>
+<li class="chapter" data-level="6.4.5" data-path="coremodule.html"><a href="coremodule.html#border_default%E6%88%96%E8%80%85border_reflect_101%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.4.5</b> BORDER_DEFAULT或者BORDER_REFLECT_101方式</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E6%A0%87%E5%87%86%E5%8C%96%E5%BD%92%E4%B8%80%E5%8C%96"><i class="fa fa-check"></i><b>6.5</b> 图像矩阵标准化/归一化</a></li>
+<li class="chapter" data-level="6.6" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E6%8C%89%E4%BD%8D%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>6.6</b> 图像矩阵的按位运算</a></li>
+<li class="chapter" data-level="6.7" data-path="coremodule.html"><a href="coremodule.html#%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E6%8E%A9%E7%A0%81%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>6.7</b> 图像矩阵的掩码运算</a></li>
+<li class="chapter" data-level="6.8" data-path="coremodule.html"><a href="coremodule.html#%E8%9E%8D%E5%90%88%E4%B8%A4%E4%B8%AA%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>6.8</b> 融合两个图像</a></li>
+<li class="chapter" data-level="6.9" data-path="coremodule.html"><a href="coremodule.html#%E6%94%B9%E5%8F%98%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AF%B9%E6%AF%94%E5%BA%A6%E5%92%8C%E4%BA%AE%E5%BA%A6"><i class="fa fa-check"></i><b>6.9</b> 改变图像的对比度和亮度</a>
+<ul>
+<li class="chapter" data-level="6.9.1" data-path="coremodule.html"><a href="coremodule.html#%E9%87%87%E7%94%A8%E7%BA%BF%E6%80%A7%E8%BF%90%E7%AE%97%E6%96%B9%E5%BC%8F"><i class="fa fa-check"></i><b>6.9.1</b> 采用线性运算方式</a></li>
+<li class="chapter" data-level="6.9.2" data-path="coremodule.html"><a href="coremodule.html#%E9%87%87%E7%94%A8%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%BF%90%E7%AE%97%E6%96%B9%E5%BC%8F%E4%BC%BD%E9%A9%AC%E6%A0%A1%E6%AD%A3"><i class="fa fa-check"></i><b>6.9.2</b> 采用非线性运算方式：伽马校正</a></li>
+</ul></li>
+<li class="chapter" data-level="6.10" data-path="coremodule.html"><a href="coremodule.html#%E6%8B%86%E5%88%86%E6%88%96%E8%80%85%E5%90%88%E5%B9%B6%E5%9B%BE%E5%83%8F%E9%80%9A%E9%81%93"><i class="fa fa-check"></i><b>6.10</b> 拆分或者合并图像通道</a></li>
+<li class="chapter" data-level="6.11" data-path="coremodule.html"><a href="coremodule.html#%E7%A6%BB%E6%95%A3%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2dft"><i class="fa fa-check"></i><b>6.11</b> 离散傅里叶变换（DFT）</a></li>
+<li class="chapter" data-level="6.12" data-path="coremodule.html"><a href="coremodule.html#%E4%BD%BF%E7%94%A8xml%E5%92%8Cyaml%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA"><i class="fa fa-check"></i><b>6.12</b> 使用XML和YAML文件进行文件输入和输出</a>
+<ul>
+<li class="chapter" data-level="6.12.1" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-filestorage-%E5%86%99%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>6.12.1</b> 用 FileStorage 写文件</a></li>
+<li class="chapter" data-level="6.12.2" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-filestorage-%E8%AF%BB%E6%96%87%E4%BB%B6"><i class="fa fa-check"></i><b>6.12.2</b> 用 FileStorage 读文件</a></li>
+<li class="chapter" data-level="6.12.3" data-path="coremodule.html"><a href="coremodule.html#%E5%B5%8C%E5%A5%97%E7%BB%93%E6%9E%84"><i class="fa fa-check"></i><b>6.12.3</b> 嵌套结构</a></li>
+<li class="chapter" data-level="6.12.4" data-path="coremodule.html"><a href="coremodule.html#%E7%94%A8-r-%E7%9A%84-xml-%E5%8C%85%E5%A4%84%E7%90%86%E4%BB%BB%E6%84%8F-xml"><i class="fa fa-check"></i><b>6.12.4</b> 用 R 的 XML 包处理任意 XML</a></li>
+<li class="chapter" data-level="6.12.5" data-path="coremodule.html"><a href="coremodule.html#yaml-%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86"><i class="fa fa-check"></i><b>6.12.5</b> YAML 文件处理</a></li>
+</ul></li>
+<li class="chapter" data-level="6.13" data-path="coremodule.html"><a href="coremodule.html#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8opencv-parallel%E6%9D%A5%E5%B9%B6%E8%A1%8C%E5%8C%96%E6%82%A8%E7%9A%84%E4%BB%A3%E7%A0%81"><i class="fa fa-check"></i><b>6.13</b> 如何使用OpenCV parallel来并行化您的代码</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="imgproc1.html"><a href="imgproc1.html"><i class="fa fa-check"></i><b>7</b> 图像处理（一）：颜色、几何变换与形态学</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="imgproc1.html"><a href="imgproc1.html#%E7%81%B0%E5%BA%A6%E5%8C%96"><i class="fa fa-check"></i><b>7.1</b> 灰度化</a></li>
+<li class="chapter" data-level="7.2" data-path="imgproc1.html"><a href="imgproc1.html#%E5%87%A0%E4%BD%95%E5%B0%BA%E5%AF%B8%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.2</b> 几何尺寸变换</a></li>
+<li class="chapter" data-level="7.3" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.3</b> 仿射变换</a></li>
+<li class="chapter" data-level="7.4" data-path="imgproc1.html"><a href="imgproc1.html#%E9%80%8F%E8%A7%86%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>7.4</b> 透视变换</a></li>
+<li class="chapter" data-level="7.5" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9F%BA%E7%A1%80%E7%BB%98%E5%9B%BE-1"><i class="fa fa-check"></i><b>7.5</b> 基础绘图</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="imgproc1.html"><a href="imgproc1.html#point%E4%B8%8Escalar"><i class="fa fa-check"></i><b>7.5.1</b> Point与Scalar</a></li>
+<li class="chapter" data-level="7.5.2" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E7%9B%B4%E7%BA%BF%E6%AE%B5"><i class="fa fa-check"></i><b>7.5.2</b> 绘制直线（段）</a></li>
+<li class="chapter" data-level="7.5.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.3</b> 绘制矩形</a></li>
+<li class="chapter" data-level="7.5.4" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%9C%86"><i class="fa fa-check"></i><b>7.5.4</b> 绘制圆</a></li>
+<li class="chapter" data-level="7.5.5" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E6%A4%AD%E5%9C%86%E5%BC%A7"><i class="fa fa-check"></i><b>7.5.5</b> 绘制椭圆弧</a></li>
+<li class="chapter" data-level="7.5.6" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%A4%9A%E8%BE%B9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.6</b> 绘制多边形</a></li>
+<li class="chapter" data-level="7.5.7" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E5%A1%AB%E5%85%85%E5%A4%9A%E8%BE%B9%E5%BD%A2"><i class="fa fa-check"></i><b>7.5.7</b> 绘制填充多边形</a></li>
+<li class="chapter" data-level="7.5.8" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%98%E5%88%B6%E6%96%87%E6%9C%AC"><i class="fa fa-check"></i><b>7.5.8</b> 绘制文本</a></li>
+<li class="chapter" data-level="7.5.9" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E4%B8%80%E5%8E%9F%E5%AD%90%E4%B8%8E%E8%BD%A6"><i class="fa fa-check"></i><b>7.5.9</b> 综合示例一：原子与车</a></li>
+<li class="chapter" data-level="7.5.10" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E4%BA%8C%E9%9A%8F%E6%9C%BA%E7%BB%98%E5%9B%BE%E5%8A%A8%E7%94%BB"><i class="fa fa-check"></i><b>7.5.10</b> 综合示例二：随机绘图动画</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9F%BA%E6%9C%AC%E9%98%88%E5%80%BC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.6</b> 基本阈值运算</a>
+<ul>
+<li class="chapter" data-level="7.6.1" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%8C%E5%80%BC%E5%8C%96%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.1</b> 二值化阈值</a></li>
+<li class="chapter" data-level="7.6.2" data-path="imgproc1.html"><a href="imgproc1.html#%E9%80%86%E4%BA%8C%E5%80%BC%E5%8C%96%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.2</b> 逆二值化阈值</a></li>
+<li class="chapter" data-level="7.6.3" data-path="imgproc1.html"><a href="imgproc1.html#%E6%88%AA%E6%96%AD"><i class="fa fa-check"></i><b>7.6.3</b> 截断</a></li>
+<li class="chapter" data-level="7.6.4" data-path="imgproc1.html"><a href="imgproc1.html#%E4%B8%8B%E6%8A%98%E6%96%AD%E9%98%88%E5%80%BC%E4%BB%A5%E4%B8%8B%E4%B8%BA-0"><i class="fa fa-check"></i><b>7.6.4</b> 下折断（阈值以下为 0）</a></li>
+<li class="chapter" data-level="7.6.5" data-path="imgproc1.html"><a href="imgproc1.html#%E4%B8%8A%E6%8A%98%E6%96%AD%E9%98%88%E5%80%BC%E4%BB%A5%E4%B8%8A%E4%B8%BA-0"><i class="fa fa-check"></i><b>7.6.5</b> 上折断（阈值以上为 0）</a></li>
+<li class="chapter" data-level="7.6.6" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%94%E7%A7%8D%E6%A8%A1%E5%BC%8F%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9C%8B"><i class="fa fa-check"></i><b>7.6.6</b> 五种模式放在一起看</a></li>
+<li class="chapter" data-level="7.6.7" data-path="imgproc1.html"><a href="imgproc1.html#%E9%98%88%E5%80%BC%E5%87%BD%E6%95%B0%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8A%E6%8C%82%E7%9D%80%E5%AE%9E%E9%99%85%E7%94%A8%E7%9A%84%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.7</b> 阈值函数的返回值上挂着实际用的阈值</a></li>
+<li class="chapter" data-level="7.6.8" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E6%BB%91%E5%8A%A8%E6%9D%A1%E5%AE%9E%E6%97%B6%E8%B0%83%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.8</b> 综合示例：滑动条实时调阈值</a></li>
+<li class="chapter" data-level="7.6.9" data-path="imgproc1.html"><a href="imgproc1.html#%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B%E5%8F%AA%E5%AF%B9%E5%B1%80%E9%83%A8%E5%8C%BA%E5%9F%9F%E5%81%9A%E9%98%88%E5%80%BC"><i class="fa fa-check"></i><b>7.6.9</b> 综合示例：只对局部区域做阈值</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BD%BF%E7%94%A8inrange%E8%BF%9B%E8%A1%8C%E9%98%88%E5%80%BC%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.7</b> 使用inRange进行阈值运算</a>
+<ul>
+<li class="chapter" data-level="7.7.1" data-path="imgproc1.html"><a href="imgproc1.html#hsv%E8%89%B2%E5%BD%A9%E7%A9%BA%E9%97%B4"><i class="fa fa-check"></i><b>7.7.1</b> HSV色彩空间</a></li>
+<li class="chapter" data-level="7.7.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%AE%A1%E7%AE%97bgr%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E4%B8%AD%E6%8C%87%E5%AE%9A%E9%A2%9C%E8%89%B2%E5%AF%B9%E5%BA%94%E7%9A%84hsv%E9%A2%9C%E8%89%B2%E5%80%BC"><i class="fa fa-check"></i><b>7.7.2</b> 计算BGR颜色空间中指定颜色对应的HSV颜色值</a></li>
+<li class="chapter" data-level="7.7.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%94%A8-inrange-%E6%8F%90%E5%8F%96%E6%8C%87%E5%AE%9A%E9%A2%9C%E8%89%B2"><i class="fa fa-check"></i><b>7.7.3</b> 用 inRange 提取指定颜色</a></li>
+<li class="chapter" data-level="7.7.4" data-path="imgproc1.html"><a href="imgproc1.html#%E4%BA%A4%E4%BA%92%E5%BC%8F%E8%B0%83%E5%8F%82"><i class="fa fa-check"></i><b>7.7.4</b> 交互式调参</a></li>
+</ul></li>
+<li class="chapter" data-level="7.8" data-path="imgproc1.html"><a href="imgproc1.html#%E6%BC%AB%E6%B0%B4%E5%A1%AB%E5%85%85"><i class="fa fa-check"></i><b>7.8</b> 漫水填充</a></li>
+<li class="chapter" data-level="7.9" data-path="imgproc1.html"><a href="imgproc1.html#%E5%9B%BE%E5%83%8F%E5%B9%B3%E6%BB%91"><i class="fa fa-check"></i><b>7.9</b> 图像平滑</a>
+<ul>
+<li class="chapter" data-level="7.9.1" data-path="imgproc1.html"><a href="imgproc1.html#%E5%B8%B8%E7%94%A8%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>7.9.1</b> 常用滤波器</a></li>
+<li class="chapter" data-level="7.9.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>7.9.2</b> 自定义滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="7.10" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BD%A2%E6%80%81%E5%AD%A6%E7%9A%84%E7%BB%93%E6%9E%84%E6%A0%B8"><i class="fa fa-check"></i><b>7.10</b> 形态学的结构核</a></li>
+<li class="chapter" data-level="7.11" data-path="imgproc1.html"><a href="imgproc1.html#%E8%85%90%E8%9A%80%E4%B8%8E%E8%86%A8%E8%83%80"><i class="fa fa-check"></i><b>7.11</b> 腐蚀与膨胀</a>
+<ul>
+<li class="chapter" data-level="7.11.1" data-path="imgproc1.html"><a href="imgproc1.html#%E8%86%A8%E8%83%80"><i class="fa fa-check"></i><b>7.11.1</b> 膨胀</a></li>
+<li class="chapter" data-level="7.11.2" data-path="imgproc1.html"><a href="imgproc1.html#%E8%85%90%E8%9A%80"><i class="fa fa-check"></i><b>7.11.2</b> 腐蚀</a></li>
+</ul></li>
+<li class="chapter" data-level="7.12" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BC%80%E8%BF%90%E7%AE%97%E9%97%AD%E8%BF%90%E7%AE%97%E5%92%8C%E5%BD%A2%E6%80%81%E5%AD%A6%E6%A2%AF%E5%BA%A6"><i class="fa fa-check"></i><b>7.12</b> 开运算、闭运算和形态学梯度</a>
+<ul>
+<li class="chapter" data-level="7.12.1" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BC%80%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.12.1</b> 开运算</a></li>
+<li class="chapter" data-level="7.12.2" data-path="imgproc1.html"><a href="imgproc1.html#%E9%97%AD%E8%BF%90%E7%AE%97"><i class="fa fa-check"></i><b>7.12.2</b> 闭运算</a></li>
+<li class="chapter" data-level="7.12.3" data-path="imgproc1.html"><a href="imgproc1.html#%E7%A4%BC%E5%B8%BD"><i class="fa fa-check"></i><b>7.12.3</b> 礼帽</a></li>
+<li class="chapter" data-level="7.12.4" data-path="imgproc1.html"><a href="imgproc1.html#%E9%BB%91%E5%B8%BD"><i class="fa fa-check"></i><b>7.12.4</b> 黑帽</a></li>
+<li class="chapter" data-level="7.12.5" data-path="imgproc1.html"><a href="imgproc1.html#%E5%BD%A2%E6%80%81%E5%AD%A6%E6%A2%AF%E5%BA%A6"><i class="fa fa-check"></i><b>7.12.5</b> 形态学梯度</a></li>
+</ul></li>
+<li class="chapter" data-level="7.13" data-path="imgproc1.html"><a href="imgproc1.html#%E5%87%BB%E4%B8%AD-%E5%87%BB%E4%B8%8D%E4%B8%AD%E5%8F%98%E6%8D%A2hit-miss"><i class="fa fa-check"></i><b>7.13</b> 击中-击不中变换（hit-miss）</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="imgproc2.html"><a href="imgproc2.html"><i class="fa fa-check"></i><b>8</b> 图像处理（二）：边缘、霍夫变换与直方图</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="imgproc2.html"><a href="imgproc2.html#%E5%9B%BE%E5%83%8F%E9%87%91%E5%AD%97%E5%A1%94"><i class="fa fa-check"></i><b>8.1</b> 图像金字塔</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="imgproc2.html"><a href="imgproc2.html#%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94gaussian-pyramid"><i class="fa fa-check"></i><b>8.1.1</b> 高斯金字塔（Gaussian pyramid）</a></li>
+<li class="chapter" data-level="8.1.2" data-path="imgproc2.html"><a href="imgproc2.html#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94laplacian-pyramid"><i class="fa fa-check"></i><b>8.1.2</b> 拉普拉斯金字塔（Laplacian pyramid）</a></li>
+<li class="chapter" data-level="8.1.3" data-path="imgproc2.html"><a href="imgproc2.html#dog%E9%87%91%E5%AD%97%E5%A1%94difference-of-gaussian-dog"><i class="fa fa-check"></i><b>8.1.3</b> DOG金字塔(Difference of Gaussian-DOG)</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="imgproc2.html"><a href="imgproc2.html#%E5%9B%BE%E5%83%8F%E8%BE%B9%E7%BC%98%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>8.2</b> 图像边缘检测</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="imgproc2.html"><a href="imgproc2.html#sobel%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.1</b> Sobel算子</a></li>
+<li class="chapter" data-level="8.2.2" data-path="imgproc2.html"><a href="imgproc2.html#scharr%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.2</b> Scharr算子</a></li>
+<li class="chapter" data-level="8.2.3" data-path="imgproc2.html"><a href="imgproc2.html#laplace%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.3</b> Laplace算子</a></li>
+<li class="chapter" data-level="8.2.4" data-path="imgproc2.html"><a href="imgproc2.html#canny%E7%AE%97%E5%AD%90"><i class="fa fa-check"></i><b>8.2.4</b> Canny算子</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="imgproc2.html"><a href="imgproc2.html#%E9%9C%8D%E5%A4%AB%E7%9B%B4%E7%BA%BF%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>8.3</b> 霍夫直线变换</a></li>
+<li class="chapter" data-level="8.4" data-path="imgproc2.html"><a href="imgproc2.html#%E9%9C%8D%E5%A4%AB%E5%9C%86%E5%8F%98%E6%8D%A2"><i class="fa fa-check"></i><b>8.4</b> 霍夫圆变换</a></li>
+<li class="chapter" data-level="8.5" data-path="imgproc2.html"><a href="imgproc2.html#%E9%87%8D%E6%98%A0%E5%B0%84"><i class="fa fa-check"></i><b>8.5</b> 重映射</a></li>
+<li class="chapter" data-level="8.6" data-path="imgproc2.html"><a href="imgproc2.html#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2-1"><i class="fa fa-check"></i><b>8.6</b> 仿射变换</a></li>
+<li class="chapter" data-level="8.7" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E8%AE%A1%E7%AE%97"><i class="fa fa-check"></i><b>8.7</b> 直方图计算</a></li>
+<li class="chapter" data-level="8.8" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%9D%87%E8%A1%A1%E5%8C%96"><i class="fa fa-check"></i><b>8.8</b> 直方图均衡化</a></li>
+<li class="chapter" data-level="8.9" data-path="imgproc2.html"><a href="imgproc2.html#%E7%9B%B4%E6%96%B9%E5%9B%BE%E6%AF%94%E8%BE%83"><i class="fa fa-check"></i><b>8.9</b> 直方图比较</a></li>
+<li class="chapter" data-level="8.10" data-path="imgproc2.html"><a href="imgproc2.html#%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10</b> 反向投影</a>
+<ul>
+<li class="chapter" data-level="8.10.1" data-path="imgproc2.html"><a href="imgproc2.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%80%9A%E9%81%93%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%9A%84%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10.1</b> 单通道图像基于单通道直方图的反向投影</a></li>
+<li class="chapter" data-level="8.10.2" data-path="imgproc2.html"><a href="imgproc2.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F%E5%9F%BA%E4%BA%8E%E5%8F%8C%E9%80%9A%E9%81%93%E7%9B%B4%E6%96%B9%E5%9B%BE%E7%9A%84%E5%8F%8D%E5%90%91%E6%8A%95%E5%BD%B1"><i class="fa fa-check"></i><b>8.10.2</b> 三通道图像基于双通道直方图的反向投影</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="imgproc3.html"><a href="imgproc3.html"><i class="fa fa-check"></i><b>9</b> 图像处理（三）：轮廓、几何拟合与图像分割</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="imgproc3.html"><a href="imgproc3.html#%E6%A8%A1%E6%9D%BF%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>9.1</b> 模板匹配</a></li>
+<li class="chapter" data-level="9.2" data-path="imgproc3.html"><a href="imgproc3.html#%E6%9F%A5%E6%89%BE%E8%BD%AE%E5%BB%93"><i class="fa fa-check"></i><b>9.2</b> 查找轮廓</a></li>
+<li class="chapter" data-level="9.3" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E5%87%B8%E9%9B%86%E5%87%B8%E5%8C%85"><i class="fa fa-check"></i><b>9.3</b> 计算最小包含凸集（凸包）</a></li>
+<li class="chapter" data-level="9.4" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E7%9F%A9%E5%BD%A2%E5%9C%86%E5%BD%A2%E6%88%96%E8%80%85%E4%B8%89%E8%A7%92%E5%BD%A2"><i class="fa fa-check"></i><b>9.4</b> 计算最小包含矩形、圆形或者三角形</a></li>
+<li class="chapter" data-level="9.5" data-path="imgproc3.html"><a href="imgproc3.html#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E5%8C%85%E5%90%AB%E6%97%8B%E8%BD%AC%E7%9F%A9%E5%BD%A2%E6%88%96%E8%80%85%E6%A4%AD%E5%9C%86"><i class="fa fa-check"></i><b>9.5</b> 计算最小包含旋转矩形或者椭圆</a></li>
+<li class="chapter" data-level="9.6" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9B%BE%E5%83%8F%E7%9A%84%E7%9F%A9"><i class="fa fa-check"></i><b>9.6</b> 图像的矩</a></li>
+<li class="chapter" data-level="9.7" data-path="imgproc3.html"><a href="imgproc3.html#point-polygon%E6%B5%8B%E8%AF%95"><i class="fa fa-check"></i><b>9.7</b> Point Polygon测试</a></li>
+<li class="chapter" data-level="9.8" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9F%BA%E4%BA%8E%E8%B7%9D%E7%A6%BB%E5%8F%98%E6%8D%A2%E5%92%8C%E5%88%86%E6%B0%B4%E5%B2%AD%E7%AE%97%E6%B3%95%E7%9A%84%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>9.8</b> 基于距离变换和分水岭算法的图像分割</a>
+<ul>
+<li class="chapter" data-level="9.8.1" data-path="imgproc3.html"><a href="imgproc3.html#%E6%A8%A1%E7%B3%8A%E9%80%80%E5%8C%96%E5%9B%BE%E5%83%8F"><i class="fa fa-check"></i><b>9.8.1</b> 模糊（退化）图像</a></li>
+<li class="chapter" data-level="9.8.2" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9B%BE%E5%83%8F%E5%8E%BB%E6%A8%A1%E7%B3%8A"><i class="fa fa-check"></i><b>9.8.2</b> 图像去模糊</a></li>
+<li class="chapter" data-level="9.8.3" data-path="imgproc3.html"><a href="imgproc3.html#%E7%BB%B4%E7%BA%B3%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.8.3</b> 维纳滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="9.9" data-path="imgproc3.html"><a href="imgproc3.html#%E8%BF%90%E5%8A%A8%E5%8E%BB%E6%A8%A1%E7%B3%8A%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.9</b> 运动去模糊滤波器</a>
+<ul>
+<li class="chapter" data-level="9.9.1" data-path="imgproc3.html"><a href="imgproc3.html#%E7%94%9F%E6%88%90%E8%BF%90%E5%8A%A8%E6%A8%A1%E7%B3%8A"><i class="fa fa-check"></i><b>9.9.1</b> 生成运动模糊</a></li>
+<li class="chapter" data-level="9.9.2" data-path="imgproc3.html"><a href="imgproc3.html#%E8%BF%90%E5%8A%A8%E6%A8%A1%E7%B3%8A%E5%9B%BE%E5%83%8F%E7%9A%84psf"><i class="fa fa-check"></i><b>9.9.2</b> 运动模糊图像的PSF</a></li>
+</ul></li>
+<li class="chapter" data-level="9.10" data-path="imgproc3.html"><a href="imgproc3.html#%E5%9F%BA%E4%BA%8E%E6%A2%AF%E5%BA%A6%E7%BB%93%E6%9E%84%E5%BC%A0%E9%87%8F%E7%9A%84%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>9.10</b> 基于梯度结构张量的各向异性图像分割</a></li>
+<li class="chapter" data-level="9.11" data-path="imgproc3.html"><a href="imgproc3.html#%E5%91%A8%E6%9C%9F%E5%8E%BB%E5%99%AA%E6%BB%A4%E6%B3%A2%E5%99%A8"><i class="fa fa-check"></i><b>9.11</b> 周期去噪滤波器</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="calib.html"><a href="calib.html"><i class="fa fa-check"></i><b>10</b> 摄像机标定和三维重建（calib3d模块）</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="calib.html"><a href="calib.html#%E5%88%9B%E5%BB%BA%E6%A0%A1%E5%87%86%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%88%B6%E6%A3%8B%E7%9B%98%E6%A0%BC"><i class="fa fa-check"></i><b>10.1</b> 创建校准模式（绘制棋盘格）</a></li>
+<li class="chapter" data-level="10.2" data-path="calib.html"><a href="calib.html#%E6%96%B9%E6%A3%8B%E7%9B%98%E6%91%84%E5%83%8F%E6%9C%BA%E6%A0%87%E5%AE%9A"><i class="fa fa-check"></i><b>10.2</b> 方棋盘摄像机标定</a></li>
+<li class="chapter" data-level="10.3" data-path="calib.html"><a href="calib.html#%E5%8D%95%E5%BA%94%E6%80%A7%E7%9F%A9%E9%98%B5"><i class="fa fa-check"></i><b>10.3</b> 单应性矩阵</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="calib.html"><a href="calib.html#%E5%8D%95%E5%BA%94%E5%8F%98%E6%8D%A2%E7%9A%84%E7%94%A8%E9%80%94"><i class="fa fa-check"></i><b>10.3.1</b> 单应变换的用途？</a></li>
+<li class="chapter" data-level="10.3.2" data-path="calib.html"><a href="calib.html#%E5%85%B1%E9%9D%A2%E7%82%B9%E7%9A%84%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1"><i class="fa fa-check"></i><b>10.3.2</b> 共面点的姿态估计</a></li>
+<li class="chapter" data-level="10.3.3" data-path="calib.html"><a href="calib.html#%E5%9B%BE%E5%83%8F%E8%9E%8D%E5%90%88"><i class="fa fa-check"></i><b>10.3.3</b> 图像融合</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="feature2d.html"><a href="feature2d.html"><i class="fa fa-check"></i><b>11</b> 2D特征框架（feature2d模块）</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="feature2d.html"><a href="feature2d.html#%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><i class="fa fa-check"></i><b>11.1</b> 角点检测基本思想</a></li>
+<li class="chapter" data-level="11.2" data-path="feature2d.html"><a href="feature2d.html#harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B%E5%99%A8"><i class="fa fa-check"></i><b>11.2</b> Harris角点检测器</a></li>
+<li class="chapter" data-level="11.3" data-path="feature2d.html"><a href="feature2d.html#shi-tomasi%E8%A7%92%E7%82%B9%E6%8E%A2%E6%B5%8B%E5%99%A8"><i class="fa fa-check"></i><b>11.3</b> Shi-Tomasi角点探测器</a></li>
+<li class="chapter" data-level="11.4" data-path="feature2d.html"><a href="feature2d.html#%E9%80%9A%E8%BF%87cornereigenvalsandvecs%E5%AE%9E%E7%8E%B0harris%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.4</b> 通过cornerEigenValsAndVecs实现Harris角点检测</a></li>
+<li class="chapter" data-level="11.5" data-path="feature2d.html"><a href="feature2d.html#%E9%80%9A%E8%BF%87cornermineigenval%E5%AE%9E%E7%8E%B0shitomasi%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.5</b> 通过cornerMinEigenVal实现ShiTomasi角点检测</a></li>
+<li class="chapter" data-level="11.6" data-path="feature2d.html"><a href="feature2d.html#%E4%BA%9A%E5%83%8F%E7%B4%A0%E8%A7%92%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.6</b> 亚像素角点检测</a></li>
+<li class="chapter" data-level="11.7" data-path="feature2d.html"><a href="feature2d.html#featuredetector%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.7</b> FeatureDetector关键点检测</a></li>
+<li class="chapter" data-level="11.8" data-path="feature2d.html"><a href="feature2d.html#orb%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.8</b> ORB关键点检测</a></li>
+<li class="chapter" data-level="11.9" data-path="feature2d.html"><a href="feature2d.html#surf%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.9</b> SURF关键点检测</a></li>
+<li class="chapter" data-level="11.10" data-path="feature2d.html"><a href="feature2d.html#sift%E5%85%B3%E9%94%AE%E7%82%B9%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.10</b> SIFT关键点检测</a></li>
+<li class="chapter" data-level="11.11" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Ebfmatcher%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.11</b> 基于BFMatcher的特征匹配</a></li>
+<li class="chapter" data-level="11.12" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Eflann%E7%9A%84%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.12</b> 基于FLANN的特征匹配</a></li>
+<li class="chapter" data-level="11.13" data-path="feature2d.html"><a href="feature2d.html#%E7%BB%93%E5%90%88%E5%8D%95%E5%BA%94%E7%9F%A9%E9%98%B5%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87"><i class="fa fa-check"></i><b>11.13</b> 结合单应矩阵定位目标</a></li>
+<li class="chapter" data-level="11.14" data-path="feature2d.html"><a href="feature2d.html#akaze%E5%B1%80%E9%83%A8%E7%89%B9%E5%BE%81%E5%8C%B9%E9%85%8D"><i class="fa fa-check"></i><b>11.14</b> AKAZE局部特征匹配</a></li>
+<li class="chapter" data-level="11.15" data-path="feature2d.html"><a href="feature2d.html#akaze%E5%92%8Corb%E5%B9%B3%E9%9D%A2%E8%B7%9F%E8%B8%AA"><i class="fa fa-check"></i><b>11.15</b> AKAZE和ORB平面跟踪</a></li>
+<li class="chapter" data-level="11.16" data-path="feature2d.html"><a href="feature2d.html#%E5%9F%BA%E4%BA%8Ehogdescriptor%E7%9A%84%E5%B9%B3%E9%9D%A2%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><i class="fa fa-check"></i><b>11.16</b> 基于HOGDescriptor的平面目标检测</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="video.html"><a href="video.html"><i class="fa fa-check"></i><b>12</b> 视频处理（视频IO以及Video模块）</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="video.html"><a href="video.html#%E8%AF%BB%E5%85%A5%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%B9%B6%E6%89%93%E5%BC%80"><i class="fa fa-check"></i><b>12.1</b> 读入视频文件并打开</a></li>
+<li class="chapter" data-level="12.2" data-path="video.html"><a href="video.html#%E8%A7%86%E9%A2%91%E7%9B%B8%E4%BC%BC%E6%80%A7%E5%BA%A6%E9%87%8F"><i class="fa fa-check"></i><b>12.2</b> 视频相似性度量</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="video.html"><a href="video.html#psnr%E5%B3%B0%E5%80%BC%E4%BF%A1%E5%99%AA%E6%AF%94"><i class="fa fa-check"></i><b>12.2.1</b> PSNR（峰值信噪比）</a></li>
+<li class="chapter" data-level="12.2.2" data-path="video.html"><a href="video.html#ssim%E7%BB%93%E6%9E%84%E7%9B%B8%E4%BC%BC%E6%80%A7"><i class="fa fa-check"></i><b>12.2.2</b> SSIM（结构相似性）</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="video.html"><a href="video.html#%E8%83%8C%E6%99%AF%E5%87%8F%E9%99%A4"><i class="fa fa-check"></i><b>12.3</b> 背景减除</a></li>
+<li class="chapter" data-level="12.4" data-path="video.html"><a href="video.html#meanshift-%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2"><i class="fa fa-check"></i><b>12.4</b> MeanShift 图像分割</a></li>
+<li class="chapter" data-level="12.5" data-path="video.html"><a href="video.html#camshift-%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA"><i class="fa fa-check"></i><b>12.5</b> CamShift 目标跟踪</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="video.html"><a href="video.html#%E5%85%88%E8%AF%B4%E6%B8%85%E6%A5%9A%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E7%9B%AE%E6%A0%87%E8%83%BD%E8%A2%AB%E8%B7%9F%E4%BD%8F"><i class="fa fa-check"></i><b>12.5.1</b> 先说清楚：什么样的目标能被跟住</a></li>
+<li class="chapter" data-level="12.5.2" data-path="video.html"><a href="video.html#%E4%B8%80%E4%B8%AA%E8%83%BD%E8%B7%9F%E4%BD%8F%E7%9A%84%E4%BE%8B%E5%AD%90"><i class="fa fa-check"></i><b>12.5.2</b> 一个能跟住的例子</a></li>
+</ul></li>
+<li class="chapter" data-level="12.6" data-path="video.html"><a href="video.html#%E5%85%89%E6%B5%81"><i class="fa fa-check"></i><b>12.6</b> 光流</a>
+<ul>
+<li class="chapter" data-level="12.6.1" data-path="video.html"><a href="video.html#%E7%A8%80%E7%96%8F%E5%85%89%E6%B5%81lucas-kanade"><i class="fa fa-check"></i><b>12.6.1</b> 稀疏光流：Lucas-Kanade</a></li>
+<li class="chapter" data-level="12.6.2" data-path="video.html"><a href="video.html#%E7%A8%A0%E5%AF%86%E5%85%89%E6%B5%81farneback"><i class="fa fa-check"></i><b>12.6.2</b> 稠密光流：Farneback</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="postscript.html"><a href="postscript.html"><i class="fa fa-check"></i>后记</a></li>
+<li class="appendix"><span><b>附录</b></span></li>
+<li class="chapter" data-level="A" data-path="sound.html"><a href="sound.html"><i class="fa fa-check"></i><b>A</b> 余音绕梁</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>参考文献</a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">本书由 bookdown 强力驱动</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ROpenCV — R与OpenCV之间的桥梁 — 之基础教程</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="imagebasis" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">第 4 章</span> OpenCV中的图像矩阵类（Mat）<a href="imagebasis.html#imagebasis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>最初的OpenCV是通过名为IplImage的C结构来实现图像在内存中的表示与存储，后来到了OpenCV2，图像矩阵类Mat被引入，它在很大程度上改进了图像的内存管理机制。</p>
+<p>ROpenCV 把 Mat 包装成 S3 类 <code>cvMat</code>：它本身是一个指向 C++ <code>cv::Mat</code> 的外部指针，像素数据留在原生内存里，R 侧只拿着一个句柄。所以「把一张图赋给另一个变量」不产生任何像素拷贝，这一点后面「内存管理和引用计数」一节还会再讲。</p>
+<div id="矩阵表示" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> 矩阵表示<a href="imagebasis.html#%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><img src="images/lena_lefteyemat.jpg" /></p>
+<p>在上图中，左眼瞳仁在计算机中被存储为如图所示的一个矩阵。而在这个矩阵中，第一行第一列位置的像素值为56。</p>
+<p>图像的所有像素值与像素位置可以形成一个离散的二元函数<span class="math inline">\(y=f(r,c)\)</span>，常称这个函数为图像强度函数，其中<span class="math inline">\(r\)</span>、<span class="math inline">\(c\)</span>分别表示像素所在矩阵的行位置和列位置，<span class="math inline">\(y\)</span>为对应位置处的像素值。</p>
+<p>注意，OpenCV 的图像矩阵的行和列的编号都是从0开始的，而R语言的矩阵的行和列的编号则是从1开始的。</p>
+<p>这件事在 ROpenCV 里必须分清楚，否则每一个下标都会差一位：</p>
+<ul>
+<li><strong>R 代码里的行列号一律从 1 开始。</strong> <code>img[1,1]</code> 是左上角那个像素，<code>img[dim(img)[1], dim(img)[2]]</code> 是右下角。因为 <code>cvMat</code> 的下标读写是照 R 数组的语义实现的。</li>
+<li><strong>OpenCV 自己的 C++ 接口从 0 开始。</strong> 比如 <code>img.at&lt;uchar&gt;(0,0)</code>。这层数字不会出现在 R 里，你只需要知道文档里那些「第 0 行第 0 列」的说明对应到 R 就是 <code>img[1,1]</code>。</li>
+</ul>
+<p>本章后面所有的例子都按 R 的习惯写。</p>
+</div>
+<div id="像素坐标系" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> 像素坐标系<a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%9D%90%E6%A0%87%E7%B3%BB" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>OpenCV中的图像矩阵类（Mat）遵循像素坐标系，即以图像左上角为原点，以x轴为横轴，其正向指向右侧，以y轴为纵轴，其正向指向下侧（如图）。</p>
+<p><img src="images/lena_coord.jpg" /></p>
+<p>在像素坐标系下，图像矩阵的列数体现了图像的宽度，而图像矩阵的行数则体现了图像的高度。</p>
+<p>由于像素坐标系和常见平面坐标系的y轴是上下反向的，所以常见平面坐标系的左上和左下方位在像素坐标系中则为左下和左上方位。</p>
+<div class="sourceCode" id="cb662"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb662-1"><a href="imagebasis.html#cb662-1" tabindex="-1"></a><span class="co">#在常见平面坐标系下绘制矩形(左下角顶点为坐标为(20,20)，宽度和长度为为60)</span></span>
+<span id="cb662-2"><a href="imagebasis.html#cb662-2" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="at">type=</span><span class="st">&quot;n&quot;</span>,<span class="at">xlab=</span><span class="st">&quot;&quot;</span>,<span class="at">ylab=</span><span class="st">&quot;&quot;</span>) <span class="co">#生成空图</span></span>
+<span id="cb662-3"><a href="imagebasis.html#cb662-3" tabindex="-1"></a><span class="fu">rect</span>(<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">80</span>,<span class="dv">80</span>) <span class="co">#绘制矩形</span></span>
+<span id="cb662-4"><a href="imagebasis.html#cb662-4" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">20</span>,<span class="dv">20</span>,<span class="at">pch=</span><span class="dv">16</span>,<span class="at">cex=</span><span class="fl">1.2</span>) <span class="co">#标注坐标为(20,20)的点</span></span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-163-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb663"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb663-1"><a href="imagebasis.html#cb663-1" tabindex="-1"></a><span class="co">#在像素坐标系下绘制同样的矩形</span></span>
+<span id="cb663-2"><a href="imagebasis.html#cb663-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC1) <span class="co">#生成全黑图像</span></span>
+<span id="cb663-3"><a href="imagebasis.html#cb663-3" tabindex="-1"></a><span class="co">#点、标量、矩形在 ROpenCV 里都是普通的数值向量：</span></span>
+<span id="cb663-4"><a href="imagebasis.html#cb663-4" tabindex="-1"></a><span class="co">#  点   c(x, y)</span></span>
+<span id="cb663-5"><a href="imagebasis.html#cb663-5" tabindex="-1"></a><span class="co">#  标量 c(b, g, r) 或单通道的 255</span></span>
+<span id="cb663-6"><a href="imagebasis.html#cb663-6" tabindex="-1"></a><span class="co">#绘图函数原地修改 img 并返回它，invisible() 只是压掉返回值，免得输出里全是 &lt;cvMat&gt; 行</span></span>
+<span id="cb663-7"><a href="imagebasis.html#cb663-7" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,<span class="fu">c</span>(<span class="dv">20</span><span class="dt">L</span>,<span class="dv">20</span><span class="dt">L</span>),<span class="fu">c</span>(<span class="dv">80</span><span class="dt">L</span>,<span class="dv">80</span><span class="dt">L</span>),<span class="dv">255</span>,<span class="dv">1</span><span class="dt">L</span>)) <span class="co">#绘制矩形</span></span>
+<span id="cb663-8"><a href="imagebasis.html#cb663-8" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cv_circle</span>(img,<span class="fu">c</span>(<span class="dv">20</span><span class="dt">L</span>,<span class="dv">20</span><span class="dt">L</span>),<span class="dv">3</span><span class="dt">L</span>,<span class="dv">255</span>,<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>)) <span class="co">#标注坐标为(20,20)的点</span></span>
+<span id="cb663-9"><a href="imagebasis.html#cb663-9" tabindex="-1"></a><span class="fu">plot</span>(img) <span class="co">#显示绘制结果</span></span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-164-1.png" alt="" width="672" /></p>
+<p><code>plot()</code> 是 <code>cvMat</code> 的 S3 方法：它把 BGR 布局翻成 RGB、按深度归一化，然后当作栅格图打在当前图形设备上。写文档、写报告用它最省事；交互式看图时也可以用 <code>cv_imshow("矩形", img)</code> 开一个原生窗口，看完记得 <code>cv_destroyAllWindows()</code>。</p>
+</div>
+<div id="像素存储位数" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> 像素存储位数<a href="imagebasis.html#%E5%83%8F%E7%B4%A0%E5%AD%98%E5%82%A8%E4%BD%8D%E6%95%B0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>像素存储位数决定了像素值的颜色表达能力。比如：</p>
+<ul>
+<li>当每个像素的值用1bit来存储时，像素的颜色取值有<span class="math inline">\(2^1=2\)</span>种；</li>
+<li>当每个像素的值用4bit来存储时，像素的颜色取值有<span class="math inline">\(2^4=16\)</span>种；</li>
+<li>当每个像素的值用8bit（即一个字节）来存储时，像素的颜色取值有<span class="math inline">\(2^8=256\)</span>种；</li>
+<li>当每个像素的值用16bit（即两个字节）来存储时，像素的颜色取值有<span class="math inline">\(2^{16}=65536\)</span>种。</li>
+</ul>
+<p>以此类推，当存储像素的位数越大，则像素颜色的取值个数就越丰富。</p>
+<p>依据图像像素的取值范围，图像可以分为多个类别，其中包括：</p>
+<p><strong>二值图像/黑白图像</strong></p>
+<p>二值图像 (Binary Image): 图像中每个像素的颜色值仅可以取两个值（这两个值在像素取值范围内互为按位取反结果）的图像。</p>
+<p><strong>示例</strong></p>
+<p>下图展示了一个20行、20列的二值图：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-165-1.png" alt="" width="672" /></p>
+<p>该图的矩阵表示为：</p>
+<p><img src="images/binaryImgMat.png" /></p>
+<p><strong>灰度图像</strong></p>
+<p>灰度图像(Gray Scale Image)，也称为灰阶图像: 图像中每个像素的颜色可以由0(黑)到255(白)的整数值表示。</p>
+<p><strong>示例</strong></p>
+<p>下图展示了一个16行、16列的灰度图：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-167-1.png" alt="" width="672" /></p>
+<p>该图的矩阵表示为：</p>
+<p><img src="images/grayImgMat.png" /></p>
+<p><strong>彩色图像</strong></p>
+<p>彩色图像 (Color Image)：彩色图像的每个像素值是由三个数构成，分别表示蓝色、绿色和红色分量。这三个颜色分量可以分别形成三个矩阵：蓝色分量矩阵、绿色分量矩阵和红色分量矩阵。</p>
+<p><strong>示例</strong></p>
+<p>下图展示了一个10行、10列的彩色图：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-169-1.png" alt="" width="672" /></p>
+<p>该图的蓝色分量矩阵为：</p>
+<p><img src="images/blueColMat.png" /></p>
+<p>该图的绿色分量矩阵为：</p>
+<p><img src="images/greenColMat.png" /></p>
+<p>该图的红色分量矩阵为：</p>
+<p><img src="images/redColMat.png" /></p>
+<p>可以看到，图像中第一行、第一列位置像素的蓝、绿、红颜色分量分别为158、152和29。</p>
+<pre><code>## [1] 9e 98 1d</code></pre>
+<p>在OpenCV的图像矩阵类（Mat）中，像素存储位数被定义为矩阵深度或者图像深度(depth)。OpenCV支持图像深度转换操作，对应的是 <code>Mat::convertTo</code>，ROpenCV 里是 <code>cv_mat_convert()</code>：</p>
+<div class="sourceCode" id="cb665"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb665-1"><a href="imagebasis.html#cb665-1" tabindex="-1"></a><span class="co">#生成一个32位浮点数矩阵img</span></span>
+<span id="cb665-2"><a href="imagebasis.html#cb665-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">3</span><span class="dt">L</span>,<span class="dv">3</span><span class="dt">L</span>,CV_32FC1)</span>
+<span id="cb665-3"><a href="imagebasis.html#cb665-3" tabindex="-1"></a><span class="co">#把 R 矩阵写进去</span></span>
+<span id="cb665-4"><a href="imagebasis.html#cb665-4" tabindex="-1"></a>img[] <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">seq</span>(<span class="fl">1.1</span>,<span class="fl">9.1</span>,<span class="at">by=</span><span class="dv">1</span>),<span class="at">nr=</span><span class="dv">3</span>)</span>
+<span id="cb665-5"><a href="imagebasis.html#cb665-5" tabindex="-1"></a><span class="co">#查看img的元素值（都是浮点数）</span></span>
+<span id="cb665-6"><a href="imagebasis.html#cb665-6" tabindex="-1"></a><span class="fu">as_array</span>(img, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]  1.1  4.1  7.1
+## [2,]  2.1  5.1  8.1
+## [3,]  3.1  6.1  9.1
+## attr(,&quot;depth&quot;)
+## [1] 5</code></pre>
+<div class="sourceCode" id="cb667"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb667-1"><a href="imagebasis.html#cb667-1" tabindex="-1"></a><span class="co">#将img转变为8位无符号数矩阵，结果保存为img1</span></span>
+<span id="cb667-2"><a href="imagebasis.html#cb667-2" tabindex="-1"></a><span class="co">#cv_mat_convert(src, rtype, alpha, beta) 对应 dst = src * alpha + beta，再按 rtype 饱和</span></span>
+<span id="cb667-3"><a href="imagebasis.html#cb667-3" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_mat_convert</span>(img, CV_8UC1, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb667-4"><a href="imagebasis.html#cb667-4" tabindex="-1"></a><span class="co">#查看img1的元素值（都是整数）</span></span>
+<span id="cb667-5"><a href="imagebasis.html#cb667-5" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<p>转变深度的过程中，超出目标深度的值会被相应调整：</p>
+<div class="sourceCode" id="cb669"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb669-1"><a href="imagebasis.html#cb669-1" tabindex="-1"></a><span class="co">#生成一个32位浮点数矩阵img</span></span>
+<span id="cb669-2"><a href="imagebasis.html#cb669-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">3</span><span class="dt">L</span>,<span class="dv">3</span><span class="dt">L</span>,CV_32FC1)</span>
+<span id="cb669-3"><a href="imagebasis.html#cb669-3" tabindex="-1"></a>img[] <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">seq</span>(<span class="fl">301.1</span>,<span class="fl">309.1</span>,<span class="at">by=</span><span class="dv">1</span>),<span class="at">nr=</span><span class="dv">3</span>)</span>
+<span id="cb669-4"><a href="imagebasis.html#cb669-4" tabindex="-1"></a>img[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="sc">-</span><span class="fl">30.1</span></span>
+<span id="cb669-5"><a href="imagebasis.html#cb669-5" tabindex="-1"></a><span class="co">#查看img的元素值（都是浮点数）</span></span>
+<span id="cb669-6"><a href="imagebasis.html#cb669-6" tabindex="-1"></a><span class="fu">as_array</span>(img, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##       [,1]  [,2]  [,3]
+## [1,] -30.1 304.1 307.1
+## [2,] 302.1 305.1 308.1
+## [3,] 303.1 306.1 309.1
+## attr(,&quot;depth&quot;)
+## [1] 5</code></pre>
+<div class="sourceCode" id="cb671"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb671-1"><a href="imagebasis.html#cb671-1" tabindex="-1"></a><span class="co">#将img转变为8位无符号数矩阵，结果保存为img1</span></span>
+<span id="cb671-2"><a href="imagebasis.html#cb671-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_mat_convert</span>(img, CV_8UC1, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb671-3"><a href="imagebasis.html#cb671-3" tabindex="-1"></a></span>
+<span id="cb671-4"><a href="imagebasis.html#cb671-4" tabindex="-1"></a><span class="co">#查看img1的元素值：负数落到 0，超过 255 的落到 255（饱和，不是溢出取模）</span></span>
+<span id="cb671-5"><a href="imagebasis.html#cb671-5" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0  255  255
+## [2,]  255  255  255
+## [3,]  255  255  255
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+</div>
+<div id="通道数" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> 通道数<a href="imagebasis.html#%E9%80%9A%E9%81%93%E6%95%B0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>图像通道数对应于表示图像像素值的向量维数。由于二值图像、灰度图像的像素值都是由一个数表示（即一维向量），所以通道数为1，为此也常称这两类图像为单通道图像。而彩色图像的像素值是由三个数表示（即三维向量），所以通道数为3，为此也常称彩色图像为3通道图像。在OpenCV中，还存在二通道图像、四通道图像等等。</p>
+<p>在内存中，一个灰度图像（单通道图像）的矩阵可能是：</p>
+<p><img src="images/tutorial/tutorial_how_matrix_stored_1.png" /></p>
+<p>而对于多通道图像，每列包含与通道数相同的子列。例如，一个BGR彩色图像（三通道图像）的矩阵可能是：</p>
+<p><img src="images/tutorial/tutorial_how_matrix_stored_2.png" /></p>
+<p>在OpenCV中，通道的顺序依次是B、G、R（不是R、G、B）。</p>
+<p>OpenCV的split函数可以拆分图像矩阵的通道，而merge函数则可以将单通道图像矩阵合并为多通道图像矩阵。</p>
+<div class="sourceCode" id="cb673"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb673-1"><a href="imagebasis.html#cb673-1" tabindex="-1"></a><span class="co">#生成3通道矩阵img</span></span>
+<span id="cb673-2"><a href="imagebasis.html#cb673-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">2</span><span class="dt">L</span>,<span class="dv">4</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb673-3"><a href="imagebasis.html#cb673-3" tabindex="-1"></a><span class="co">#把三维数组写进去</span></span>
+<span id="cb673-4"><a href="imagebasis.html#cb673-4" tabindex="-1"></a>img[] <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>,<span class="at">dim=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">3</span>))</span>
+<span id="cb673-5"><a href="imagebasis.html#cb673-5" tabindex="-1"></a></span>
+<span id="cb673-6"><a href="imagebasis.html#cb673-6" tabindex="-1"></a><span class="co">#查看img的基本信息：行、列、通道数、类型码、深度</span></span>
+<span id="cb673-7"><a href="imagebasis.html#cb673-7" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span></code></pre></div>
+<pre><code>## [1]  2  4  3 64  0</code></pre>
+<div class="sourceCode" id="cb675"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb675-1"><a href="imagebasis.html#cb675-1" tabindex="-1"></a><span class="co">#拆分img的通道：cv_split 直接返回一个 cvMat 列表，不用事先准备容器</span></span>
+<span id="cb675-2"><a href="imagebasis.html#cb675-2" tabindex="-1"></a>planes <span class="ot">=</span> <span class="fu">cv_split</span>(img)</span>
+<span id="cb675-3"><a href="imagebasis.html#cb675-3" tabindex="-1"></a><span class="fu">length</span>(planes)</span></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<div class="sourceCode" id="cb677"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb677-1"><a href="imagebasis.html#cb677-1" tabindex="-1"></a><span class="fu">as_array</span>(planes[[<span class="dv">1</span>]], <span class="at">numeric =</span> <span class="cn">TRUE</span>)  <span class="co">#蓝色分量矩阵</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    3    5    7
+## [2,]    2    4    6    8
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb679"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb679-1"><a href="imagebasis.html#cb679-1" tabindex="-1"></a><span class="fu">as_array</span>(planes[[<span class="dv">2</span>]], <span class="at">numeric =</span> <span class="cn">TRUE</span>)  <span class="co">#绿色分量矩阵</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    9   11   13   15
+## [2,]   10   12   14   16
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb681"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb681-1"><a href="imagebasis.html#cb681-1" tabindex="-1"></a><span class="fu">as_array</span>(planes[[<span class="dv">3</span>]], <span class="at">numeric =</span> <span class="cn">TRUE</span>)  <span class="co">#红色分量矩阵</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]   17   19   21   23
+## [2,]   18   20   22   24
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb683"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb683-1"><a href="imagebasis.html#cb683-1" tabindex="-1"></a><span class="co">#将planes中的前2个单通道图像矩阵合并为双通道图像矩阵img1</span></span>
+<span id="cb683-2"><a href="imagebasis.html#cb683-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_merge</span>(planes[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
+<span id="cb683-3"><a href="imagebasis.html#cb683-3" tabindex="-1"></a><span class="co">#查看img1的基本信息（通道数为2）</span></span>
+<span id="cb683-4"><a href="imagebasis.html#cb683-4" tabindex="-1"></a><span class="fu">mat_info</span>(img1)</span></code></pre></div>
+<pre><code>## [1]  2  4  2 32  0</code></pre>
+<div class="sourceCode" id="cb685"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb685-1"><a href="imagebasis.html#cb685-1" tabindex="-1"></a><span class="co">#将planes中的3个单通道图像矩阵合并为三通道图像矩阵img2</span></span>
+<span id="cb685-2"><a href="imagebasis.html#cb685-2" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_merge</span>(planes)</span>
+<span id="cb685-3"><a href="imagebasis.html#cb685-3" tabindex="-1"></a><span class="co">#查看img2的基本信息（通道数为3）</span></span>
+<span id="cb685-4"><a href="imagebasis.html#cb685-4" tabindex="-1"></a><span class="fu">mat_info</span>(img2)</span></code></pre></div>
+<pre><code>## [1]  2  4  3 64  0</code></pre>
+<div class="sourceCode" id="cb687"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb687-1"><a href="imagebasis.html#cb687-1" tabindex="-1"></a><span class="fu">as_array</span>(img2, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    3    5    7
+## [2,]    2    4    6    8
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3] [,4]
+## [1,]    9   11   13   15
+## [2,]   10   12   14   16
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3] [,4]
+## [1,]   17   19   21   23
+## [2,]   18   20   22   24
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+</div>
+<div id="存储空间" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> 存储空间<a href="imagebasis.html#%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>已知一幅图像的尺寸（屏幕分辨率）为<span class="math inline">\(h\times w\)</span>（其中，<span class="math inline">\(h\)</span>表示纵向像素点数，<span class="math inline">\(w\)</span>表示横向像素点数），像素存储位数为<span class="math inline">\(k\)</span>时，则该图像的存储空间<span class="math inline">\(s\)</span>可以按如下公式计算：</p>
+<p><span class="math display">\[
+\begin{aligned}
+s &amp;= h \times w \times k \,(bit) \\
+&amp;= \frac{h \times w \times k}{8} \,(byte) \\
+&amp;= \frac{h \times w \times k}{8\times 1024} \,(kb) \\
+&amp;= \frac{h \times w \times k}{8\times 1024 \times 1024} \,(mb) \\
+\end{aligned}
+\]</span>
+例如：一幅画的尺寸是1024*768，像素存储位数为16bit，则它的数据量为1.5M。</p>
+<div class="sourceCode" id="cb689"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb689-1"><a href="imagebasis.html#cb689-1" tabindex="-1"></a><span class="dv">1024</span><span class="sc">*</span><span class="dv">768</span><span class="sc">*</span><span class="dv">16</span><span class="sc">/</span>(<span class="dv">8</span><span class="sc">*</span><span class="dv">1024</span><span class="sc">*</span><span class="dv">1024</span>)</span></code></pre></div>
+<pre><code>## [1] 1.5</code></pre>
+</div>
+<div id="类型" class="section level2 hasAnchor" number="4.6">
+<h2><span class="header-section-number">4.6</span> 类型<a href="imagebasis.html#%E7%B1%BB%E5%9E%8B" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>OpenCV中图像矩阵的类型（type）是结合像素存储位数/深度定义的一系列常量，其命名规则为CV_(深度/位数）+（数据类型）+（通道数）,其中数据类型有U（无符号整数）、S（有符号整数）和F（浮点数）三种。以下是OpenCV中常见的图像矩阵类型列表：</p>
+<ul>
+<li>CV_8UC1、CV_8UC3：分别表示8位无符号整数单通道图像和8位无符号整数三通道图像，颜色取值范围都为[0,255]</li>
+<li>CV_8SC1、CV_8SC3：分别表示8位有符号整数单通道图像和8位有符号整数三通道图像，颜色取值范围都为[-128,127]</li>
+<li>CV_16UC1、CV_16UC3：分别表示16位无符号整数单通道图像和16位无符号整数三通道图像，颜色取值范围都为[0,65535]</li>
+<li>CV_16SC1、CV_16SC3：分别表示16位有符号整数单通道图像和16位有符号整数三通道图像，颜色取值范围都为[-32768,32767]</li>
+<li>CV_32SC1、CV_32SC3：分别表示32位有符号整数单通道图像和32位有符号整数三通道图像，颜色取值范围都为[-2147483648,2147483647]</li>
+<li>CV_32FC1、CV_32FC3：分别表示32位浮点数单通道图像和32位浮点数三通道图像</li>
+<li>CV_64FC1、CV_64FC3：分别表示64位浮点数单通道图像和64位浮点数三通道图像</li>
+</ul>
+<p>另外，CV_8UC1、CV_8SC1、CV_16UC1、CV_16SC1、CV_32FC1和CV_64FC1等单通道图像类型，可以简写为：CV_8U、CV_8S、CV_16U、CV_16S、CV_32F和CV_64F等。</p>
+<p>这些常量在 ROpenCV 里都有同名的 R 对象，值是编译器从 OpenCV 头文件算出来的整数，不是抄在 R 里的。查一张图用的是哪个类型码，看 <code>mat_info()</code> 的第四个元素；第五个元素是深度（把类型码里的通道数去掉之后剩下的那个数）：</p>
+<div class="sourceCode" id="cb691"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb691-1"><a href="imagebasis.html#cb691-1" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">2</span><span class="dt">L</span>,<span class="dv">4</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb691-2"><a href="imagebasis.html#cb691-2" tabindex="-1"></a>info <span class="ot">=</span> <span class="fu">mat_info</span>(img)</span>
+<span id="cb691-3"><a href="imagebasis.html#cb691-3" tabindex="-1"></a>info</span></code></pre></div>
+<pre><code>## [1]  2  4  3 64  0</code></pre>
+<div class="sourceCode" id="cb693"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb693-1"><a href="imagebasis.html#cb693-1" tabindex="-1"></a><span class="fu">c</span>(<span class="at">rows =</span> info[<span class="dv">1</span>], <span class="at">cols =</span> info[<span class="dv">2</span>], <span class="at">channels =</span> info[<span class="dv">3</span>], <span class="at">type =</span> info[<span class="dv">4</span>], <span class="at">depth =</span> info[<span class="dv">5</span>])</span></code></pre></div>
+<pre><code>##     rows     cols channels     type    depth 
+##        2        4        3       64        0</code></pre>
+<div class="sourceCode" id="cb695"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb695-1"><a href="imagebasis.html#cb695-1" tabindex="-1"></a><span class="co">#类型码 64 对应 CV_8UC3（OpenCV 5 把通道位的起点从 3 挪到了 5，所以不是 16），</span></span>
+<span id="cb695-2"><a href="imagebasis.html#cb695-2" tabindex="-1"></a><span class="co">#深度 0 对应 CV_8U。两个数字都从常量读，不要背。</span></span>
+<span id="cb695-3"><a href="imagebasis.html#cb695-3" tabindex="-1"></a><span class="fu">c</span>(<span class="at">CV_8UC3 =</span> CV_8UC3, <span class="at">CV_8U =</span> CV_8U)</span></code></pre></div>
+<pre><code>## CV_8UC3   CV_8U 
+##      64       0</code></pre>
+</div>
+<div id="创建图像矩阵" class="section level2 hasAnchor" number="4.7">
+<h2><span class="header-section-number">4.7</span> 创建图像矩阵<a href="imagebasis.html#%E5%88%9B%E5%BB%BA%E5%9B%BE%E5%83%8F%E7%9F%A9%E9%98%B5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>OpenCV的图像矩阵类Mat具有非常多的构造函数形式，其中包括：</p>
+<ul>
+<li>Mat()</li>
+<li>Mat(int rows, int cols, int type)</li>
+<li>Mat(Size size, int type)</li>
+<li>Mat(int rows, int cols, int type, const Scalar &amp;s)</li>
+<li>Mat(Size size, int type, const Scalar &amp;s)</li>
+<li>Mat(int ndims, const int *sizes, int type)</li>
+<li>Mat(const std::vector&lt; int &gt; &amp;sizes, int type)</li>
+<li>Mat(int ndims, const int *sizes, int type, const Scalar &amp;s)</li>
+<li>Mat(const std::vector&lt; int &gt; &amp;sizes, int type, const Scalar &amp;s)</li>
+<li>Mat(const Mat &amp;m)</li>
+<li>Mat(int rows, int cols, int type, void *data, size_t step=AUTO_STEP)</li>
+<li>Mat(Size size, int type, void *data, size_t step=AUTO_STEP)</li>
+<li>Mat(int ndims, const int <em>sizes, int type, void </em>data, const size_t *steps=0)</li>
+<li>Mat(const std::vector&lt; int &gt; &amp;sizes, int type, void <em>data, const size_t </em>steps=0)</li>
+<li>Mat(const Mat &amp;m, const Range &amp;rowRange, const Range &amp;colRange=Range::all())</li>
+<li>Mat(const Mat &amp;m, const Rect &amp;roi)</li>
+<li>等等</li>
+</ul>
+<p>ROpenCV 用一个 <code>Mat()</code> 覆盖了其中最常用的几种形式，靠参数个数和类型在运行时挑：</p>
+<ul>
+<li><code>Mat()</code> —— 空矩阵</li>
+<li><code>Mat(m)</code> —— 从 R 的矩阵 / 三维数组 / raw 向量拷贝进来</li>
+<li><code>Mat(rows, cols, type)</code> —— 按尺寸和类型码新建，初值 0</li>
+<li><code>Mat(rows, cols, type, value)</code> —— 同上，用标量填充</li>
+</ul>
+<p>ROI（<code>Mat(const Mat&amp;, const Rect&amp;)</code>）没有放入 <code>Mat()</code>，因为它返回的是一个<strong>共享像素</strong>的视图而不是新矩阵，语义和上面几个不一样，单独用 <code>cv_mat_roi()</code> 表达，见本章后面的「获取/设置图像子区域」一节。</p>
+<p><strong>生成空图</strong></p>
+<div class="sourceCode" id="cb697"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb697-1"><a href="imagebasis.html#cb697-1" tabindex="-1"></a><span class="co"># 生成0行、0列的空图img</span></span>
+<span id="cb697-2"><a href="imagebasis.html#cb697-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>()</span>
+<span id="cb697-3"><a href="imagebasis.html#cb697-3" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span></code></pre></div>
+<pre><code>## [1] 0 0 1 0 0</code></pre>
+<p><strong>生成纯色图像</strong></p>
+<div class="sourceCode" id="cb699"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb699-1"><a href="imagebasis.html#cb699-1" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号单通道图像，所有像素值都为0（即黑色）</span></span>
+<span id="cb699-2"><a href="imagebasis.html#cb699-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC1,<span class="dv">0</span><span class="dt">L</span>)</span>
+<span id="cb699-3"><a href="imagebasis.html#cb699-3" tabindex="-1"></a></span>
+<span id="cb699-4"><a href="imagebasis.html#cb699-4" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号单通道图像，所有像素值都为128（即灰色）</span></span>
+<span id="cb699-5"><a href="imagebasis.html#cb699-5" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC1,<span class="dv">128</span><span class="dt">L</span>)</span>
+<span id="cb699-6"><a href="imagebasis.html#cb699-6" tabindex="-1"></a></span>
+<span id="cb699-7"><a href="imagebasis.html#cb699-7" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(128,0,128)（即紫色）</span></span>
+<span id="cb699-8"><a href="imagebasis.html#cb699-8" tabindex="-1"></a>img3 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3,<span class="fu">c</span>(<span class="dv">128</span>,<span class="dv">0</span>,<span class="dv">128</span>))</span>
+<span id="cb699-9"><a href="imagebasis.html#cb699-9" tabindex="-1"></a></span>
+<span id="cb699-10"><a href="imagebasis.html#cb699-10" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(255,0,0)（即蓝色）</span></span>
+<span id="cb699-11"><a href="imagebasis.html#cb699-11" tabindex="-1"></a>img4 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3,<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb699-12"><a href="imagebasis.html#cb699-12" tabindex="-1"></a></span>
+<span id="cb699-13"><a href="imagebasis.html#cb699-13" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,255,0)（即绿色）</span></span>
+<span id="cb699-14"><a href="imagebasis.html#cb699-14" tabindex="-1"></a>img5 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>))</span>
+<span id="cb699-15"><a href="imagebasis.html#cb699-15" tabindex="-1"></a></span>
+<span id="cb699-16"><a href="imagebasis.html#cb699-16" tabindex="-1"></a><span class="co"># 生成100行、100列的8位无符号三通道图像，所有像素值都为(0,0,255)（即红色）</span></span>
+<span id="cb699-17"><a href="imagebasis.html#cb699-17" tabindex="-1"></a>img6 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>))</span></code></pre></div>
+<p><code>plot.cvMat</code> 一次只画一张，多张并排要自己摆版面：</p>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-181-1.png" alt="" width="864" /></p>
+<p><strong>生成单位矩阵</strong></p>
+<div class="sourceCode" id="cb700"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb700-1"><a href="imagebasis.html#cb700-1" tabindex="-1"></a><span class="co">#生成5行5列的64位浮点数单通道单位矩阵</span></span>
+<span id="cb700-2"><a href="imagebasis.html#cb700-2" tabindex="-1"></a>E <span class="ot">=</span> <span class="fu">cv_setIdentity</span>(<span class="fu">Mat</span>(<span class="dv">5</span><span class="dt">L</span>,<span class="dv">5</span><span class="dt">L</span>,CV_64F), <span class="dv">1</span>)</span>
+<span id="cb700-3"><a href="imagebasis.html#cb700-3" tabindex="-1"></a><span class="fu">as_array</span>(E, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    0    0    0    0
+## [2,]    0    1    0    0    0
+## [3,]    0    0    1    0    0
+## [4,]    0    0    0    1    0
+## [5,]    0    0    0    0    1
+## attr(,&quot;depth&quot;)
+## [1] 6</code></pre>
+<div class="sourceCode" id="cb702"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb702-1"><a href="imagebasis.html#cb702-1" tabindex="-1"></a><span class="co">#生成200行200列的64位浮点数单通道单位矩阵</span></span>
+<span id="cb702-2"><a href="imagebasis.html#cb702-2" tabindex="-1"></a>E <span class="ot">=</span> <span class="fu">cv_setIdentity</span>(<span class="fu">Mat</span>(<span class="dv">200</span><span class="dt">L</span>,<span class="dv">200</span><span class="dt">L</span>,CV_64F), <span class="dv">1</span>)</span>
+<span id="cb702-3"><a href="imagebasis.html#cb702-3" tabindex="-1"></a><span class="fu">plot</span>(E) <span class="co">#对角线为 1，其余为 0</span></span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-183-1.png" alt="" width="672" /></p>
+<p><strong>生成全1矩阵（所有像素的取值都为1）</strong></p>
+<div class="sourceCode" id="cb703"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb703-1"><a href="imagebasis.html#cb703-1" tabindex="-1"></a><span class="co">#生成5行5列的32位浮点数单通道全1矩阵</span></span>
+<span id="cb703-2"><a href="imagebasis.html#cb703-2" tabindex="-1"></a>O <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">5</span><span class="dt">L</span>,<span class="dv">5</span><span class="dt">L</span>,CV_32F,<span class="dv">1</span>)</span>
+<span id="cb703-3"><a href="imagebasis.html#cb703-3" tabindex="-1"></a><span class="fu">as_array</span>(O, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    1    1    1    1
+## [2,]    1    1    1    1    1
+## [3,]    1    1    1    1    1
+## [4,]    1    1    1    1    1
+## [5,]    1    1    1    1    1
+## attr(,&quot;depth&quot;)
+## [1] 5</code></pre>
+<div class="sourceCode" id="cb705"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb705-1"><a href="imagebasis.html#cb705-1" tabindex="-1"></a><span class="co">#生成200行200列的32位浮点数单通道全1矩阵</span></span>
+<span id="cb705-2"><a href="imagebasis.html#cb705-2" tabindex="-1"></a>O <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">200</span><span class="dt">L</span>,<span class="dv">200</span><span class="dt">L</span>,CV_32F,<span class="dv">1</span>)</span>
+<span id="cb705-3"><a href="imagebasis.html#cb705-3" tabindex="-1"></a><span class="fu">plot</span>(O) <span class="co">#显示为白色图像</span></span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-185-1.png" alt="" width="672" /></p>
+<p><strong>生成全0矩阵</strong></p>
+<div class="sourceCode" id="cb706"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb706-1"><a href="imagebasis.html#cb706-1" tabindex="-1"></a><span class="co">#生成3行3列的单通道全0矩阵</span></span>
+<span id="cb706-2"><a href="imagebasis.html#cb706-2" tabindex="-1"></a>Z <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">3</span><span class="dt">L</span>,<span class="dv">3</span><span class="dt">L</span>,CV_8UC1)</span>
+<span id="cb706-3"><a href="imagebasis.html#cb706-3" tabindex="-1"></a><span class="fu">as_array</span>(Z, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0    0    0
+## [2,]    0    0    0
+## [3,]    0    0    0
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb708"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb708-1"><a href="imagebasis.html#cb708-1" tabindex="-1"></a><span class="co">#生成200行200列的单通道全0矩阵</span></span>
+<span id="cb708-2"><a href="imagebasis.html#cb708-2" tabindex="-1"></a>Z <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">200</span><span class="dt">L</span>,<span class="dv">200</span><span class="dt">L</span>,CV_8UC1)</span>
+<span id="cb708-3"><a href="imagebasis.html#cb708-3" tabindex="-1"></a><span class="fu">plot</span>(Z) <span class="co">#显示为黑色图像</span></span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-187-1.png" alt="" width="672" /></p>
+</div>
+<div id="读写像素值" class="section level2 hasAnchor" number="4.8">
+<h2><span class="header-section-number">4.8</span> 读写像素值<a href="imagebasis.html#%E8%AF%BB%E5%86%99%E5%83%8F%E7%B4%A0%E5%80%BC" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><code>cvMat</code> 的下标读写分成两条路，这个分工是有意的：</p>
+<ul>
+<li><strong>读</strong>走 <code>as_array()</code>，语义就是「取出来一份 R 数组」。每次读都全量拷一份，所以读出来的东西和原图没有关系，改了也不会影响图像。</li>
+<li><strong>写</strong>走 C++ 原地赋值，直接改 <code>cv::Mat</code> 的像素缓冲，不产生任何拷贝。这也是为什么 <code>img[i,j] &lt;- v</code> 能真正改到图像上。</li>
+</ul>
+<p>行列号从 1 开始，和 R 的数组一致。</p>
+<div id="单通道图像" class="section level3 hasAnchor" number="4.8.1">
+<h3><span class="header-section-number">4.8.1</span> 单通道图像<a href="imagebasis.html#%E5%8D%95%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>获取单通道图像的指定像素值</strong></p>
+<div class="sourceCode" id="cb709"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb709-1"><a href="imagebasis.html#cb709-1" tabindex="-1"></a><span class="co"># 以灰度模式读取图像文件，存放在img变量中</span></span>
+<span id="cb709-2"><a href="imagebasis.html#cb709-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/baboon.jpg&quot;</span>,IMREAD_GRAYSCALE)</span>
+<span id="cb709-3"><a href="imagebasis.html#cb709-3" tabindex="-1"></a><span class="co"># 获取第11行、第11列像素的值</span></span>
+<span id="cb709-4"><a href="imagebasis.html#cb709-4" tabindex="-1"></a>img[<span class="dv">11</span>,<span class="dv">11</span>]</span></code></pre></div>
+<pre><code>## [1] c4</code></pre>
+<p><code>CV_8U</code> 的像素读出来是 <code>raw</code>（一个字节，省内存），参与算术前先转成数值：</p>
+<div class="sourceCode" id="cb711"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb711-1"><a href="imagebasis.html#cb711-1" tabindex="-1"></a><span class="fu">as.numeric</span>(img[<span class="dv">11</span>,<span class="dv">11</span>])</span></code></pre></div>
+<pre><code>## [1] 196</code></pre>
+<p><strong>修改单通道图像的指定像素值</strong></p>
+<div class="sourceCode" id="cb713"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb713-1"><a href="imagebasis.html#cb713-1" tabindex="-1"></a><span class="co">#生成100行、100列的8位无符号整数图像img（所有像素值都为0）</span></span>
+<span id="cb713-2"><a href="imagebasis.html#cb713-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC1)</span>
+<span id="cb713-3"><a href="imagebasis.html#cb713-3" tabindex="-1"></a><span class="co">#将第51行的第41-60列像素和第51列的第41行-60行的像素</span></span>
+<span id="cb713-4"><a href="imagebasis.html#cb713-4" tabindex="-1"></a><span class="co">#都从0变为255（即由黑色变为白色）</span></span>
+<span id="cb713-5"><a href="imagebasis.html#cb713-5" tabindex="-1"></a>img[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb713-6"><a href="imagebasis.html#cb713-6" tabindex="-1"></a>img[<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">51</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb713-7"><a href="imagebasis.html#cb713-7" tabindex="-1"></a><span class="co">#显示结果</span></span>
+<span id="cb713-8"><a href="imagebasis.html#cb713-8" tabindex="-1"></a><span class="fu">plot</span>(img)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-190-1.png" alt="" width="672" /></p>
+<p>修改完成后显示图像，可以发现图像中部区域有一个白色小十字形。</p>
+<p><strong>获取单通道图像的指定区域的像素值</strong></p>
+<div class="sourceCode" id="cb714"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb714-1"><a href="imagebasis.html#cb714-1" tabindex="-1"></a><span class="co">#以灰度图模式读入图像数据</span></span>
+<span id="cb714-2"><a href="imagebasis.html#cb714-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/HappyFish.jpg&quot;</span>,IMREAD_GRAYSCALE)</span>
+<span id="cb714-3"><a href="imagebasis.html#cb714-3" tabindex="-1"></a><span class="co">#获取图像指定区域(第21行~35行、第31列~45列)的像素值，返回一个 15x15 的 R 矩阵</span></span>
+<span id="cb714-4"><a href="imagebasis.html#cb714-4" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">35</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">45</span>]</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+##  [1,]   b4   b9   c3   96   93   6b   8f   ea   ff    f2
+##  [2,]   8e   8c   88   b9   c6   ff   f8   ff   ff    fd
+##  [3,]   ff   ff   ff   fd   ff   e3   ff   fb   ef    ff
+##  [4,]   fe   ff   ff   ff   fb   ff   f6   ff   ff    fa
+##  [5,]   ff   ff   fe   fe   fe   fe   fe   fe   fe    fe
+##  [6,]   fa   ff   fe   fe   fe   fe   fe   fe   fe    fe
+##  [7,]   ff   ff   fe   fe   fe   fe   fe   fe   fe    fe
+##  [8,]   ff   f7   fe   fe   fe   fe   fe   fe   fe    fe
+##  [9,]   f1   ff   fe   fe   fe   fe   fe   fe   fe    fe
+## [10,]   f7   ff   fe   fe   fe   fe   fe   fe   fe    fe
+## [11,]   ff   f5   fe   fe   fe   fe   fe   fe   fe    fe
+## [12,]   f8   ff   fe   fe   fe   fe   fe   fe   fe    fe
+## [13,]   f1   ff   fe   fe   fe   fe   fe   fe   fe    fe
+## [14,]   f0   fd   fe   fe   fe   fe   fe   fe   fe    fe
+## [15,]   f9   f9   fe   fe   fe   fe   fe   fe   fe    fe
+##       [,11] [,12] [,13] [,14] [,15]
+##  [1,]    ff    ff    ff    ff    da
+##  [2,]    f6    ff    f2    fa    ff
+##  [3,]    ff    ff    ff    f9    fb
+##  [4,]    fe    fb    ff    f5    ff
+##  [5,]    fe    fe    fe    fe    fe
+##  [6,]    fe    fe    fe    fe    fe
+##  [7,]    fe    fe    fe    fe    fe
+##  [8,]    fe    fe    fe    fe    fe
+##  [9,]    fe    fe    fe    fe    fe
+## [10,]    fe    fe    fe    fe    fe
+## [11,]    fe    fe    fe    fe    fe
+## [12,]    fe    fe    fe    fe    fe
+## [13,]    fe    fe    fe    fe    fe
+## [14,]    fe    fe    fe    fe    fe
+## [15,]    fe    fe    fe    fe    fe</code></pre>
+<p><strong>修改单通道图像的指定区域的像素值</strong></p>
+<div class="sourceCode" id="cb716"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb716-1"><a href="imagebasis.html#cb716-1" tabindex="-1"></a><span class="co">#将图像指定区域(第21行~35行、第31列~45列)的像素值更改为黑色</span></span>
+<span id="cb716-2"><a href="imagebasis.html#cb716-2" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">35</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">45</span>] <span class="ot">=</span> <span class="dv">0</span></span></code></pre></div>
+<p>修改成功后，可以发现图像左上角出现了一个小的黑色方块。
+<img src="bookdown_files/figure-html/unnamed-chunk-193-1.png" alt="" width="672" /></p>
+</div>
+<div id="三通道图像" class="section level3 hasAnchor" number="4.8.2">
+<h3><span class="header-section-number">4.8.2</span> 三通道图像<a href="imagebasis.html#%E4%B8%89%E9%80%9A%E9%81%93%E5%9B%BE%E5%83%8F" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>获取三通道图像的指定像素值</strong></p>
+<div class="sourceCode" id="cb717"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb717-1"><a href="imagebasis.html#cb717-1" tabindex="-1"></a><span class="co"># 以默认方式读取图像文件</span></span>
+<span id="cb717-2"><a href="imagebasis.html#cb717-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/cat.jpg&quot;</span>)</span>
+<span id="cb717-3"><a href="imagebasis.html#cb717-3" tabindex="-1"></a><span class="co"># 获取第11行、第11列像素的值</span></span>
+<span id="cb717-4"><a href="imagebasis.html#cb717-4" tabindex="-1"></a>img[<span class="dv">11</span>,<span class="dv">11</span>]</span></code></pre></div>
+<pre><code>## [1] b2 b3 aa</code></pre>
+<p>可以看到，返回的是一个三维向量，三个值依次表示第11行、第11列像素的蓝色、绿色和红色分量值。进一步，可以用如下代码提取各个颜色分量：</p>
+<div class="sourceCode" id="cb719"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb719-1"><a href="imagebasis.html#cb719-1" tabindex="-1"></a><span class="co"># 提取第11行、第11列像素的各个颜色分量</span></span>
+<span id="cb719-2"><a href="imagebasis.html#cb719-2" tabindex="-1"></a>px <span class="ot">=</span> <span class="fu">as.numeric</span>(img[<span class="dv">11</span>,<span class="dv">11</span>])</span>
+<span id="cb719-3"><a href="imagebasis.html#cb719-3" tabindex="-1"></a><span class="fu">c</span>(<span class="at">blue =</span> px[<span class="dv">1</span>], <span class="at">green =</span> px[<span class="dv">2</span>], <span class="at">red =</span> px[<span class="dv">3</span>])</span></code></pre></div>
+<pre><code>##  blue green   red 
+##   178   179   170</code></pre>
+<p><strong>修改三通道图像的指定像素值</strong></p>
+<div class="sourceCode" id="cb721"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb721-1"><a href="imagebasis.html#cb721-1" tabindex="-1"></a><span class="co">#生成100行、100列的8位无符号整数图像img（所有像素值都为(0,0,0)）</span></span>
+<span id="cb721-2"><a href="imagebasis.html#cb721-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb721-3"><a href="imagebasis.html#cb721-3" tabindex="-1"></a></span>
+<span id="cb721-4"><a href="imagebasis.html#cb721-4" tabindex="-1"></a><span class="co">#一个像素：三个分量，长度正好对上，直接写</span></span>
+<span id="cb721-5"><a href="imagebasis.html#cb721-5" tabindex="-1"></a>img[<span class="dv">51</span>,<span class="dv">51</span>,] <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>)</span>
+<span id="cb721-6"><a href="imagebasis.html#cb721-6" tabindex="-1"></a></span>
+<span id="cb721-7"><a href="imagebasis.html#cb721-7" tabindex="-1"></a><span class="co">#一条横线 + 一条竖线：三个通道分开写，读代码的人一眼就知道在做什么</span></span>
+<span id="cb721-8"><a href="imagebasis.html#cb721-8" tabindex="-1"></a>img[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">0</span>; img[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">2</span>] <span class="ot">=</span> <span class="dv">0</span>; img[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">3</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb721-9"><a href="imagebasis.html#cb721-9" tabindex="-1"></a>img[<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">51</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">0</span>; img[<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">51</span>,<span class="dv">2</span>] <span class="ot">=</span> <span class="dv">0</span>; img[<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,<span class="dv">51</span>,<span class="dv">3</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb721-10"><a href="imagebasis.html#cb721-10" tabindex="-1"></a></span>
+<span id="cb721-11"><a href="imagebasis.html#cb721-11" tabindex="-1"></a><span class="co">#显示结果</span></span>
+<span id="cb721-12"><a href="imagebasis.html#cb721-12" tabindex="-1"></a><span class="fu">plot</span>(img)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-196-1.png" alt="" width="672" /></p>
+<p>修改完成后显示图像，可以发现图像中部区域有一个小红十字。</p>
+<p>这里有个坑值得单独说：一条线如果写成一个语句 <code>img[51,41:60,] = c(0,0,255)</code>，得到的<strong>不是</strong>一条红线。选中的是 20 个像素 × 3 个通道 = 60 个元素，而右边只有 3 个数，R 会循环补齐；补齐的顺序按 <code>(行, 列, 通道)</code> 列优先展开、通道在最外层，于是 255 在三个通道之间轮转——第 41 列是绿、第 42 列是红、第 43 列是蓝，如此往复：</p>
+<div class="sourceCode" id="cb722"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb722-1"><a href="imagebasis.html#cb722-1" tabindex="-1"></a>bad <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span><span class="dt">L</span>,<span class="dv">100</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb722-2"><a href="imagebasis.html#cb722-2" tabindex="-1"></a>bad[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,] <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>)</span>
+<span id="cb722-3"><a href="imagebasis.html#cb722-3" tabindex="-1"></a><span class="co"># 第 51 行第 41~43 列：三行分别是第 41、42、43 列，三列分别是 B、G、R</span></span>
+<span id="cb722-4"><a href="imagebasis.html#cb722-4" tabindex="-1"></a><span class="co"># 结果是绿、红、蓝轮流出现——255 在三个通道之间轮转，不是一条红线</span></span>
+<span id="cb722-5"><a href="imagebasis.html#cb722-5" tabindex="-1"></a><span class="fu">as_array</span>(bad, <span class="at">numeric =</span> <span class="cn">TRUE</span>)[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">43</span>,]</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0  255    0
+## [2,]    0    0  255
+## [3,]  255    0    0</code></pre>
+<p>要给一整块区域涂同一个颜色，要么让颜色的长度对上（通道在最外层，所以用 <code>each</code> 按像素数展开），要么就像上面那样按通道分开写：</p>
+<div class="sourceCode" id="cb724"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb724-1"><a href="imagebasis.html#cb724-1" tabindex="-1"></a>img[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>,] <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>), <span class="at">each =</span> <span class="dv">20</span>)</span>
+<span id="cb724-2"><a href="imagebasis.html#cb724-2" tabindex="-1"></a><span class="fu">as_array</span>(img, <span class="at">numeric =</span> <span class="cn">TRUE</span>)[<span class="dv">51</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">43</span>,]</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    0    0  255
+## [2,]    0    0  255
+## [3,]    0    0  255</code></pre>
+<p><strong>获取三通道图像的指定区域的像素值</strong></p>
+<div class="sourceCode" id="cb726"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb726-1"><a href="imagebasis.html#cb726-1" tabindex="-1"></a><span class="co">#读入图像数据</span></span>
+<span id="cb726-2"><a href="imagebasis.html#cb726-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/HappyFish.jpg&quot;</span>)</span>
+<span id="cb726-3"><a href="imagebasis.html#cb726-3" tabindex="-1"></a></span>
+<span id="cb726-4"><a href="imagebasis.html#cb726-4" tabindex="-1"></a><span class="co">#获取图像指定区域(第21行~25行、第31列~35列)的像素值，返回 5x5x3 的三维数组</span></span>
+<span id="cb726-5"><a href="imagebasis.html#cb726-5" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">25</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">35</span>,]</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   a9   ad   b7   8b   8a
+## [2,]   85   83   7f   b0   bf
+## [3,]   fa   fa   f8   f8   fa
+## [4,]   fc   fb   fb   fb   f7
+## [5,]   ff   fd   fc   fc   fc
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   a4   aa   b7   8d   8b
+## [2,]   83   82   80   b4   c1
+## [3,]   fa   fa   fc   fa   fd
+## [4,]   fe   ff   ff   ff   fb
+## [5,]   ff   ff   ff   ff   ff
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   d7   db   df   ac   a7
+## [2,]   a7   a4   9a   c7   d3
+## [3,]   ff   ff   ff   ff   ff
+## [4,]   ff   ff   ff   ff   fc
+## [5,]   fc   fc   fb   fb   fd</code></pre>
+<p><strong>修改三通道图像指定区域的像素值</strong></p>
+<div class="sourceCode" id="cb728"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb728-1"><a href="imagebasis.html#cb728-1" tabindex="-1"></a><span class="co">#将图像指定区域(第21行~35行、第31列~45列)的像素值改为蓝色</span></span>
+<span id="cb728-2"><a href="imagebasis.html#cb728-2" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">35</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">45</span>,<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb728-3"><a href="imagebasis.html#cb728-3" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">35</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">45</span>,<span class="dv">2</span>] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb728-4"><a href="imagebasis.html#cb728-4" tabindex="-1"></a>img[<span class="dv">21</span><span class="sc">:</span><span class="dv">35</span>,<span class="dv">31</span><span class="sc">:</span><span class="dv">45</span>,<span class="dv">3</span>] <span class="ot">=</span> <span class="dv">0</span></span></code></pre></div>
+<p>修改成功后，可以发现图像左上角出现了一个小的蓝色方块。
+<img src="bookdown_files/figure-html/unnamed-chunk-201-1.png" alt="" width="672" /></p>
+</div>
+</div>
+<div id="内存管理和引用计数" class="section level2 hasAnchor" number="4.9">
+<h2><span class="header-section-number">4.9</span> 内存管理和引用计数<a href="imagebasis.html#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%92%8C%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>OpenCV中的图像矩阵类（Mat）本质上是由两个部分组成的类：</p>
+<ul>
+<li>一部分矩阵头：包含信息有矩阵的大小、矩阵的像素位数/矩阵深度、矩阵通道数、矩阵存储的地址等，矩阵头部的大小是恒定的。<br />
+</li>
+<li>另一部分是矩阵数据指针：指向包含了像素值的矩阵，矩阵本身的大小因图像的不同而不同，通常具有较大的数量级。</li>
+</ul>
+<p>在基于OpenCV进行很多图像处理时，多个图像矩阵可以具有不同的矩阵头，却会共享相同矩阵数据（即它们的矩阵数据指针所指向的内存区域有重叠部分）。OpenCV会维护一个引用计数器，用来监测这种数据共享情况，每增加一次共享情况，OpenCV就会累加一次引用计数。只要图像内存区域的引用计数大于0，相应的内存就不会被销毁回收。</p>
+<p>在 ROpenCV 里，这件事的第一层表现非常直接：<code>cvMat</code> 是外部指针，<code>img2 = img1</code> 只是给同一个指针起了第二个名字，连矩阵头都没有复制。</p>
+<div class="sourceCode" id="cb729"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb729-1"><a href="imagebasis.html#cb729-1" tabindex="-1"></a><span class="co">#创建无符号整数三通道图像img1</span></span>
+<span id="cb729-2"><a href="imagebasis.html#cb729-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">2</span><span class="dt">L</span>,<span class="dv">3</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb729-3"><a href="imagebasis.html#cb729-3" tabindex="-1"></a>img1[] <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>,<span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span>
+<span id="cb729-4"><a href="imagebasis.html#cb729-4" tabindex="-1"></a></span>
+<span id="cb729-5"><a href="imagebasis.html#cb729-5" tabindex="-1"></a><span class="co">#获取img1图像的基本信息（行、列、通道数、类型码、深度）</span></span>
+<span id="cb729-6"><a href="imagebasis.html#cb729-6" tabindex="-1"></a><span class="fu">mat_info</span>(img1)</span></code></pre></div>
+<pre><code>## [1]  2  3  3 64  0</code></pre>
+<div class="sourceCode" id="cb731"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb731-1"><a href="imagebasis.html#cb731-1" tabindex="-1"></a><span class="co">#按行、列顺序输出img1的各个像素值</span></span>
+<span id="cb731-2"><a href="imagebasis.html#cb731-2" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb733"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb733-1"><a href="imagebasis.html#cb733-1" tabindex="-1"></a><span class="co">#直接将img1赋值给img2：两个名字，一个矩阵</span></span>
+<span id="cb733-2"><a href="imagebasis.html#cb733-2" tabindex="-1"></a>img2 <span class="ot">=</span> img1</span>
+<span id="cb733-3"><a href="imagebasis.html#cb733-3" tabindex="-1"></a><span class="fu">identical</span>(img1, img2)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb735"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb735-1"><a href="imagebasis.html#cb735-1" tabindex="-1"></a><span class="co">#将img2的第1行、第1列像素值的蓝色分量改为255(绿色和红色分量保持不变)</span></span>
+<span id="cb735-2"><a href="imagebasis.html#cb735-2" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">as.numeric</span>(img2[<span class="dv">1</span>,<span class="dv">1</span>,])</span>
+<span id="cb735-3"><a href="imagebasis.html#cb735-3" tabindex="-1"></a>img2[<span class="dv">1</span>,<span class="dv">1</span>,] <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">255</span>, v[<span class="dv">2</span>], v[<span class="dv">3</span>])</span>
+<span id="cb735-4"><a href="imagebasis.html#cb735-4" tabindex="-1"></a></span>
+<span id="cb735-5"><a href="imagebasis.html#cb735-5" tabindex="-1"></a><span class="co">#查看img2的各个像素值</span></span>
+<span id="cb735-6"><a href="imagebasis.html#cb735-6" tabindex="-1"></a><span class="fu">as_array</span>(img2, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]  255    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb737"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb737-1"><a href="imagebasis.html#cb737-1" tabindex="-1"></a><span class="co">#查看img1的各个像素值：跟着一起变了</span></span>
+<span id="cb737-2"><a href="imagebasis.html#cb737-2" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]  255    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<p>可以看到，img1的第1行、第1列像素值的蓝色分量也变成了255。</p>
+<p>第二层表现是「矩阵头复制」：<code>cv_mat_roi()</code> 返回的子矩阵、<code>cv_copyTo()</code> 之外的很多 OpenCV 函数返回值，都是共享同一块像素缓冲的新矩阵头，引用计数加一。这一层才是「Mat 很轻」这句话真正的含义，下一节和本章最后两节会分别用到它。</p>
+</div>
+<div id="获取设置图像子区域或者感兴趣区域" class="section level2 hasAnchor" number="4.10">
+<h2><span class="header-section-number">4.10</span> 获取/设置图像子区域或者感兴趣区域<a href="imagebasis.html#%E8%8E%B7%E5%8F%96%E8%AE%BE%E7%BD%AE%E5%9B%BE%E5%83%8F%E5%AD%90%E5%8C%BA%E5%9F%9F%E6%88%96%E8%80%85%E6%84%9F%E5%85%B4%E8%B6%A3%E5%8C%BA%E5%9F%9F" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>很多时候，需要提取出图像的部分区域进行操作。比如，下面的例子会提取出狒狒的眼部区域：</p>
+<div class="sourceCode" id="cb739"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb739-1"><a href="imagebasis.html#cb739-1" tabindex="-1"></a><span class="co">#读取狒狒的图片文件</span></span>
+<span id="cb739-2"><a href="imagebasis.html#cb739-2" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">&quot;images/baboon.jpg&quot;</span>)</span>
+<span id="cb739-3"><a href="imagebasis.html#cb739-3" tabindex="-1"></a><span class="co">#获取img指定区域smallImg：c(x, y, w, h)，左上角坐标 + 宽高，按像素坐标系（0 起算）</span></span>
+<span id="cb739-4"><a href="imagebasis.html#cb739-4" tabindex="-1"></a>smallImg <span class="ot">=</span> <span class="fu">cv_mat_roi</span>(img,<span class="fu">c</span>(<span class="dv">120</span>,<span class="dv">30</span>,<span class="dv">260</span>,<span class="dv">70</span>))</span>
+<span id="cb739-5"><a href="imagebasis.html#cb739-5" tabindex="-1"></a><span class="fu">dim</span>(smallImg)</span></code></pre></div>
+<pre><code>## [1]  70 260   3</code></pre>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-204-1.png" alt="" width="672" /></p>
+<p>这里要注意，smallImg和img是共享数据的：<code>cv_mat_roi()</code> 返回的只是原图的一个新矩阵头，像素缓冲还是同一块，引用计数加一。</p>
+<div class="sourceCode" id="cb741"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb741-1"><a href="imagebasis.html#cb741-1" tabindex="-1"></a><span class="co">#在smallImg上绘制红色填充矩形</span></span>
+<span id="cb741-2"><a href="imagebasis.html#cb741-2" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(smallImg,<span class="fu">c</span>(<span class="dv">110</span><span class="dt">L</span>,<span class="dv">25</span><span class="dt">L</span>),<span class="fu">c</span>(<span class="dv">150</span><span class="dt">L</span>,<span class="dv">45</span><span class="dt">L</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>))</span>
+<span id="cb741-3"><a href="imagebasis.html#cb741-3" tabindex="-1"></a><span class="co">#显示smallImg</span></span>
+<span id="cb741-4"><a href="imagebasis.html#cb741-4" tabindex="-1"></a><span class="fu">plot</span>(smallImg)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-205-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb742"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb742-1"><a href="imagebasis.html#cb742-1" tabindex="-1"></a><span class="co">#显示img</span></span>
+<span id="cb742-2"><a href="imagebasis.html#cb742-2" tabindex="-1"></a><span class="fu">plot</span>(img)</span></code></pre></div>
+<p><img src="bookdown_files/figure-html/unnamed-chunk-205-2.png" alt="" width="672" /></p>
+<pre><code>## [1]   0   0 255</code></pre>
+<p>可以看到，在smallImg上添加一个红色填充矩形后，img上的相应位置也出现了红色填充矩形。</p>
+<p>需要一块独立的区域时，加一步 <code>cv_copyTo()</code>：</p>
+<div class="sourceCode" id="cb744"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb744-1"><a href="imagebasis.html#cb744-1" tabindex="-1"></a><span class="co">#独立副本：之后改copy不会影响img</span></span>
+<span id="cb744-2"><a href="imagebasis.html#cb744-2" tabindex="-1"></a>copy <span class="ot">=</span> <span class="fu">cv_copyTo</span>(smallImg)</span>
+<span id="cb744-3"><a href="imagebasis.html#cb744-3" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(copy,<span class="fu">c</span>(<span class="dv">0</span><span class="dt">L</span>,<span class="dv">0</span><span class="dt">L</span>),<span class="fu">c</span>(<span class="dv">20</span><span class="dt">L</span>,<span class="dv">20</span><span class="dt">L</span>),<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span><span class="dt">L</span>))</span>
+<span id="cb744-4"><a href="imagebasis.html#cb744-4" tabindex="-1"></a><span class="co">#copy 的左上角变蓝了</span></span>
+<span id="cb744-5"><a href="imagebasis.html#cb744-5" tabindex="-1"></a><span class="fu">as.numeric</span>(copy[<span class="dv">5</span>,<span class="dv">5</span>,])</span></code></pre></div>
+<pre><code>## [1] 255   0   0</code></pre>
+<div class="sourceCode" id="cb746"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb746-1"><a href="imagebasis.html#cb746-1" tabindex="-1"></a><span class="co">#img 的对应位置没变（ROI 的 (5,5) 对应原图的 1-based [35,125]）</span></span>
+<span id="cb746-2"><a href="imagebasis.html#cb746-2" tabindex="-1"></a><span class="fu">as.numeric</span>(img[<span class="dv">35</span>,<span class="dv">125</span>,])</span></code></pre></div>
+<pre><code>## [1] 50 67 63</code></pre>
+</div>
+<div id="图像拷贝与克隆" class="section level2 hasAnchor" number="4.11">
+<h2><span class="header-section-number">4.11</span> 图像拷贝与克隆<a href="imagebasis.html#%E5%9B%BE%E5%83%8F%E6%8B%B7%E8%B4%9D%E4%B8%8E%E5%85%8B%E9%9A%86" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>通过拷贝和克隆操作，可以生成一个图像的独立副本。在 OpenCV 里 <code>copyTo</code> 和 <code>clone</code> 做的是同一件事——分配一块新内存再把像素拷过去——所以 ROpenCV 只留了一个入口：<code>cv_copyTo()</code>。</p>
+<div class="sourceCode" id="cb748"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb748-1"><a href="imagebasis.html#cb748-1" tabindex="-1"></a><span class="co">#创建8位无符号整数三通道图像img1</span></span>
+<span id="cb748-2"><a href="imagebasis.html#cb748-2" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">2</span><span class="dt">L</span>,<span class="dv">3</span><span class="dt">L</span>,CV_8UC3)</span>
+<span id="cb748-3"><a href="imagebasis.html#cb748-3" tabindex="-1"></a>img1[] <span class="ot">=</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>,<span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>))</span>
+<span id="cb748-4"><a href="imagebasis.html#cb748-4" tabindex="-1"></a><span class="co">#获取img1图像的基本信息</span></span>
+<span id="cb748-5"><a href="imagebasis.html#cb748-5" tabindex="-1"></a><span class="fu">mat_info</span>(img1)</span></code></pre></div>
+<pre><code>## [1]  2  3  3 64  0</code></pre>
+<div class="sourceCode" id="cb750"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb750-1"><a href="imagebasis.html#cb750-1" tabindex="-1"></a><span class="co">#输出img1的各个像素值</span></span>
+<span id="cb750-2"><a href="imagebasis.html#cb750-2" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb752"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb752-1"><a href="imagebasis.html#cb752-1" tabindex="-1"></a><span class="co">#通过拷贝方式从img1生成img2</span></span>
+<span id="cb752-2"><a href="imagebasis.html#cb752-2" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_copyTo</span>(img1)</span>
+<span id="cb752-3"><a href="imagebasis.html#cb752-3" tabindex="-1"></a><span class="co">#输出img2的各个像素值</span></span>
+<span id="cb752-4"><a href="imagebasis.html#cb752-4" tabindex="-1"></a><span class="fu">as_array</span>(img2, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb754"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb754-1"><a href="imagebasis.html#cb754-1" tabindex="-1"></a><span class="co">#再拷一份，当作「克隆」</span></span>
+<span id="cb754-2"><a href="imagebasis.html#cb754-2" tabindex="-1"></a>img3 <span class="ot">=</span> <span class="fu">cv_copyTo</span>(img1)</span>
+<span id="cb754-3"><a href="imagebasis.html#cb754-3" tabindex="-1"></a><span class="co">#输出img3的各个像素值</span></span>
+<span id="cb754-4"><a href="imagebasis.html#cb754-4" tabindex="-1"></a><span class="fu">as_array</span>(img3, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<p>从输出内容看，img2和img3都与img1有相同的像素值。此外，在拷贝方式下，图像矩阵之间是不存在共享数据的。</p>
+<div class="sourceCode" id="cb756"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb756-1"><a href="imagebasis.html#cb756-1" tabindex="-1"></a><span class="co">#将img1第1行、第1列像素值的蓝色分量改为255</span></span>
+<span id="cb756-2"><a href="imagebasis.html#cb756-2" tabindex="-1"></a>v <span class="ot">=</span> <span class="fu">as.numeric</span>(img1[<span class="dv">1</span>,<span class="dv">1</span>,])</span>
+<span id="cb756-3"><a href="imagebasis.html#cb756-3" tabindex="-1"></a>img1[<span class="dv">1</span>,<span class="dv">1</span>,] <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">255</span>, v[<span class="dv">2</span>], v[<span class="dv">3</span>])</span>
+<span id="cb756-4"><a href="imagebasis.html#cb756-4" tabindex="-1"></a></span>
+<span id="cb756-5"><a href="imagebasis.html#cb756-5" tabindex="-1"></a><span class="co">#输出img1的各个像素值</span></span>
+<span id="cb756-6"><a href="imagebasis.html#cb756-6" tabindex="-1"></a><span class="fu">as_array</span>(img1, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]  255    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb758"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb758-1"><a href="imagebasis.html#cb758-1" tabindex="-1"></a><span class="co">#输出img2的各个像素值：不受影响</span></span>
+<span id="cb758-2"><a href="imagebasis.html#cb758-2" tabindex="-1"></a><span class="fu">as_array</span>(img2, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<div class="sourceCode" id="cb760"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb760-1"><a href="imagebasis.html#cb760-1" tabindex="-1"></a><span class="co">#输出img3的各个像素值：不受影响</span></span>
+<span id="cb760-2"><a href="imagebasis.html#cb760-2" tabindex="-1"></a><span class="fu">as_array</span>(img3, <span class="at">numeric =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9   11
+## [2,]    8   10   12
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   13   15   17
+## [2,]   14   16   18
+## 
+## attr(,&quot;depth&quot;)
+## [1] 0</code></pre>
+<p>可以看到，修改img1之后，img2和img3都没有受到影响。</p>
+<p>最后把三者放在一起对比，共享和独立两种关系的区别就很清楚了：</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>写法</th>
+<th>数据</th>
+<th>改一个会不会影响另一个</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>img2 = img1</code></td>
+<td>同一个外部指针</td>
+<td>会，本来就是一个对象</td>
+</tr>
+<tr class="even">
+<td><code>cv_mat_roi(img, rect)</code></td>
+<td>新的矩阵头，同一块像素缓冲</td>
+<td>会，写的是同一块内存</td>
+</tr>
+<tr class="odd">
+<td><code>cv_copyTo(img)</code></td>
+<td>新的矩阵头和新的像素缓冲</td>
+<td>不会</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="ROpenCVMechanisim.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="firstshow.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": true,
+    "facebook": false,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/main/04-imagebasis.Rmd",
+    "text": "编辑"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "none"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
