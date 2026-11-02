@@ -668,7 +668,7 @@ I_{new} = \left \lfloor \frac{I_{old}}{10} \right \rfloor \times 10
 <span id="cb854-21"><a href="coremodule.html#cb854-21" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb854-22"><a href="coremodule.html#cb854-22" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb854-23"><a href="coremodule.html#cb854-23" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.232312&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 0.602148&quot;</code></pre>
 <p>而在使用查询表时所消耗的时间：</p>
 <div class="sourceCode" id="cb856"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb856-1"><a href="coremodule.html#cb856-1" tabindex="-1"></a><span class="co">#生成查询表lookuptbl</span></span>
 <span id="cb856-2"><a href="coremodule.html#cb856-2" tabindex="-1"></a>lookuptbl <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">24</span>,<span class="at">each=</span><span class="dv">10</span>)<span class="sc">*</span><span class="dv">10</span>,<span class="fu">rep</span>(<span class="dv">250</span>,<span class="dv">6</span>))</span>
@@ -696,7 +696,7 @@ I_{new} = \left \lfloor \frac{I_{old}}{10} \right \rfloor \times 10
 <span id="cb856-24"><a href="coremodule.html#cb856-24" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb856-25"><a href="coremodule.html#cb856-25" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb856-26"><a href="coremodule.html#cb856-26" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.236051&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 0.588049&quot;</code></pre>
 <p>可以看到，单独使用查询表方式，较之于直接使用乘除运算方式而言，时间消耗并没有优势。
 若在基于查询表的基础之上，再结合向量运算时（R 语言的向量运算很强），时间消耗会
 大大减少：</p>
@@ -722,7 +722,7 @@ I_{new} = \left \lfloor \frac{I_{old}}{10} \right \rfloor \times 10
 <span id="cb858-20"><a href="coremodule.html#cb858-20" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb858-21"><a href="coremodule.html#cb858-21" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb858-22"><a href="coremodule.html#cb858-22" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.027337&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 0.045024&quot;</code></pre>
 <p>下图左边是狒狒原始图像，右边是颜色空间压缩结果：</p>
 <p><img src="bookdown_files/figure-html/unnamed-chunk-265-1.png" alt="" width="672" /></p>
 </div>
@@ -2169,7 +2169,7 @@ I_1(i,j)=5 \times I(i,j)-\left[ I(i-1,j)+I(i+1,j)+I(i,j-1)+I(i,j+1) \right]
 <span id="cb902-28"><a href="coremodule.html#cb902-28" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb902-29"><a href="coremodule.html#cb902-29" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb902-30"><a href="coremodule.html#cb902-30" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.824432&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 2.072048&quot;</code></pre>
 <p>可以看出，处理后的图像具有一种锐化效果（即图像边缘更清晰）</p>
 <p><img src="bookdown_files/figure-html/unnamed-chunk-300-1.png" alt="" width="672" /></p>
 <p>可以将公式：</p>
@@ -2211,7 +2211,7 @@ I_1=5 \times I-\left[ I.top+I.bottom+I.left+I.right \right]
 <span id="cb904-27"><a href="coremodule.html#cb904-27" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb904-28"><a href="coremodule.html#cb904-28" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb904-29"><a href="coremodule.html#cb904-29" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.014342&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 0.018028&quot;</code></pre>
 <p><img src="bookdown_files/figure-html/unnamed-chunk-302-1.png" alt="" width="672" /></p>
 <p>以上图像锐化过程，可以转变为图像矩阵上的掩码运算，这种操作的思想是以掩码矩阵
 （也称为内核）的值为权重对相应像素值进行加权求和。</p>
@@ -2279,7 +2279,7 @@ I_1 = I \otimes M
 <span id="cb906-30"><a href="coremodule.html#cb906-30" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb906-31"><a href="coremodule.html#cb906-31" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb906-32"><a href="coremodule.html#cb906-32" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.597762&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 1.759951&quot;</code></pre>
 <p><img src="bookdown_files/figure-html/unnamed-chunk-304-1.png" alt="" width="672" /></p>
 <p>当直接使用 <code>cv_filter2D</code> 函数（下一章还会用到此函数）进行掩码操作时，可以获得更快的
 速度：</p>
@@ -2299,7 +2299,7 @@ I_1 = I \otimes M
 <span id="cb908-14"><a href="coremodule.html#cb908-14" tabindex="-1"></a>t2 <span class="ot">=</span> <span class="fu">cv_getTickCount</span>()</span>
 <span id="cb908-15"><a href="coremodule.html#cb908-15" tabindex="-1"></a><span class="co">#打印出从t1到t2所经历的时间(单位：秒)</span></span>
 <span id="cb908-16"><a href="coremodule.html#cb908-16" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;Times passed in seconds: %f&quot;</span>,(t2<span class="sc">-</span>t1)<span class="sc">/</span><span class="fu">cv_getTickFrequency</span>())</span></code></pre></div>
-<pre><code>## [1] &quot;Times passed in seconds: 0.000776&quot;</code></pre>
+<pre><code>## [1] &quot;Times passed in seconds: 0.002638&quot;</code></pre>
 <p><img src="bookdown_files/figure-html/unnamed-chunk-306-1.png" alt="" width="672" /></p>
 </div>
 <div id="融合两个图像" class="section level2 hasAnchor" number="6.8">
@@ -3165,10 +3165,10 @@ M = \sqrt[2] {Re^2+Im^2}
 <span id="cb1021-4"><a href="coremodule.html#cb1021-4" tabindex="-1"></a><span class="co">#保存到指定文件</span></span>
 <span id="cb1021-5"><a href="coremodule.html#cb1021-5" tabindex="-1"></a>f_out <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;out.xml&quot;</span>)</span>
 <span id="cb1021-6"><a href="coremodule.html#cb1021-6" tabindex="-1"></a><span class="fu">saveXML</span>(xmltop,<span class="at">file=</span>f_out,<span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>)</span></code></pre></div>
-<pre><code>## [1] &quot;C:\\Users\\pyCQUER\\AppData\\Local\\Temp\\Rtmpiqht1U/out.xml&quot;</code></pre>
+<pre><code>## [1] &quot;C:\\Users\\pyCQUER\\AppData\\Local\\Temp\\RtmpIFsNIu/out.xml&quot;</code></pre>
 <div class="sourceCode" id="cb1023"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1023-1"><a href="coremodule.html#cb1023-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">readLines</span>(f_out),<span class="at">sep=</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning in readLines(f_out): incomplete final line found on
-## &#39;C:\Users\pyCQUER\AppData\Local\Temp\Rtmpiqht1U/out.xml&#39;</code></pre>
+## &#39;C:\Users\pyCQUER\AppData\Local\Temp\RtmpIFsNIu/out.xml&#39;</code></pre>
 <pre><code>## &lt;book&gt;
 ##   &lt;chapter&gt;
 ##     &lt;title&gt;第一章 绪论&lt;/title&gt;
@@ -3206,7 +3206,7 @@ M = \sqrt[2] {Re^2+Im^2}
 <pre><code>## [1] &quot;%YAML:1.0&quot; &quot;---&quot;</code></pre>
 <div class="sourceCode" id="cb1033"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1033-1"><a href="coremodule.html#cb1033-1" tabindex="-1"></a><span class="co">#直接读，会失败</span></span>
 <span id="cb1033-2"><a href="coremodule.html#cb1033-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">conditionMessage</span>(<span class="fu">tryCatch</span>(<span class="fu">read_yaml</span>(f_yml),<span class="at">error =</span> <span class="cf">function</span>(e) e)),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
-<pre><code>## (C:\Users\pyCQUER\AppData\Local\Temp\Rtmpiqht1U/demo.yml) Scanner error: while scanning a directive at line 1, column 1 found unexpected non-alphabetical character at line 1, column 6
+<pre><code>## (C:\Users\pyCQUER\AppData\Local\Temp\RtmpIFsNIu/demo.yml) Scanner error: while scanning a directive at line 1, column 1 found unexpected non-alphabetical character at line 1, column 6
 ## </code></pre>
 <p>第一行是 <code>%YAML:1.0</code>——注意是<strong>冒号</strong>。YAML 规范的指令写法是 <code>%YAML 1.1</code>
 （空格），libyaml 遇到冒号就报 <code>Scanner error</code>。OpenCV 这个写法
@@ -3337,8 +3337,8 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/main/06-coremodule.Rmd",
-    "text": "编辑"
+    "link": null,
+    "text": null
   },
   "history": {
     "link": null,

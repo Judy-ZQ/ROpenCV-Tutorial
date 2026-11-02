@@ -1372,8 +1372,8 @@ R = \lambda_1\lambda_2 - k(\lambda_1+\lambda_2)^2
 <span id="cb1788-10"><a href="feature2d.html#cb1788-10" tabindex="-1"></a>found <span class="ot">=</span> hog<span class="sc">$</span><span class="fu">detectMultiScale</span>(img)</span>
 <span id="cb1788-11"><a href="feature2d.html#cb1788-11" tabindex="-1"></a><span class="fu">str</span>(found)</span></code></pre></div>
 <pre><code>## List of 2
-##  $ foundLocations: int [1:5, 1:4] 398 14 218 106 274 164 164 160 234 146 ...
-##  $ foundWeights  : num [1:5] 0.943 0.5858 0.692 0.4063 0.0382</code></pre>
+##  $ foundLocations: int [1:5, 1:4] 274 218 398 14 106 146 160 164 164 234 ...
+##  $ foundWeights  : num [1:5] 0.0382 0.692 0.943 0.5858 0.4063</code></pre>
 <div class="sourceCode" id="cb1790"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1790-1"><a href="feature2d.html#cb1790-1" tabindex="-1"></a><span class="co">#foundLocations 是 n×4 的矩阵，每行一个 c(x, y, w, h)</span></span>
 <span id="cb1790-2"><a href="feature2d.html#cb1790-2" tabindex="-1"></a><span class="fu">dim</span>(found<span class="sc">$</span>foundLocations)</span></code></pre></div>
 <pre><code>## [1] 5 4</code></pre>
@@ -1423,8 +1423,8 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/Judy-ZQ/ROpenCV-Tutorial/edit/main/09-2dfeature.Rmd",
-    "text": "编辑"
+    "link": null,
+    "text": null
   },
   "history": {
     "link": null,
