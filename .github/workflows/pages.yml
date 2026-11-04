@@ -1,7 +1,7 @@
 name: Deploy book to GitHub Pages
 
-# 仓库里只放渲染结果（index.html 入口页 + _book/），所以这里不做任何构建，
-# 只把这两样打包成 Pages 站点直接发布。
+# 仓库里只放渲染结果（_book/）。这个工作流不做任何构建，直接把 _book/ 作为
+# 站点根目录发布，所以 https://judy-zq.github.io/ROpenCV-Tutorial/ 打开就是书。
 
 on:
   push:
@@ -28,13 +28,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Stage site
+      - name: Check book output
         run: |
-          mkdir -p _site
-          cp index.html _site/index.html
-          cp -r _book _site/_book
-          touch _site/.nojekyll
-          du -sh _site
+          test -f _book/index.html || { echo "::error::_book/index.html 不存在，先本地运行 quarto render"; exit 1; }
+          echo "_book 文件数: $(find _book -type f | wc -l)"
+          du -sh _book
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -42,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: _book
 
       - name: Deploy to GitHub Pages
         id: deployment
