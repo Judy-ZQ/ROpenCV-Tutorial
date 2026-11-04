@@ -1,31 +1,32 @@
-# 本仓库只发布编译好的 gitbook（_book/），Rmd 源文件与素材不上传。
+# 本仓库只发布渲染结果（_book/），Quarto 的源文件（*.qmd、_quarto.yml、
+# style/、common/）与素材（images/、video/、data/）都不上传。
 # 下面所有条目都用前导 / 锚定到仓库根目录，否则会误伤 _book/ 里的同名目录
-# （_book/css/、_book/images/、_book/bookdown_files/ 都是书本身的一部分，必须保留）。
+# （_book/images/、_book/site_libs/ 都是书本身的一部分，必须保留）。
 
-# ---- 源章节与 bookdown 配置 ----
-/*.Rmd
-/_bookdown.yml
-/_output.yml
+# ---- 源章节与 Quarto 配置 ----
+/*.qmd
+/_quarto.yml
+/Makefile
+/README.md
+/LICENSE
 /book.bib
 /packages.bib
 /ROpenCVTutorial.Rproj
 /.Rprofile
-/README.md
-/LICENSE
 
 # ---- 源素材 ----
 /images/
 /video/
 /data/
-/css/
-/latex/
+/style/
+/common/
+/attic/
+/scripts/
 
-# ---- 构建中间产物 ----
-/_bookdown_files/
-/bookdown.tex
-/jss-article-rnw/
-/inst/
-/images4pub/
+# ---- 构建产物与缓存 ----
+/.quarto/
+/_freeze/
+/**/_files/
 
 # ---- R / RStudio ----
 .Rproj.user/
