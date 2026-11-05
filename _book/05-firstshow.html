@@ -1176,7 +1176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="co">#启用colPallete函数</span></span>
 <span><span class="fu">colPallete</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><img src="images/tutorial/pallete.png" class="img-fluid"></p>
+<p><img src="images/tutorial/pallete.png" class="img-fluid" style="width:50.0%"></p>
 <p><strong>示例</strong></p>
 <p>拖动滑动条，改变两个图像融合的权重：</p>
 <div class="cell">
@@ -1213,7 +1213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="co">#调用on_trackbar函数</span></span>
 <span><span class="fu">on_trackbar</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>同样的融合效果不需要滑动条也能验证，把权重固定成 0.5 就是上面那张图：</p>
+<p>同样的融合效果不需要滑动条也能验证，把权重固定成 0.5（见如下代码）， 就可以得到两张图各自权重为0.5时的融合结果：</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">src1</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/LinuxLogo.jpg"</span><span class="op">)</span></span>
 <span><span class="va">src2</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/WindowsLogo.jpg"</span><span class="op">)</span></span>
@@ -1226,7 +1226,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><img src="images/linearblend50.png" class="img-fluid"></p>
 </section><section id="推荐使用方式" class="level2" data-number="5.9"><h2 data-number="5.9" class="anchored" data-anchor-id="推荐使用方式">
 <span class="header-section-number">5.9</span> 推荐使用方式</h2>
 <p>结合OpenCV文档，查询相关函数的用法以及相关例子</p>
@@ -2334,7 +2333,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb69-685"><a href="#cb69-685" aria-hidden="true" tabindex="-1"></a><span class="fu">colPallete</span>(<span class="dv">0</span>,<span class="dv">0</span>)</span>
 <span id="cb69-686"><a href="#cb69-686" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb69-687"><a href="#cb69-687" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-688"><a href="#cb69-688" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/pallete.png)</span></span>
+<span id="cb69-688"><a href="#cb69-688" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/pallete.png)</span>{width=50%}</span>
 <span id="cb69-689"><a href="#cb69-689" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-690"><a href="#cb69-690" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-691"><a href="#cb69-691" aria-hidden="true" tabindex="-1"></a>**示例**</span>
@@ -2376,7 +2375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb69-727"><a href="#cb69-727" aria-hidden="true" tabindex="-1"></a><span class="fu">on_trackbar</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb69-728"><a href="#cb69-728" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb69-729"><a href="#cb69-729" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-730"><a href="#cb69-730" aria-hidden="true" tabindex="-1"></a>同样的融合效果不需要滑动条也能验证，把权重固定成 0.5 就是上面那张图：</span>
+<span id="cb69-730"><a href="#cb69-730" aria-hidden="true" tabindex="-1"></a>同样的融合效果不需要滑动条也能验证，把权重固定成 0.5（见如下代码）， 就可以得到两张图各自权重为0.5时的融合结果：</span>
 <span id="cb69-731"><a href="#cb69-731" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-734"><a href="#cb69-734" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb69-735"><a href="#cb69-735" aria-hidden="true" tabindex="-1"></a>src1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/LinuxLogo.jpg"</span>)</span>
@@ -2386,7 +2385,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb69-739"><a href="#cb69-739" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb69-740"><a href="#cb69-740" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-741"><a href="#cb69-741" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-742"><a href="#cb69-742" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/linearblend50.png)</span></span>
+<span id="cb69-742"><a href="#cb69-742" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-743"><a href="#cb69-743" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-744"><a href="#cb69-744" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-745"><a href="#cb69-745" aria-hidden="true" tabindex="-1"></a><span class="fu">## 推荐使用方式</span></span>

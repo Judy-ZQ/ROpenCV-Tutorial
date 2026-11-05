@@ -33,3 +33,5 @@
 .Rhistory
 .RData
 .Ruserdata
+
+**/*.quarto_ipynb

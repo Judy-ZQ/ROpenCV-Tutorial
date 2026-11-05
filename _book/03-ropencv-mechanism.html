@@ -349,7 +349,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="重载函数的处理" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="重载函数的处理">
 <span class="header-section-number">3.1</span> 重载函数的处理</h2>
 <p>OpenCV中的函数重载是很普遍的现象，在5.0.0(pre)版本的OpenCV中，图像矩阵类（Mat）的构造函数就有29个之多：</p>
-<p><img src="images/MatConstructor.png" class="img-fluid"></p>
+<p><img src="images/MatConstructor.png" class="img-fluid" style="width:60.0%"></p>
 <p>R语言本身不支持函数重载，所以桥接层必须自己决定「这一次调用该走哪一个重载」。 ROpenCV的做法是<strong>在调用时按实参的个数与类型分派</strong>，而不是给每个重载起一个编号名字。</p>
 <p>比如绘制矩形，OpenCV有两个重载：一个接受两个角点，一个接受一个矩形。在R里 两种写法都可以直接写，函数名一样：</p>
 <div class="cell">
@@ -397,7 +397,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>ROpenCV 的做法是<strong>把输出参数变成返回值</strong>。上面那个函数在 R 里写成：</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">cv_cvtColor</span><span class="op">(</span><span class="va">src</span>, <span class="va">code</span>, dstCn <span class="op">=</span> <span class="fl">0</span>, dst <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>dst</code> 默认是 <code>NULL</code>，表示「新建一个对象装结果并返回」；如果确实想复用一块已有的 内存，可以显式传一个对象进去，函数会把它填好并原样返回。于是：</p>
-<div class="cell">
+<div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#读取图像文件，读取的结果保存在img中</span></span>
 <span><span class="va">img</span> <span class="op">=</span> <span class="fu">cv_imread</span><span class="op">(</span><span class="st">"images/HappyFish.jpg"</span><span class="op">)</span></span>
 <span><span class="co">#调用cvtColor函数，将img转变为灰度图像。结果直接返回</span></span>
@@ -405,8 +405,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="co">#显示结果</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dst</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="03-ropencv-mechanism_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="03-ropencv-mechanism_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%"></p>
 </figure>
 </div>
 </div>
@@ -614,23 +614,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">dst_arr</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">*</span><span class="va">a1</span> <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span><span class="va">a2</span></span>
 <span><span class="co">#搬回 OpenCV 侧</span></span>
 <span><span class="va">dst</span> <span class="op">=</span> <span class="fu">Mat</span><span class="op">(</span><span class="va">dst_arr</span><span class="op">)</span></span>
-<span><span class="va">dst</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;cvMat&gt; 434 x 434, CV_64FC3, 3 channels</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#进行CV_8U转换，以便plot</span></span>
+<span><span class="co"># dst</span></span>
+<span></span>
+<span><span class="co">#进行CV_8U转换，以便plot</span></span>
 <span><span class="va">dst1</span> <span class="op">=</span> <span class="fu">cv_mat_convert</span><span class="op">(</span><span class="va">dst</span>,<span class="va">CV_8U</span><span class="op">)</span></span>
 <span><span class="va">op</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">src1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">src2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dst1</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dst1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="03-ropencv-mechanism_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="03-ropencv-mechanism_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>0.5*a1 + 0.5*a2</code> 的结果是双精度，所以 <code>Mat()</code> 得到的是 <code>CV_64F</code> 图像。若要 <code>CV_8U</code>，用 <code>cv_mat_convert(dst, CV_8U)</code> 显式转换——<code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> 对浮点图会做归一化， 和 8 位图看起来会不一样。</p>
 
@@ -1098,284 +1098,305 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">源代码</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># ROpenCV的核心处理机制 {#sec-ropencv-mechanism}</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>{{&lt; include common/_setup.qmd &gt;}}</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>可以不要</span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE,message=FALSE,warning=FALSE}</span></span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROpenCV)</span>
-<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>ROpenCV针对OpenCV的类和函数进行了二次封装，以便实现：</span>
-<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在R中创建OpenCV的类实例并传递给OpenCV</span>
-<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在OpenCV中处理、创建/生成类实例并传递给R</span>
-<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在R中调用OpenCV的函数（包含类封装的函数），并按照函数要求传递相应的参数</span>
-<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a>为此所做的主要工作包括：  </span>
-<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>重载函数的处理</span>
-<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>OpenCV函数输出参数的处理</span>
-<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>OpenCV类实例的处理</span>
-<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-25"><a href="#cb64-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## 重载函数的处理</span></span>
-<span id="cb64-26"><a href="#cb64-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-27"><a href="#cb64-27" aria-hidden="true" tabindex="-1"></a>OpenCV中的函数重载是很普遍的现象，在5.0.0(pre)版本的OpenCV中，图像矩阵类（Mat）的构造函数就有29个之多：</span>
-<span id="cb64-28"><a href="#cb64-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/MatConstructor.png)</span></span>
-<span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a>R语言本身不支持函数重载，所以桥接层必须自己决定「这一次调用该走哪一个重载」。</span>
-<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a>ROpenCV的做法是**在调用时按实参的个数与类型分派**，而不是给每个重载起一个编号名字。</span>
-<span id="cb64-33"><a href="#cb64-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-34"><a href="#cb64-34" aria-hidden="true" tabindex="-1"></a>比如绘制矩形，OpenCV有两个重载：一个接受两个角点，一个接受一个矩形。在R里</span>
-<span id="cb64-35"><a href="#cb64-35" aria-hidden="true" tabindex="-1"></a>两种写法都可以直接写，函数名一样：</span>
-<span id="cb64-36"><a href="#cb64-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-39"><a href="#cb64-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-40"><a href="#cb64-40" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个50行50列的三通道黑色图像</span></span>
-<span id="cb64-41"><a href="#cb64-41" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">50</span>L,<span class="dv">50</span>L,CV_8UC3,<span class="dv">0</span>L)</span>
-<span id="cb64-42"><a href="#cb64-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-43"><a href="#cb64-43" aria-hidden="true" tabindex="-1"></a><span class="co">#形式一：给两个角点，在左侧画一个红色矩形</span></span>
-<span id="cb64-44"><a href="#cb64-44" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_rectangle</span>(img,<span class="fu">c</span>(<span class="dv">5</span>L,<span class="dv">5</span>L),<span class="fu">c</span>(<span class="dv">20</span>L,<span class="dv">20</span>L),<span class="fu">c</span>(<span class="dv">255</span>L,<span class="dv">0</span>L,<span class="dv">0</span>L),<span class="dv">2</span>L)</span>
-<span id="cb64-45"><a href="#cb64-45" aria-hidden="true" tabindex="-1"></a><span class="co">#左边框上的像素是红色</span></span>
-<span id="cb64-46"><a href="#cb64-46" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">11</span>,]</span>
-<span id="cb64-47"><a href="#cb64-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-48"><a href="#cb64-48" aria-hidden="true" tabindex="-1"></a><span class="co">#形式二：给一个矩形（x、y、宽、高），在右侧画一个绿色矩形</span></span>
-<span id="cb64-49"><a href="#cb64-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_rectangle</span>(img,<span class="fu">c</span>(<span class="dv">30</span>L,<span class="dv">5</span>L,<span class="dv">20</span>L,<span class="dv">20</span>L),<span class="fu">c</span>(<span class="dv">0</span>L,<span class="dv">255</span>L,<span class="dv">0</span>L),<span class="dv">2</span>L)</span>
-<span id="cb64-50"><a href="#cb64-50" aria-hidden="true" tabindex="-1"></a><span class="co">#右边框是绿色</span></span>
-<span id="cb64-51"><a href="#cb64-51" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">31</span>,]</span>
-<span id="cb64-52"><a href="#cb64-52" aria-hidden="true" tabindex="-1"></a><span class="co">#左边那个红色矩形还在，说明两次调用各画各的</span></span>
-<span id="cb64-53"><a href="#cb64-53" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">11</span>,]</span>
-<span id="cb64-54"><a href="#cb64-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-55"><a href="#cb64-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-56"><a href="#cb64-56" aria-hidden="true" tabindex="-1"></a>分派的依据是「第2个参数是长度为2的向量还是长度为4的向量」。</span>
-<span id="cb64-57"><a href="#cb64-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-58"><a href="#cb64-58" aria-hidden="true" tabindex="-1"></a>注：正因为要按类型分派，**整型参数要写成 `5L` 而不是 `5`**。R 里 <span class="in">`5`</span> 是双精度数，</span>
-<span id="cb64-59"><a href="#cb64-59" aria-hidden="true" tabindex="-1"></a>传下去可能选中错误的那个重载，或者报类型不匹配。</span>
-<span id="cb64-60"><a href="#cb64-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-61"><a href="#cb64-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## OpenCV函数输出参数的处理</span></span>
-<span id="cb64-62"><a href="#cb64-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-63"><a href="#cb64-63" aria-hidden="true" tabindex="-1"></a>在OpenCV中，很多函数都具有输出参数，比如颜色转换函数**cvtColor**：</span>
-<span id="cb64-64"><a href="#cb64-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-65"><a href="#cb64-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-66"><a href="#cb64-66" aria-hidden="true" tabindex="-1"></a><span class="in">void cv::cvtColor(  </span></span>
-<span id="cb64-67"><a href="#cb64-67" aria-hidden="true" tabindex="-1"></a><span class="in">  InputArray    src, #src表示待处理图像</span></span>
-<span id="cb64-68"><a href="#cb64-68" aria-hidden="true" tabindex="-1"></a><span class="in">  OutputArray   dst, #dst表示处理结果</span></span>
-<span id="cb64-69"><a href="#cb64-69" aria-hidden="true" tabindex="-1"></a><span class="in">  int code,        #code指明颜色转换方式</span></span>
-<span id="cb64-70"><a href="#cb64-70" aria-hidden="true" tabindex="-1"></a><span class="in">  int dstCn = 0    </span></span>
-<span id="cb64-71"><a href="#cb64-71" aria-hidden="true" tabindex="-1"></a><span class="in">)       </span></span>
-<span id="cb64-72"><a href="#cb64-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-73"><a href="#cb64-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-74"><a href="#cb64-74" aria-hidden="true" tabindex="-1"></a>其中，dst参数就是一个输出参数，用来存放图像的颜色转换结果。C++ 里靠引用把结果</span>
-<span id="cb64-75"><a href="#cb64-75" aria-hidden="true" tabindex="-1"></a>「带出来」，而 R 没有这种机制。</span>
-<span id="cb64-76"><a href="#cb64-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-77"><a href="#cb64-77" aria-hidden="true" tabindex="-1"></a>ROpenCV 的做法是**把输出参数变成返回值**。上面那个函数在 R 里写成：</span>
-<span id="cb64-78"><a href="#cb64-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-79"><a href="#cb64-79" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb64-80"><a href="#cb64-80" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_cvtColor</span>(src, code, <span class="at">dstCn =</span> <span class="dv">0</span>, <span class="at">dst =</span> <span class="cn">NULL</span>)</span>
-<span id="cb64-81"><a href="#cb64-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-82"><a href="#cb64-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-83"><a href="#cb64-83" aria-hidden="true" tabindex="-1"></a><span class="in">`dst`</span> 默认是 <span class="in">`NULL`</span>，表示「新建一个对象装结果并返回」；如果确实想复用一块已有的</span>
-<span id="cb64-84"><a href="#cb64-84" aria-hidden="true" tabindex="-1"></a>内存，可以显式传一个对象进去，函数会把它填好并原样返回。于是：</span>
-<span id="cb64-85"><a href="#cb64-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-88"><a href="#cb64-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-89"><a href="#cb64-89" aria-hidden="true" tabindex="-1"></a><span class="co">#读取图像文件，读取的结果保存在img中</span></span>
-<span id="cb64-90"><a href="#cb64-90" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/HappyFish.jpg"</span>)</span>
-<span id="cb64-91"><a href="#cb64-91" aria-hidden="true" tabindex="-1"></a><span class="co">#调用cvtColor函数，将img转变为灰度图像。结果直接返回</span></span>
-<span id="cb64-92"><a href="#cb64-92" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY)</span>
-<span id="cb64-93"><a href="#cb64-93" aria-hidden="true" tabindex="-1"></a><span class="co">#显示结果</span></span>
-<span id="cb64-94"><a href="#cb64-94" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dst)</span>
-<span id="cb64-95"><a href="#cb64-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-96"><a href="#cb64-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-97"><a href="#cb64-97" aria-hidden="true" tabindex="-1"></a>在这个例子中，<span class="in">`dst`</span> 是函数新建并返回的图像矩阵，不需要事先准备容器。</span>
-<span id="cb64-98"><a href="#cb64-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-99"><a href="#cb64-99" aria-hidden="true" tabindex="-1"></a>**复用已有对象**时传 <span class="in">`dst=`</span>，返回的是同一个对象（不是副本）：</span>
-<span id="cb64-100"><a href="#cb64-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-103"><a href="#cb64-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-104"><a href="#cb64-104" aria-hidden="true" tabindex="-1"></a><span class="co">#准备一个空的灰度图容器</span></span>
-<span id="cb64-105"><a href="#cb64-105" aria-hidden="true" tabindex="-1"></a>buf <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">dim</span>(img)[<span class="dv">1</span>],<span class="fu">dim</span>(img)[<span class="dv">2</span>],CV_8UC1,<span class="dv">0</span>L)</span>
-<span id="cb64-106"><a href="#cb64-106" aria-hidden="true" tabindex="-1"></a><span class="co">#也可以直接准备一个空图容器</span></span>
-<span id="cb64-107"><a href="#cb64-107" aria-hidden="true" tabindex="-1"></a><span class="co"># buf = Mat()</span></span>
-<span id="cb64-108"><a href="#cb64-108" aria-hidden="true" tabindex="-1"></a><span class="co">#把结果填进 buf，返回的仍是 buf 本身</span></span>
-<span id="cb64-109"><a href="#cb64-109" aria-hidden="true" tabindex="-1"></a>out <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY,<span class="at">dst=</span>buf)</span>
-<span id="cb64-110"><a href="#cb64-110" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(out,buf)</span>
-<span id="cb64-111"><a href="#cb64-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-112"><a href="#cb64-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-113"><a href="#cb64-113" aria-hidden="true" tabindex="-1"></a>这种写法在循环里反复处理同一尺寸的图像时有用，可以少申请内存。但要注意：</span>
-<span id="cb64-114"><a href="#cb64-114" aria-hidden="true" tabindex="-1"></a>**传进去的 `buf` 会被覆盖**，如果原内容还要用，得先 <span class="in">`cv_copyTo`</span> 一份。</span>
-<span id="cb64-115"><a href="#cb64-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-116"><a href="#cb64-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-117"><a href="#cb64-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## OpenCV类实例的处理</span></span>
-<span id="cb64-118"><a href="#cb64-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-119"><a href="#cb64-119" aria-hidden="true" tabindex="-1"></a><span class="fu">### 图像矩阵 cvMat</span></span>
-<span id="cb64-120"><a href="#cb64-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-121"><a href="#cb64-121" aria-hidden="true" tabindex="-1"></a>ROpenCV 不在 R 里重建 OpenCV 的类，而是让 <span class="in">`cvMat`</span> 直接持有指向 <span class="in">`cv::Mat`</span> 的</span>
-<span id="cb64-122"><a href="#cb64-122" aria-hidden="true" tabindex="-1"></a><span class="in">`externalptr`</span>。R 和 OpenCV 之间传的是指针而不是像素，所以**转换是零拷贝的**：</span>
-<span id="cb64-123"><a href="#cb64-123" aria-hidden="true" tabindex="-1"></a>一张大图从 <span class="in">`cv_imread`</span> 读进来不会在 R 侧再占一份内存。</span>
-<span id="cb64-124"><a href="#cb64-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-127"><a href="#cb64-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-128"><a href="#cb64-128" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个空的图像矩阵</span></span>
-<span id="cb64-129"><a href="#cb64-129" aria-hidden="true" tabindex="-1"></a>emptyImg <span class="ot">=</span> <span class="fu">Mat</span>()</span>
-<span id="cb64-130"><a href="#cb64-130" aria-hidden="true" tabindex="-1"></a>emptyImg</span>
-<span id="cb64-131"><a href="#cb64-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-132"><a href="#cb64-132" aria-hidden="true" tabindex="-1"></a><span class="co">#生成10行10列的全0单通道图像矩阵</span></span>
-<span id="cb64-133"><a href="#cb64-133" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">10</span>L,<span class="dv">10</span>L,CV_8UC1,<span class="dv">0</span>L)</span>
-<span id="cb64-134"><a href="#cb64-134" aria-hidden="true" tabindex="-1"></a>blackImg</span>
-<span id="cb64-135"><a href="#cb64-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-136"><a href="#cb64-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-137"><a href="#cb64-137" aria-hidden="true" tabindex="-1"></a><span class="in">`Mat()`</span> 不带参数给 0x0 的空矩阵；带参数时按 <span class="in">`Mat(rows, cols, type, value)`</span> 构造。</span>
-<span id="cb64-138"><a href="#cb64-138" aria-hidden="true" tabindex="-1"></a>也可以直接把 R 的矩阵或三维数组搬进去，类型由数组自动推断：</span>
-<span id="cb64-139"><a href="#cb64-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-142"><a href="#cb64-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-143"><a href="#cb64-143" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span>),<span class="dv">10</span>,<span class="dv">10</span>)</span>
-<span id="cb64-144"><a href="#cb64-144" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(m)</span>
-<span id="cb64-145"><a href="#cb64-145" aria-hidden="true" tabindex="-1"></a>img</span>
-<span id="cb64-146"><a href="#cb64-146" aria-hidden="true" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span>
-<span id="cb64-147"><a href="#cb64-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-148"><a href="#cb64-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-149"><a href="#cb64-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### 点、尺寸、标量、矩形：普通数值向量</span></span>
-<span id="cb64-150"><a href="#cb64-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-151"><a href="#cb64-151" aria-hidden="true" tabindex="-1"></a>旧版本（是一直没有发布的版本，握在手里几年了）为这些类型各造了一套对象（<span class="in">`Point()`</span>、<span class="in">`Size()`</span>、<span class="in">`Scalar()`</span>、<span class="in">`Rect()`</span>），当前发布的版本取消了这一层——它们本来就是几个数，用 R 的向量即可：</span>
-<span id="cb64-152"><a href="#cb64-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-155"><a href="#cb64-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-156"><a href="#cb64-156" aria-hidden="true" tabindex="-1"></a><span class="co">#整数点：c(x, y)</span></span>
-<span id="cb64-157"><a href="#cb64-157" aria-hidden="true" tabindex="-1"></a>pnt <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>)</span>
-<span id="cb64-158"><a href="#cb64-158" aria-hidden="true" tabindex="-1"></a>pnt</span>
-<span id="cb64-159"><a href="#cb64-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-160"><a href="#cb64-160" aria-hidden="true" tabindex="-1"></a><span class="co">#浮点数点同样是长度为2的向量</span></span>
-<span id="cb64-161"><a href="#cb64-161" aria-hidden="true" tabindex="-1"></a>pnt2f <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">10.1</span>,<span class="fl">20.2</span>)</span>
-<span id="cb64-162"><a href="#cb64-162" aria-hidden="true" tabindex="-1"></a>pnt2f</span>
-<span id="cb64-163"><a href="#cb64-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-164"><a href="#cb64-164" aria-hidden="true" tabindex="-1"></a><span class="co">#尺寸：c(width, height)，面积自己算</span></span>
-<span id="cb64-165"><a href="#cb64-165" aria-hidden="true" tabindex="-1"></a>sz <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">100</span>)</span>
-<span id="cb64-166"><a href="#cb64-166" aria-hidden="true" tabindex="-1"></a>sz[<span class="dv">1</span>]<span class="sc">*</span>sz[<span class="dv">2</span>]</span>
-<span id="cb64-167"><a href="#cb64-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-168"><a href="#cb64-168" aria-hidden="true" tabindex="-1"></a><span class="co">#标量（颜色）：c(B, G, R)</span></span>
-<span id="cb64-169"><a href="#cb64-169" aria-hidden="true" tabindex="-1"></a>sca <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>)</span>
-<span id="cb64-170"><a href="#cb64-170" aria-hidden="true" tabindex="-1"></a>sca</span>
-<span id="cb64-171"><a href="#cb64-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-172"><a href="#cb64-172" aria-hidden="true" tabindex="-1"></a><span class="co">#矩形：c(x, y, width, height)</span></span>
-<span id="cb64-173"><a href="#cb64-173" aria-hidden="true" tabindex="-1"></a>rect <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">100</span>,<span class="dv">50</span>)</span>
-<span id="cb64-174"><a href="#cb64-174" aria-hidden="true" tabindex="-1"></a>rect</span>
-<span id="cb64-175"><a href="#cb64-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-176"><a href="#cb64-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-177"><a href="#cb64-177" aria-hidden="true" tabindex="-1"></a>好处是这些值可以直接参与 R 的运算：求中点写 <span class="in">`(a+b)/2`</span>，判断点在矩形内写</span>
-<span id="cb64-178"><a href="#cb64-178" aria-hidden="true" tabindex="-1"></a><span class="in">`pnt[1] &gt;= rect[1] &amp;&amp; pnt[1] &lt; rect[1]+rect[3]`</span>，不需要记任何方法名。</span>
-<span id="cb64-179"><a href="#cb64-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-180"><a href="#cb64-180" aria-hidden="true" tabindex="-1"></a><span class="fu">### 访问图像矩阵的信息</span></span>
-<span id="cb64-181"><a href="#cb64-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-184"><a href="#cb64-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-185"><a href="#cb64-185" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/HappyFish.jpg"</span>)</span>
-<span id="cb64-186"><a href="#cb64-186" aria-hidden="true" tabindex="-1"></a><span class="co">#打印摘要：尺寸、类型、通道数</span></span>
-<span id="cb64-187"><a href="#cb64-187" aria-hidden="true" tabindex="-1"></a>img</span>
-<span id="cb64-188"><a href="#cb64-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-189"><a href="#cb64-189" aria-hidden="true" tabindex="-1"></a><span class="co">#行数、列数（多通道时还有通道数）</span></span>
-<span id="cb64-190"><a href="#cb64-190" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img)</span>
-<span id="cb64-191"><a href="#cb64-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-192"><a href="#cb64-192" aria-hidden="true" tabindex="-1"></a><span class="co">#行数、列数、通道数、类型码、深度码</span></span>
-<span id="cb64-193"><a href="#cb64-193" aria-hidden="true" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span>
-<span id="cb64-194"><a href="#cb64-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-195"><a href="#cb64-195" aria-hidden="true" tabindex="-1"></a><span class="co">#取第100行、第100列像素的值</span></span>
-<span id="cb64-196"><a href="#cb64-196" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">100</span>,<span class="dv">100</span>,]</span>
-<span id="cb64-197"><a href="#cb64-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-198"><a href="#cb64-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-199"><a href="#cb64-199" aria-hidden="true" tabindex="-1"></a>**下标要注意**：OpenCV 的 <span class="in">`img.at(i,j)`</span> 是 0 基，而 <span class="in">`as_array()`</span> 返回的是 R 数组，</span>
-<span id="cb64-200"><a href="#cb64-200" aria-hidden="true" tabindex="-1"></a>是 1 基。旧代码里的 <span class="in">`img[99,99]`</span> 对应新代码的 <span class="in">`[100,100,]`</span>。</span>
-<span id="cb64-201"><a href="#cb64-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-202"><a href="#cb64-202" aria-hidden="true" tabindex="-1"></a><span class="fu">### 旋转矩形</span></span>
-<span id="cb64-203"><a href="#cb64-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-204"><a href="#cb64-204" aria-hidden="true" tabindex="-1"></a>旋转矩形多一个角度，用长度 5 的数值向量表示：</span>
-<span id="cb64-205"><a href="#cb64-205" aria-hidden="true" tabindex="-1"></a><span class="in">`c(中心x, 中心y, 宽, 高, 角度)`</span>。</span>
-<span id="cb64-206"><a href="#cb64-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-209"><a href="#cb64-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-210"><a href="#cb64-210" aria-hidden="true" tabindex="-1"></a><span class="co">#四个角点</span></span>
-<span id="cb64-211"><a href="#cb64-211" aria-hidden="true" tabindex="-1"></a>pts <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">10</span>,<span class="dv">0</span>, <span class="dv">10</span>,<span class="dv">5</span>, <span class="dv">0</span>,<span class="dv">5</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-212"><a href="#cb64-212" aria-hidden="true" tabindex="-1"></a><span class="co">#求最小外接旋转矩形。注意点集必须是 CV_32F</span></span>
-<span id="cb64-213"><a href="#cb64-213" aria-hidden="true" tabindex="-1"></a>rrect <span class="ot">=</span> <span class="fu">cv_minAreaRect</span>(<span class="fu">cv_mat_convert</span>(<span class="fu">Mat</span>(pts),CV_32F))</span>
-<span id="cb64-214"><a href="#cb64-214" aria-hidden="true" tabindex="-1"></a>rrect</span>
-<span id="cb64-215"><a href="#cb64-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-216"><a href="#cb64-216" aria-hidden="true" tabindex="-1"></a><span class="co">#求四个顶点</span></span>
-<span id="cb64-217"><a href="#cb64-217" aria-hidden="true" tabindex="-1"></a>pts4 <span class="ot">=</span> <span class="fu">cv_boxPoints</span>(rrect)</span>
-<span id="cb64-218"><a href="#cb64-218" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(pts4,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-219"><a href="#cb64-219" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-220"><a href="#cb64-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-221"><a href="#cb64-221" aria-hidden="true" tabindex="-1"></a>传入cv_minAreaRect的点集必须是 <span class="in">`CV_32F`</span>：<span class="in">`Mat(matrix)`</span> 默认给的是 <span class="in">`CV_64F`</span>，直接传进去会报</span>
-<span id="cb64-222"><a href="#cb64-222" aria-hidden="true" tabindex="-1"></a><span class="in">`Assertion failed (depth == CV_32F || depth == CV_32S)`</span>。在使用中，需要结合OpenCV的参考资料留意 函数的使用要求。</span>
-<span id="cb64-223"><a href="#cb64-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-224"><a href="#cb64-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### as_array 和 Mat：R 与 OpenCV 的数据交换</span></span>
-<span id="cb64-225"><a href="#cb64-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-226"><a href="#cb64-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-229"><a href="#cb64-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-230"><a href="#cb64-230" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个100x100的随机灰度矩阵</span></span>
-<span id="cb64-231"><a href="#cb64-231" aria-hidden="true" tabindex="-1"></a>img_mat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span><span class="sc">*</span><span class="dv">100</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">nr=</span><span class="dv">100</span>,<span class="at">nc=</span><span class="dv">100</span>)</span>
-<span id="cb64-232"><a href="#cb64-232" aria-hidden="true" tabindex="-1"></a><span class="co">#搬到 OpenCV 侧</span></span>
-<span id="cb64-233"><a href="#cb64-233" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(img_mat)</span>
-<span id="cb64-234"><a href="#cb64-234" aria-hidden="true" tabindex="-1"></a>img</span>
-<span id="cb64-235"><a href="#cb64-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-236"><a href="#cb64-236" aria-hidden="true" tabindex="-1"></a><span class="co">#再取回 R 侧</span></span>
-<span id="cb64-237"><a href="#cb64-237" aria-hidden="true" tabindex="-1"></a>back <span class="ot">=</span> <span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-238"><a href="#cb64-238" aria-hidden="true" tabindex="-1"></a><span class="co">#数值一致。注意 as_array 的结果带 depth 属性，所以不能直接 identical()</span></span>
-<span id="cb64-239"><a href="#cb64-239" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">as.vector</span>(back),<span class="fu">as.vector</span>(img_mat))</span>
-<span id="cb64-240"><a href="#cb64-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-241"><a href="#cb64-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-242"><a href="#cb64-242" aria-hidden="true" tabindex="-1"></a>三维数组（彩色图）同理，第三维是通道：</span>
-<span id="cb64-243"><a href="#cb64-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-246"><a href="#cb64-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-247"><a href="#cb64-247" aria-hidden="true" tabindex="-1"></a>img_arr <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span><span class="sc">*</span><span class="dv">100</span><span class="sc">*</span><span class="dv">3</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">dim=</span><span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">100</span>,<span class="dv">3</span>))</span>
-<span id="cb64-248"><a href="#cb64-248" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(img_arr)</span>
-<span id="cb64-249"><a href="#cb64-249" aria-hidden="true" tabindex="-1"></a>img</span>
-<span id="cb64-250"><a href="#cb64-250" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img)</span>
-<span id="cb64-251"><a href="#cb64-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-252"><a href="#cb64-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-253"><a href="#cb64-253" aria-hidden="true" tabindex="-1"></a><span class="in">`as_array()`</span> 返回的数组带一个 <span class="in">`depth`</span> 属性，记录图像深度：</span>
-<span id="cb64-254"><a href="#cb64-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-257"><a href="#cb64-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-258"><a href="#cb64-258" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span>L,<span class="dv">100</span>L,CV_8UC1,<span class="dv">0</span>L)</span>
-<span id="cb64-259"><a href="#cb64-259" aria-hidden="true" tabindex="-1"></a>blackImg_mat <span class="ot">=</span> <span class="fu">as_array</span>(blackImg,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-260"><a href="#cb64-260" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(blackImg_mat)</span>
-<span id="cb64-261"><a href="#cb64-261" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(blackImg_mat,<span class="st">"depth"</span>)</span>
-<span id="cb64-262"><a href="#cb64-262" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-263"><a href="#cb64-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-264"><a href="#cb64-264" aria-hidden="true" tabindex="-1"></a>注意 <span class="in">`as_array()`</span> **只带 `depth`，不带 `type`**；要类型码请用 <span class="in">`mat_info(x)[4]`</span>。</span>
-<span id="cb64-265"><a href="#cb64-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-266"><a href="#cb64-266" aria-hidden="true" tabindex="-1"></a>改完再搬回去：</span>
-<span id="cb64-267"><a href="#cb64-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-270"><a href="#cb64-270" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-271"><a href="#cb64-271" aria-hidden="true" tabindex="-1"></a><span class="co">#把中心区域改成 255</span></span>
-<span id="cb64-272"><a href="#cb64-272" aria-hidden="true" tabindex="-1"></a>blackImg_mat[<span class="dv">40</span><span class="sc">:</span><span class="dv">70</span>,<span class="dv">40</span><span class="sc">:</span><span class="dv">70</span>] <span class="ot">=</span> <span class="dv">255</span></span>
-<span id="cb64-273"><a href="#cb64-273" aria-hidden="true" tabindex="-1"></a><span class="co">#重新构造图像矩阵</span></span>
-<span id="cb64-274"><a href="#cb64-274" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(blackImg_mat)</span>
-<span id="cb64-275"><a href="#cb64-275" aria-hidden="true" tabindex="-1"></a>blackImg</span>
-<span id="cb64-276"><a href="#cb64-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-277"><a href="#cb64-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-278"><a href="#cb64-278" aria-hidden="true" tabindex="-1"></a>最后是一个两图融合的例子：</span>
-<span id="cb64-279"><a href="#cb64-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-282"><a href="#cb64-282" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb64-283"><a href="#cb64-283" aria-hidden="true" tabindex="-1"></a>src1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans1.jpg"</span>)</span>
-<span id="cb64-284"><a href="#cb64-284" aria-hidden="true" tabindex="-1"></a>src2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans2.jpg"</span>)</span>
-<span id="cb64-285"><a href="#cb64-285" aria-hidden="true" tabindex="-1"></a><span class="co">#各自取回 R 侧，按 0.5 加权</span></span>
-<span id="cb64-286"><a href="#cb64-286" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">=</span> <span class="fu">as_array</span>(src1,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-287"><a href="#cb64-287" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">=</span> <span class="fu">as_array</span>(src2,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
-<span id="cb64-288"><a href="#cb64-288" aria-hidden="true" tabindex="-1"></a>dst_arr <span class="ot">=</span> <span class="fl">0.5</span><span class="sc">*</span>a1 <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>a2</span>
-<span id="cb64-289"><a href="#cb64-289" aria-hidden="true" tabindex="-1"></a><span class="co">#搬回 OpenCV 侧</span></span>
-<span id="cb64-290"><a href="#cb64-290" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">Mat</span>(dst_arr)</span>
-<span id="cb64-291"><a href="#cb64-291" aria-hidden="true" tabindex="-1"></a>dst</span>
-<span id="cb64-292"><a href="#cb64-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-293"><a href="#cb64-293" aria-hidden="true" tabindex="-1"></a><span class="co">#进行CV_8U转换，以便plot</span></span>
-<span id="cb64-294"><a href="#cb64-294" aria-hidden="true" tabindex="-1"></a>dst1 <span class="ot">=</span> <span class="fu">cv_mat_convert</span>(dst,CV_8U)</span>
-<span id="cb64-295"><a href="#cb64-295" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
-<span id="cb64-296"><a href="#cb64-296" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src1)</span>
-<span id="cb64-297"><a href="#cb64-297" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src2)</span>
-<span id="cb64-298"><a href="#cb64-298" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dst1)</span>
-<span id="cb64-299"><a href="#cb64-299" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
-<span id="cb64-300"><a href="#cb64-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-301"><a href="#cb64-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-302"><a href="#cb64-302" aria-hidden="true" tabindex="-1"></a><span class="in">`0.5*a1 + 0.5*a2`</span> 的结果是双精度，所以 <span class="in">`Mat()`</span> 得到的是 <span class="in">`CV_64F`</span> 图像。若要</span>
-<span id="cb64-303"><a href="#cb64-303" aria-hidden="true" tabindex="-1"></a><span class="in">`CV_8U`</span>，用 <span class="in">`cv_mat_convert(dst, CV_8U)`</span> 显式转换——<span class="in">`plot()`</span> 对浮点图会做归一化，</span>
-<span id="cb64-304"><a href="#cb64-304" aria-hidden="true" tabindex="-1"></a>和 8 位图看起来会不一样。</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># ROpenCV的核心处理机制 {#sec-ropencv-mechanism}</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>{{&lt; include common/_setup.qmd &gt;}}</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>可以不要</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE,message=FALSE,warning=FALSE}</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROpenCV)</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>ROpenCV针对OpenCV的类和函数进行了二次封装，以便实现：</span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在R中创建OpenCV的类实例并传递给OpenCV</span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在OpenCV中处理、创建/生成类实例并传递给R</span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在R中调用OpenCV的函数（包含类封装的函数），并按照函数要求传递相应的参数</span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>为此所做的主要工作包括：  </span>
+<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>重载函数的处理</span>
+<span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>OpenCV函数输出参数的处理</span>
+<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>OpenCV类实例的处理</span>
+<span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-24"><a href="#cb61-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-25"><a href="#cb61-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## 重载函数的处理</span></span>
+<span id="cb61-26"><a href="#cb61-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-27"><a href="#cb61-27" aria-hidden="true" tabindex="-1"></a>OpenCV中的函数重载是很普遍的现象，在5.0.0(pre)版本的OpenCV中，图像矩阵类（Mat）的构造函数就有29个之多：</span>
+<span id="cb61-28"><a href="#cb61-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-29"><a href="#cb61-29" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/MatConstructor.png)</span>{width=60%}</span>
+<span id="cb61-30"><a href="#cb61-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-31"><a href="#cb61-31" aria-hidden="true" tabindex="-1"></a>R语言本身不支持函数重载，所以桥接层必须自己决定「这一次调用该走哪一个重载」。</span>
+<span id="cb61-32"><a href="#cb61-32" aria-hidden="true" tabindex="-1"></a>ROpenCV的做法是**在调用时按实参的个数与类型分派**，而不是给每个重载起一个编号名字。</span>
+<span id="cb61-33"><a href="#cb61-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-34"><a href="#cb61-34" aria-hidden="true" tabindex="-1"></a>比如绘制矩形，OpenCV有两个重载：一个接受两个角点，一个接受一个矩形。在R里</span>
+<span id="cb61-35"><a href="#cb61-35" aria-hidden="true" tabindex="-1"></a>两种写法都可以直接写，函数名一样：</span>
+<span id="cb61-36"><a href="#cb61-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-39"><a href="#cb61-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-40"><a href="#cb61-40" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个50行50列的三通道黑色图像</span></span>
+<span id="cb61-41"><a href="#cb61-41" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">50</span>L,<span class="dv">50</span>L,CV_8UC3,<span class="dv">0</span>L)</span>
+<span id="cb61-42"><a href="#cb61-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-43"><a href="#cb61-43" aria-hidden="true" tabindex="-1"></a><span class="co">#形式一：给两个角点，在左侧画一个红色矩形</span></span>
+<span id="cb61-44"><a href="#cb61-44" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_rectangle</span>(img,<span class="fu">c</span>(<span class="dv">5</span>L,<span class="dv">5</span>L),<span class="fu">c</span>(<span class="dv">20</span>L,<span class="dv">20</span>L),<span class="fu">c</span>(<span class="dv">255</span>L,<span class="dv">0</span>L,<span class="dv">0</span>L),<span class="dv">2</span>L)</span>
+<span id="cb61-45"><a href="#cb61-45" aria-hidden="true" tabindex="-1"></a><span class="co">#左边框上的像素是红色</span></span>
+<span id="cb61-46"><a href="#cb61-46" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">11</span>,]</span>
+<span id="cb61-47"><a href="#cb61-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-48"><a href="#cb61-48" aria-hidden="true" tabindex="-1"></a><span class="co">#形式二：给一个矩形（x、y、宽、高），在右侧画一个绿色矩形</span></span>
+<span id="cb61-49"><a href="#cb61-49" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_rectangle</span>(img,<span class="fu">c</span>(<span class="dv">30</span>L,<span class="dv">5</span>L,<span class="dv">20</span>L,<span class="dv">20</span>L),<span class="fu">c</span>(<span class="dv">0</span>L,<span class="dv">255</span>L,<span class="dv">0</span>L),<span class="dv">2</span>L)</span>
+<span id="cb61-50"><a href="#cb61-50" aria-hidden="true" tabindex="-1"></a><span class="co">#右边框是绿色</span></span>
+<span id="cb61-51"><a href="#cb61-51" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">31</span>,]</span>
+<span id="cb61-52"><a href="#cb61-52" aria-hidden="true" tabindex="-1"></a><span class="co">#左边那个红色矩形还在，说明两次调用各画各的</span></span>
+<span id="cb61-53"><a href="#cb61-53" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">6</span>,<span class="dv">11</span>,]</span>
+<span id="cb61-54"><a href="#cb61-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-55"><a href="#cb61-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-56"><a href="#cb61-56" aria-hidden="true" tabindex="-1"></a>分派的依据是「第2个参数是长度为2的向量还是长度为4的向量」。</span>
+<span id="cb61-57"><a href="#cb61-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-58"><a href="#cb61-58" aria-hidden="true" tabindex="-1"></a>注：正因为要按类型分派，**整型参数要写成 `5L` 而不是 `5`**。R 里 <span class="in">`5`</span> 是双精度数，</span>
+<span id="cb61-59"><a href="#cb61-59" aria-hidden="true" tabindex="-1"></a>传下去可能选中错误的那个重载，或者报类型不匹配。</span>
+<span id="cb61-60"><a href="#cb61-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-61"><a href="#cb61-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## OpenCV函数输出参数的处理</span></span>
+<span id="cb61-62"><a href="#cb61-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-63"><a href="#cb61-63" aria-hidden="true" tabindex="-1"></a>在OpenCV中，很多函数都具有输出参数，比如颜色转换函数**cvtColor**：</span>
+<span id="cb61-64"><a href="#cb61-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-65"><a href="#cb61-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-66"><a href="#cb61-66" aria-hidden="true" tabindex="-1"></a><span class="in">void cv::cvtColor(  </span></span>
+<span id="cb61-67"><a href="#cb61-67" aria-hidden="true" tabindex="-1"></a><span class="in">  InputArray    src, #src表示待处理图像</span></span>
+<span id="cb61-68"><a href="#cb61-68" aria-hidden="true" tabindex="-1"></a><span class="in">  OutputArray   dst, #dst表示处理结果</span></span>
+<span id="cb61-69"><a href="#cb61-69" aria-hidden="true" tabindex="-1"></a><span class="in">  int code,        #code指明颜色转换方式</span></span>
+<span id="cb61-70"><a href="#cb61-70" aria-hidden="true" tabindex="-1"></a><span class="in">  int dstCn = 0    </span></span>
+<span id="cb61-71"><a href="#cb61-71" aria-hidden="true" tabindex="-1"></a><span class="in">)       </span></span>
+<span id="cb61-72"><a href="#cb61-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-73"><a href="#cb61-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-74"><a href="#cb61-74" aria-hidden="true" tabindex="-1"></a>其中，dst参数就是一个输出参数，用来存放图像的颜色转换结果。C++ 里靠引用把结果</span>
+<span id="cb61-75"><a href="#cb61-75" aria-hidden="true" tabindex="-1"></a>「带出来」，而 R 没有这种机制。</span>
+<span id="cb61-76"><a href="#cb61-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-77"><a href="#cb61-77" aria-hidden="true" tabindex="-1"></a>ROpenCV 的做法是**把输出参数变成返回值**。上面那个函数在 R 里写成：</span>
+<span id="cb61-78"><a href="#cb61-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-79"><a href="#cb61-79" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb61-80"><a href="#cb61-80" aria-hidden="true" tabindex="-1"></a><span class="fu">cv_cvtColor</span>(src, code, <span class="at">dstCn =</span> <span class="dv">0</span>, <span class="at">dst =</span> <span class="cn">NULL</span>)</span>
+<span id="cb61-81"><a href="#cb61-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-82"><a href="#cb61-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-83"><a href="#cb61-83" aria-hidden="true" tabindex="-1"></a><span class="in">`dst`</span> 默认是 <span class="in">`NULL`</span>，表示「新建一个对象装结果并返回」；如果确实想复用一块已有的</span>
+<span id="cb61-84"><a href="#cb61-84" aria-hidden="true" tabindex="-1"></a>内存，可以显式传一个对象进去，函数会把它填好并原样返回。于是：</span>
+<span id="cb61-85"><a href="#cb61-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-86"><a href="#cb61-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r out.width="60%", fig.align="center"}</span></span>
+<span id="cb61-87"><a href="#cb61-87" aria-hidden="true" tabindex="-1"></a><span class="co">#读取图像文件，读取的结果保存在img中</span></span>
+<span id="cb61-88"><a href="#cb61-88" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/HappyFish.jpg"</span>)</span>
+<span id="cb61-89"><a href="#cb61-89" aria-hidden="true" tabindex="-1"></a><span class="co">#调用cvtColor函数，将img转变为灰度图像。结果直接返回</span></span>
+<span id="cb61-90"><a href="#cb61-90" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY)</span>
+<span id="cb61-91"><a href="#cb61-91" aria-hidden="true" tabindex="-1"></a><span class="co">#显示结果</span></span>
+<span id="cb61-92"><a href="#cb61-92" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dst)</span>
+<span id="cb61-93"><a href="#cb61-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-94"><a href="#cb61-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-95"><a href="#cb61-95" aria-hidden="true" tabindex="-1"></a>在这个例子中，<span class="in">`dst`</span> 是函数新建并返回的图像矩阵，不需要事先准备容器。</span>
+<span id="cb61-96"><a href="#cb61-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-97"><a href="#cb61-97" aria-hidden="true" tabindex="-1"></a>**复用已有对象**时传 <span class="in">`dst=`</span>，返回的是同一个对象（不是副本）：</span>
+<span id="cb61-98"><a href="#cb61-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-101"><a href="#cb61-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-102"><a href="#cb61-102" aria-hidden="true" tabindex="-1"></a><span class="co">#准备一个空的灰度图容器</span></span>
+<span id="cb61-103"><a href="#cb61-103" aria-hidden="true" tabindex="-1"></a>buf <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">dim</span>(img)[<span class="dv">1</span>],<span class="fu">dim</span>(img)[<span class="dv">2</span>],CV_8UC1,<span class="dv">0</span>L)</span>
+<span id="cb61-104"><a href="#cb61-104" aria-hidden="true" tabindex="-1"></a><span class="co">#也可以直接准备一个空图容器</span></span>
+<span id="cb61-105"><a href="#cb61-105" aria-hidden="true" tabindex="-1"></a><span class="co"># buf = Mat()</span></span>
+<span id="cb61-106"><a href="#cb61-106" aria-hidden="true" tabindex="-1"></a><span class="co">#把结果填进 buf，返回的仍是 buf 本身</span></span>
+<span id="cb61-107"><a href="#cb61-107" aria-hidden="true" tabindex="-1"></a>out <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY,<span class="at">dst=</span>buf)</span>
+<span id="cb61-108"><a href="#cb61-108" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(out,buf)</span>
+<span id="cb61-109"><a href="#cb61-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-110"><a href="#cb61-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-111"><a href="#cb61-111" aria-hidden="true" tabindex="-1"></a>这种写法在循环里反复处理同一尺寸的图像时有用，可以少申请内存。但要注意：</span>
+<span id="cb61-112"><a href="#cb61-112" aria-hidden="true" tabindex="-1"></a>**传进去的 `buf` 会被覆盖**，如果原内容还要用，得先 <span class="in">`cv_copyTo`</span> 一份。</span>
+<span id="cb61-113"><a href="#cb61-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-114"><a href="#cb61-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-115"><a href="#cb61-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## OpenCV类实例的处理</span></span>
+<span id="cb61-116"><a href="#cb61-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-117"><a href="#cb61-117" aria-hidden="true" tabindex="-1"></a><span class="fu">### 图像矩阵 cvMat</span></span>
+<span id="cb61-118"><a href="#cb61-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-119"><a href="#cb61-119" aria-hidden="true" tabindex="-1"></a>ROpenCV 不在 R 里重建 OpenCV 的类，而是让 <span class="in">`cvMat`</span> 直接持有指向 <span class="in">`cv::Mat`</span> 的</span>
+<span id="cb61-120"><a href="#cb61-120" aria-hidden="true" tabindex="-1"></a><span class="in">`externalptr`</span>。R 和 OpenCV 之间传的是指针而不是像素，所以**转换是零拷贝的**：</span>
+<span id="cb61-121"><a href="#cb61-121" aria-hidden="true" tabindex="-1"></a>一张大图从 <span class="in">`cv_imread`</span> 读进来不会在 R 侧再占一份内存。</span>
+<span id="cb61-122"><a href="#cb61-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-125"><a href="#cb61-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-126"><a href="#cb61-126" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个空的图像矩阵</span></span>
+<span id="cb61-127"><a href="#cb61-127" aria-hidden="true" tabindex="-1"></a>emptyImg <span class="ot">=</span> <span class="fu">Mat</span>()</span>
+<span id="cb61-128"><a href="#cb61-128" aria-hidden="true" tabindex="-1"></a>emptyImg</span>
+<span id="cb61-129"><a href="#cb61-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-130"><a href="#cb61-130" aria-hidden="true" tabindex="-1"></a><span class="co">#生成10行10列的全0单通道图像矩阵</span></span>
+<span id="cb61-131"><a href="#cb61-131" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">10</span>L,<span class="dv">10</span>L,CV_8UC1,<span class="dv">0</span>L)</span>
+<span id="cb61-132"><a href="#cb61-132" aria-hidden="true" tabindex="-1"></a>blackImg</span>
+<span id="cb61-133"><a href="#cb61-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-134"><a href="#cb61-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-135"><a href="#cb61-135" aria-hidden="true" tabindex="-1"></a><span class="in">`Mat()`</span> 不带参数给 0x0 的空矩阵；带参数时按 <span class="in">`Mat(rows, cols, type, value)`</span> 构造。</span>
+<span id="cb61-136"><a href="#cb61-136" aria-hidden="true" tabindex="-1"></a>也可以直接把 R 的矩阵或三维数组搬进去，类型由数组自动推断：</span>
+<span id="cb61-137"><a href="#cb61-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-140"><a href="#cb61-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-141"><a href="#cb61-141" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span>),<span class="dv">10</span>,<span class="dv">10</span>)</span>
+<span id="cb61-142"><a href="#cb61-142" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(m)</span>
+<span id="cb61-143"><a href="#cb61-143" aria-hidden="true" tabindex="-1"></a>img</span>
+<span id="cb61-144"><a href="#cb61-144" aria-hidden="true" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span>
+<span id="cb61-145"><a href="#cb61-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-146"><a href="#cb61-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-147"><a href="#cb61-147" aria-hidden="true" tabindex="-1"></a><span class="fu">### 点、尺寸、标量、矩形：普通数值向量</span></span>
+<span id="cb61-148"><a href="#cb61-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-149"><a href="#cb61-149" aria-hidden="true" tabindex="-1"></a>旧版本（是一直没有发布的版本，握在手里几年了）为这些类型各造了一套对象（<span class="in">`Point()`</span>、<span class="in">`Size()`</span>、<span class="in">`Scalar()`</span>、<span class="in">`Rect()`</span>），当前发布的版本取消了这一层——它们本来就是几个数，用 R 的向量即可：</span>
+<span id="cb61-150"><a href="#cb61-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-153"><a href="#cb61-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-154"><a href="#cb61-154" aria-hidden="true" tabindex="-1"></a><span class="co">#整数点：c(x, y)</span></span>
+<span id="cb61-155"><a href="#cb61-155" aria-hidden="true" tabindex="-1"></a>pnt <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>)</span>
+<span id="cb61-156"><a href="#cb61-156" aria-hidden="true" tabindex="-1"></a>pnt</span>
+<span id="cb61-157"><a href="#cb61-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-158"><a href="#cb61-158" aria-hidden="true" tabindex="-1"></a><span class="co">#浮点数点同样是长度为2的向量</span></span>
+<span id="cb61-159"><a href="#cb61-159" aria-hidden="true" tabindex="-1"></a>pnt2f <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">10.1</span>,<span class="fl">20.2</span>)</span>
+<span id="cb61-160"><a href="#cb61-160" aria-hidden="true" tabindex="-1"></a>pnt2f</span>
+<span id="cb61-161"><a href="#cb61-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-162"><a href="#cb61-162" aria-hidden="true" tabindex="-1"></a><span class="co">#尺寸：c(width, height)，面积自己算</span></span>
+<span id="cb61-163"><a href="#cb61-163" aria-hidden="true" tabindex="-1"></a>sz <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">100</span>)</span>
+<span id="cb61-164"><a href="#cb61-164" aria-hidden="true" tabindex="-1"></a>sz[<span class="dv">1</span>]<span class="sc">*</span>sz[<span class="dv">2</span>]</span>
+<span id="cb61-165"><a href="#cb61-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-166"><a href="#cb61-166" aria-hidden="true" tabindex="-1"></a><span class="co">#标量（颜色）：c(B, G, R)</span></span>
+<span id="cb61-167"><a href="#cb61-167" aria-hidden="true" tabindex="-1"></a>sca <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>)</span>
+<span id="cb61-168"><a href="#cb61-168" aria-hidden="true" tabindex="-1"></a>sca</span>
+<span id="cb61-169"><a href="#cb61-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-170"><a href="#cb61-170" aria-hidden="true" tabindex="-1"></a><span class="co">#矩形：c(x, y, width, height)</span></span>
+<span id="cb61-171"><a href="#cb61-171" aria-hidden="true" tabindex="-1"></a>rect <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">100</span>,<span class="dv">50</span>)</span>
+<span id="cb61-172"><a href="#cb61-172" aria-hidden="true" tabindex="-1"></a>rect</span>
+<span id="cb61-173"><a href="#cb61-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-174"><a href="#cb61-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-175"><a href="#cb61-175" aria-hidden="true" tabindex="-1"></a>好处是这些值可以直接参与 R 的运算：求中点写 <span class="in">`(a+b)/2`</span>，判断点在矩形内写</span>
+<span id="cb61-176"><a href="#cb61-176" aria-hidden="true" tabindex="-1"></a><span class="in">`pnt[1] &gt;= rect[1] &amp;&amp; pnt[1] &lt; rect[1]+rect[3]`</span>，不需要记任何方法名。</span>
+<span id="cb61-177"><a href="#cb61-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-178"><a href="#cb61-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### 访问图像矩阵的信息</span></span>
+<span id="cb61-179"><a href="#cb61-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-182"><a href="#cb61-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-183"><a href="#cb61-183" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/HappyFish.jpg"</span>)</span>
+<span id="cb61-184"><a href="#cb61-184" aria-hidden="true" tabindex="-1"></a><span class="co">#打印摘要：尺寸、类型、通道数</span></span>
+<span id="cb61-185"><a href="#cb61-185" aria-hidden="true" tabindex="-1"></a>img</span>
+<span id="cb61-186"><a href="#cb61-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-187"><a href="#cb61-187" aria-hidden="true" tabindex="-1"></a><span class="co">#行数、列数（多通道时还有通道数）</span></span>
+<span id="cb61-188"><a href="#cb61-188" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img)</span>
+<span id="cb61-189"><a href="#cb61-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-190"><a href="#cb61-190" aria-hidden="true" tabindex="-1"></a><span class="co">#行数、列数、通道数、类型码、深度码</span></span>
+<span id="cb61-191"><a href="#cb61-191" aria-hidden="true" tabindex="-1"></a><span class="fu">mat_info</span>(img)</span>
+<span id="cb61-192"><a href="#cb61-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-193"><a href="#cb61-193" aria-hidden="true" tabindex="-1"></a><span class="co">#取第100行、第100列像素的值</span></span>
+<span id="cb61-194"><a href="#cb61-194" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)[<span class="dv">100</span>,<span class="dv">100</span>,]</span>
+<span id="cb61-195"><a href="#cb61-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-196"><a href="#cb61-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-197"><a href="#cb61-197" aria-hidden="true" tabindex="-1"></a>**下标要注意**：OpenCV 的 <span class="in">`img.at(i,j)`</span> 是 0 基，而 <span class="in">`as_array()`</span> 返回的是 R 数组，</span>
+<span id="cb61-198"><a href="#cb61-198" aria-hidden="true" tabindex="-1"></a>是 1 基。旧代码里的 <span class="in">`img[99,99]`</span> 对应新代码的 <span class="in">`[100,100,]`</span>。</span>
+<span id="cb61-199"><a href="#cb61-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-200"><a href="#cb61-200" aria-hidden="true" tabindex="-1"></a><span class="fu">### 旋转矩形</span></span>
+<span id="cb61-201"><a href="#cb61-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-202"><a href="#cb61-202" aria-hidden="true" tabindex="-1"></a>旋转矩形多一个角度，用长度 5 的数值向量表示：</span>
+<span id="cb61-203"><a href="#cb61-203" aria-hidden="true" tabindex="-1"></a><span class="in">`c(中心x, 中心y, 宽, 高, 角度)`</span>。</span>
+<span id="cb61-204"><a href="#cb61-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-207"><a href="#cb61-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-208"><a href="#cb61-208" aria-hidden="true" tabindex="-1"></a><span class="co">#四个角点</span></span>
+<span id="cb61-209"><a href="#cb61-209" aria-hidden="true" tabindex="-1"></a>pts <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">10</span>,<span class="dv">0</span>, <span class="dv">10</span>,<span class="dv">5</span>, <span class="dv">0</span>,<span class="dv">5</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-210"><a href="#cb61-210" aria-hidden="true" tabindex="-1"></a><span class="co">#求最小外接旋转矩形。注意点集必须是 CV_32F</span></span>
+<span id="cb61-211"><a href="#cb61-211" aria-hidden="true" tabindex="-1"></a>rrect <span class="ot">=</span> <span class="fu">cv_minAreaRect</span>(<span class="fu">cv_mat_convert</span>(<span class="fu">Mat</span>(pts),CV_32F))</span>
+<span id="cb61-212"><a href="#cb61-212" aria-hidden="true" tabindex="-1"></a>rrect</span>
+<span id="cb61-213"><a href="#cb61-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-214"><a href="#cb61-214" aria-hidden="true" tabindex="-1"></a><span class="co">#求四个顶点</span></span>
+<span id="cb61-215"><a href="#cb61-215" aria-hidden="true" tabindex="-1"></a>pts4 <span class="ot">=</span> <span class="fu">cv_boxPoints</span>(rrect)</span>
+<span id="cb61-216"><a href="#cb61-216" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(pts4,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-217"><a href="#cb61-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-218"><a href="#cb61-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-219"><a href="#cb61-219" aria-hidden="true" tabindex="-1"></a>传入cv_minAreaRect的点集必须是 <span class="in">`CV_32F`</span>：<span class="in">`Mat(matrix)`</span> 默认给的是 <span class="in">`CV_64F`</span>，直接传进去会报</span>
+<span id="cb61-220"><a href="#cb61-220" aria-hidden="true" tabindex="-1"></a><span class="in">`Assertion failed (depth == CV_32F || depth == CV_32S)`</span>。在使用中，需要结合OpenCV的参考资料留意 函数的使用要求。</span>
+<span id="cb61-221"><a href="#cb61-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-222"><a href="#cb61-222" aria-hidden="true" tabindex="-1"></a><span class="fu">### as_array 和 Mat：R 与 OpenCV 的数据交换</span></span>
+<span id="cb61-223"><a href="#cb61-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-224"><a href="#cb61-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-227"><a href="#cb61-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-228"><a href="#cb61-228" aria-hidden="true" tabindex="-1"></a><span class="co">#生成一个100x100的随机灰度矩阵</span></span>
+<span id="cb61-229"><a href="#cb61-229" aria-hidden="true" tabindex="-1"></a>img_mat <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span><span class="sc">*</span><span class="dv">100</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">nr=</span><span class="dv">100</span>,<span class="at">nc=</span><span class="dv">100</span>)</span>
+<span id="cb61-230"><a href="#cb61-230" aria-hidden="true" tabindex="-1"></a><span class="co">#搬到 OpenCV 侧</span></span>
+<span id="cb61-231"><a href="#cb61-231" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(img_mat)</span>
+<span id="cb61-232"><a href="#cb61-232" aria-hidden="true" tabindex="-1"></a>img</span>
+<span id="cb61-233"><a href="#cb61-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-234"><a href="#cb61-234" aria-hidden="true" tabindex="-1"></a><span class="co">#再取回 R 侧</span></span>
+<span id="cb61-235"><a href="#cb61-235" aria-hidden="true" tabindex="-1"></a>back <span class="ot">=</span> <span class="fu">as_array</span>(img,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-236"><a href="#cb61-236" aria-hidden="true" tabindex="-1"></a><span class="co">#数值一致。注意 as_array 的结果带 depth 属性，所以不能直接 identical()</span></span>
+<span id="cb61-237"><a href="#cb61-237" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">as.vector</span>(back),<span class="fu">as.vector</span>(img_mat))</span>
+<span id="cb61-238"><a href="#cb61-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-239"><a href="#cb61-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-240"><a href="#cb61-240" aria-hidden="true" tabindex="-1"></a>三维数组（彩色图）同理，第三维是通道：</span>
+<span id="cb61-241"><a href="#cb61-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-244"><a href="#cb61-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-245"><a href="#cb61-245" aria-hidden="true" tabindex="-1"></a>img_arr <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">255</span>,<span class="dv">100</span><span class="sc">*</span><span class="dv">100</span><span class="sc">*</span><span class="dv">3</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">dim=</span><span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">100</span>,<span class="dv">3</span>))</span>
+<span id="cb61-246"><a href="#cb61-246" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(img_arr)</span>
+<span id="cb61-247"><a href="#cb61-247" aria-hidden="true" tabindex="-1"></a>img</span>
+<span id="cb61-248"><a href="#cb61-248" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img)</span>
+<span id="cb61-249"><a href="#cb61-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-250"><a href="#cb61-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-251"><a href="#cb61-251" aria-hidden="true" tabindex="-1"></a><span class="in">`as_array()`</span> 返回的数组带一个 <span class="in">`depth`</span> 属性，记录图像深度：</span>
+<span id="cb61-252"><a href="#cb61-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-255"><a href="#cb61-255" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-256"><a href="#cb61-256" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(<span class="dv">100</span>L,<span class="dv">100</span>L,CV_8UC1,<span class="dv">0</span>L)</span>
+<span id="cb61-257"><a href="#cb61-257" aria-hidden="true" tabindex="-1"></a>blackImg_mat <span class="ot">=</span> <span class="fu">as_array</span>(blackImg,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-258"><a href="#cb61-258" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(blackImg_mat)</span>
+<span id="cb61-259"><a href="#cb61-259" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(blackImg_mat,<span class="st">"depth"</span>)</span>
+<span id="cb61-260"><a href="#cb61-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-261"><a href="#cb61-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-262"><a href="#cb61-262" aria-hidden="true" tabindex="-1"></a>注意 <span class="in">`as_array()`</span> **只带 `depth`，不带 `type`**；要类型码请用 <span class="in">`mat_info(x)[4]`</span>。</span>
+<span id="cb61-263"><a href="#cb61-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-264"><a href="#cb61-264" aria-hidden="true" tabindex="-1"></a>改完再搬回去：</span>
+<span id="cb61-265"><a href="#cb61-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-268"><a href="#cb61-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb61-269"><a href="#cb61-269" aria-hidden="true" tabindex="-1"></a><span class="co">#把中心区域改成 255</span></span>
+<span id="cb61-270"><a href="#cb61-270" aria-hidden="true" tabindex="-1"></a>blackImg_mat[<span class="dv">40</span><span class="sc">:</span><span class="dv">70</span>,<span class="dv">40</span><span class="sc">:</span><span class="dv">70</span>] <span class="ot">=</span> <span class="dv">255</span></span>
+<span id="cb61-271"><a href="#cb61-271" aria-hidden="true" tabindex="-1"></a><span class="co">#重新构造图像矩阵</span></span>
+<span id="cb61-272"><a href="#cb61-272" aria-hidden="true" tabindex="-1"></a>blackImg <span class="ot">=</span> <span class="fu">Mat</span>(blackImg_mat)</span>
+<span id="cb61-273"><a href="#cb61-273" aria-hidden="true" tabindex="-1"></a>blackImg</span>
+<span id="cb61-274"><a href="#cb61-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-275"><a href="#cb61-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-276"><a href="#cb61-276" aria-hidden="true" tabindex="-1"></a>最后是一个两图融合的例子：</span>
+<span id="cb61-277"><a href="#cb61-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-278"><a href="#cb61-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=FALSE}</span></span>
+<span id="cb61-279"><a href="#cb61-279" aria-hidden="true" tabindex="-1"></a>src1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans1.jpg"</span>)</span>
+<span id="cb61-280"><a href="#cb61-280" aria-hidden="true" tabindex="-1"></a>src2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans2.jpg"</span>)</span>
+<span id="cb61-281"><a href="#cb61-281" aria-hidden="true" tabindex="-1"></a><span class="co">#各自取回 R 侧，按 0.5 加权</span></span>
+<span id="cb61-282"><a href="#cb61-282" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">=</span> <span class="fu">as_array</span>(src1,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-283"><a href="#cb61-283" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">=</span> <span class="fu">as_array</span>(src2,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-284"><a href="#cb61-284" aria-hidden="true" tabindex="-1"></a>dst_arr <span class="ot">=</span> <span class="fl">0.5</span><span class="sc">*</span>a1 <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>a2</span>
+<span id="cb61-285"><a href="#cb61-285" aria-hidden="true" tabindex="-1"></a><span class="co">#搬回 OpenCV 侧</span></span>
+<span id="cb61-286"><a href="#cb61-286" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">Mat</span>(dst_arr)</span>
+<span id="cb61-287"><a href="#cb61-287" aria-hidden="true" tabindex="-1"></a><span class="co"># dst</span></span>
+<span id="cb61-288"><a href="#cb61-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-289"><a href="#cb61-289" aria-hidden="true" tabindex="-1"></a><span class="co">#进行CV_8U转换，以便plot</span></span>
+<span id="cb61-290"><a href="#cb61-290" aria-hidden="true" tabindex="-1"></a>dst1 <span class="ot">=</span> <span class="fu">cv_mat_convert</span>(dst,CV_8U)</span>
+<span id="cb61-291"><a href="#cb61-291" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb61-292"><a href="#cb61-292" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src1)</span>
+<span id="cb61-293"><a href="#cb61-293" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src2)</span>
+<span id="cb61-294"><a href="#cb61-294" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dst1)</span>
+<span id="cb61-295"><a href="#cb61-295" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb61-296"><a href="#cb61-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-297"><a href="#cb61-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-298"><a href="#cb61-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-299"><a href="#cb61-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb61-300"><a href="#cb61-300" aria-hidden="true" tabindex="-1"></a>src1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans1.jpg"</span>)</span>
+<span id="cb61-301"><a href="#cb61-301" aria-hidden="true" tabindex="-1"></a>src2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/pictrans2.jpg"</span>)</span>
+<span id="cb61-302"><a href="#cb61-302" aria-hidden="true" tabindex="-1"></a><span class="co">#各自取回 R 侧，按 0.5 加权</span></span>
+<span id="cb61-303"><a href="#cb61-303" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">=</span> <span class="fu">as_array</span>(src1,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-304"><a href="#cb61-304" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">=</span> <span class="fu">as_array</span>(src2,<span class="at">numeric=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-305"><a href="#cb61-305" aria-hidden="true" tabindex="-1"></a>dst_arr <span class="ot">=</span> <span class="fl">0.5</span><span class="sc">*</span>a1 <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>a2</span>
+<span id="cb61-306"><a href="#cb61-306" aria-hidden="true" tabindex="-1"></a><span class="co">#搬回 OpenCV 侧</span></span>
+<span id="cb61-307"><a href="#cb61-307" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">Mat</span>(dst_arr)</span>
+<span id="cb61-308"><a href="#cb61-308" aria-hidden="true" tabindex="-1"></a><span class="co"># dst</span></span>
+<span id="cb61-309"><a href="#cb61-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-310"><a href="#cb61-310" aria-hidden="true" tabindex="-1"></a><span class="co">#进行CV_8U转换，以便plot</span></span>
+<span id="cb61-311"><a href="#cb61-311" aria-hidden="true" tabindex="-1"></a>dst1 <span class="ot">=</span> <span class="fu">cv_mat_convert</span>(dst,CV_8U)</span>
+<span id="cb61-312"><a href="#cb61-312" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb61-313"><a href="#cb61-313" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src1)</span>
+<span id="cb61-314"><a href="#cb61-314" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(src2)</span>
+<span id="cb61-315"><a href="#cb61-315" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dst1)</span>
+<span id="cb61-316"><a href="#cb61-316" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb61-317"><a href="#cb61-317" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb61-318"><a href="#cb61-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-319"><a href="#cb61-319" aria-hidden="true" tabindex="-1"></a><span class="in">`0.5*a1 + 0.5*a2`</span> 的结果是双精度，所以 <span class="in">`Mat()`</span> 得到的是 <span class="in">`CV_64F`</span> 图像。若要</span>
+<span id="cb61-320"><a href="#cb61-320" aria-hidden="true" tabindex="-1"></a><span class="in">`CV_8U`</span>，用 <span class="in">`cv_mat_convert(dst, CV_8U)`</span> 显式转换——<span class="in">`plot()`</span> 对浮点图会做归一化，</span>
+<span id="cb61-321"><a href="#cb61-321" aria-hidden="true" tabindex="-1"></a>和 8 位图看起来会不一样。</span>
 </code></pre></div><button title="复制到剪贴板" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

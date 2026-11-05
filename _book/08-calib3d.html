@@ -377,7 +377,7 @@ window.Quarto = {
 </div>
 <blockquote class="blockquote">
 <p><strong>为什么不能直接传 R 矩阵？</strong></p>
-<p><code>matrix(...,ncol=2)</code> 建出来是 <code>CV_64FC1</code> 的 4×2 矩阵，不是一个「点集」。 <code>calibrateCamera</code>、<code>solvePnP</code>、<code>findHomography</code> 这一族要的是 <code>CV_32FC2</code> 且 <code>checkVector(2, CV_32F) == 点数</code>，类型或布局。</p>
+<p><code>matrix(...,ncol=2)</code> 建出来是 <code>CV_64FC1</code> 的 4×2 矩阵，不是一个「点集」。 <code>calibrateCamera</code>、<code>solvePnP</code>、<code>findHomography</code> 这一族要的是 <code>CV_32FC2</code> 且 <code>checkVector(2, CV_32F) == 点数</code>的类型或布局。</p>
 <p>而 <code>cv_findChessboardCorners</code> 这类<strong>输出</strong>角点的函数，交回来的是 <code>1 × N × 2</code> 的 cvMat，取数据要用 <code>matrix(as_array(x, numeric = TRUE), ncol = 2)</code> 才能变成「每行一个点」。</p>
 </blockquote>
 <section id="创建校准模式绘制棋盘格" class="level2" data-number="10.1"><h2 data-number="10.1" class="anchored" data-anchor-id="创建校准模式绘制棋盘格">
@@ -398,7 +398,7 @@ window.Quarto = {
 <span></span>
 <span><span class="co">#生成空图</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="va">h</span>,type <span class="op">=</span> <span class="st">"n"</span>,xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">w</span><span class="op">)</span>,ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">h</span><span class="op">)</span>,bty <span class="op">=</span> <span class="st">"n"</span>,</span>
-<span>     xlab <span class="op">=</span> <span class="st">""</span>,ylab <span class="op">=</span> <span class="st">""</span>,xaxt <span class="op">=</span> <span class="st">"n"</span>,yaxt <span class="op">=</span> <span class="st">"n"</span><span class="op">)</span></span>
+<span>     xlab <span class="op">=</span> <span class="st">""</span>,ylab <span class="op">=</span> <span class="st">""</span>,xaxt <span class="op">=</span> <span class="st">"n"</span>,yaxt <span class="op">=</span> <span class="st">"n"</span>,asp<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
 <span><span class="va">isWhite</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -512,7 +512,7 @@ window.Quarto = {
 </div>
 <blockquote class="blockquote">
 <p>一共 <code>6 × 9 = 54</code> 个点，坐标从 <code>(0,0,0)</code> 到 <code>(8,5,0)</code>。</p>
-<p><strong>顺序不能随便改。</strong> <code>findChessboardCorners</code> 返回的角点是按「逐行、从左到右」 排的，世界坐标必须按同样的顺序排，否则解出来的位姿是转了个身的。 这里外层 <code>x</code>、内层 <code>y</code> 正是原书 <code>for(x...) for(y...)</code> 的顺序。</p>
+<p><strong>顺序不能随便改。</strong> <code>findChessboardCorners</code> 返回的角点是按「逐行、从左到右」 排的，世界坐标必须按同样的顺序排，否则解出来的位姿是转了个身的。</p>
 </blockquote>
 <p><strong>第二步：逐张找角点</strong></p>
 <div class="cell">
@@ -1033,10 +1033,7 @@ s \left[ \begin{matrix} x'\\y'\\1 \end{matrix} \right] = H \left[ \begin{matrix}
 <span><span class="co">#把 dst 中遮罩覆盖的内容复制到 img2 上</span></span>
 <span><span class="va">img2</span> <span class="op">=</span> <span class="fu">cv_copyTo</span><span class="op">(</span><span class="va">dst</span>,<span class="va">mask</span>,<span class="va">img2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">mask</span><span class="op">)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 490 500</code></pre>
-</div>
+<span><span class="co"># dim(mask)</span></span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -1511,595 +1508,599 @@ s \left[ \begin{matrix} x'\\y'\\1 \end{matrix} \right] = H \left[ \begin{matrix}
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">源代码</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 摄像机标定和三维重建（calib3d模块） {#sec-calib}</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>{{&lt; include common/_setup.qmd &gt;}}</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROpenCV)</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>本章反复要把「点的列表」交给 OpenCV，而 OpenCV 那边的类型是 <span class="in">`vector&lt;Point2f&gt;`</span>、</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="in">`vector&lt;Point3f&gt;`</span>，到了 R 侧必须变成**多通道 Mat**。先定义两个小工具，后面一直用：</span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co">#把 n×2 的 R 矩阵（每行一个 (x,y)）转成 OpenCV 要的 CV_32FC2 Mat</span></span>
-<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>pts2f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
-<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC2)</span>
-<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#注意这一行：多通道 Mat 的 [] 赋值是**按通道**铺开的，</span></span>
-<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#先写完全部 x、再写完全部 y，不是 (x1,y1,x2,y2) 那样交错</span></span>
-<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>])</span>
-<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a><span class="co">#把 n×3 的 R 矩阵（每行一个 (x,y,z)）转成 CV_32FC3 Mat</span></span>
-<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>pts3f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
-<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC3)</span>
-<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>],m[,<span class="dv">3</span>])</span>
-<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **为什么不能直接传 R 矩阵？**</span></span>
-<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
-<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`matrix(...,ncol=2)`</span><span class="at"> 建出来是 </span><span class="in">`CV_64FC1`</span><span class="at"> 的 4×2 矩阵，不是一个「点集」。</span></span>
-<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`calibrateCamera`</span><span class="at">、</span><span class="in">`solvePnP`</span><span class="at">、</span><span class="in">`findHomography`</span><span class="at"> 这一族要的是</span></span>
-<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`CV_32FC2`</span><span class="at"> 且 </span><span class="in">`checkVector(2, CV_32F) == 点数`</span><span class="at">，类型或布局。</span></span>
-<span id="cb44-37"><a href="#cb44-37" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
-<span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 而 </span><span class="in">`cv_findChessboardCorners`</span><span class="at"> 这类**输出**角点的函数，交回来的是</span></span>
-<span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`1 × N × 2`</span><span class="at"> 的 cvMat，取数据要用</span></span>
-<span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`matrix(as_array(x, numeric = TRUE), ncol = 2)`</span><span class="at"> 才能变成「每行一个点」。</span></span>
-<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## 创建校准模式（绘制棋盘格）</span></span>
-<span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-45"><a href="#cb44-45" aria-hidden="true" tabindex="-1"></a>标定要用棋盘格。可以不用图像矩阵，直接在 R 里画：</span>
-<span id="cb44-46"><a href="#cb44-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-49"><a href="#cb44-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-50"><a href="#cb44-50" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
-<span id="cb44-51"><a href="#cb44-51" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
-<span id="cb44-52"><a href="#cb44-52" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
-<span id="cb44-53"><a href="#cb44-53" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
-<span id="cb44-54"><a href="#cb44-54" aria-hidden="true" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
-<span id="cb44-55"><a href="#cb44-55" aria-hidden="true" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
-<span id="cb44-56"><a href="#cb44-56" aria-hidden="true" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
-<span id="cb44-57"><a href="#cb44-57" aria-hidden="true" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
-<span id="cb44-58"><a href="#cb44-58" aria-hidden="true" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
-<span id="cb44-59"><a href="#cb44-59" aria-hidden="true" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
-<span id="cb44-60"><a href="#cb44-60" aria-hidden="true" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
-<span id="cb44-61"><a href="#cb44-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-62"><a href="#cb44-62" aria-hidden="true" tabindex="-1"></a><span class="co">#生成空图</span></span>
-<span id="cb44-63"><a href="#cb44-63" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span>h,<span class="at">type =</span> <span class="st">"n"</span>,<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,w),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,h),<span class="at">bty =</span> <span class="st">"n"</span>,</span>
-<span id="cb44-64"><a href="#cb44-64" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">""</span>,<span class="at">ylab =</span> <span class="st">""</span>,<span class="at">xaxt =</span> <span class="st">"n"</span>,<span class="at">yaxt =</span> <span class="st">"n"</span>)</span>
-<span id="cb44-65"><a href="#cb44-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-66"><a href="#cb44-66" aria-hidden="true" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
-<span id="cb44-67"><a href="#cb44-67" aria-hidden="true" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
-<span id="cb44-68"><a href="#cb44-68" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
-<span id="cb44-69"><a href="#cb44-69" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
-<span id="cb44-70"><a href="#cb44-70" aria-hidden="true" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格</span></span>
-<span id="cb44-71"><a href="#cb44-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rect</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,i<span class="sc">*</span>cell_w,j<span class="sc">*</span>cell_h,</span>
-<span id="cb44-72"><a href="#cb44-72" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">ifelse</span>(isWhite,<span class="st">"white"</span>,<span class="st">"black"</span>),<span class="at">border =</span> <span class="st">"white"</span>)</span>
-<span id="cb44-73"><a href="#cb44-73" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
-<span id="cb44-74"><a href="#cb44-74" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb44-75"><a href="#cb44-75" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
-<span id="cb44-76"><a href="#cb44-76" aria-hidden="true" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
-<span id="cb44-77"><a href="#cb44-77" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
-<span id="cb44-78"><a href="#cb44-78" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb44-79"><a href="#cb44-79" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-80"><a href="#cb44-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-81"><a href="#cb44-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-82"><a href="#cb44-82" aria-hidden="true" tabindex="-1"></a>也可以生成一张图像矩阵，用 <span class="in">`cv_rectangle`</span> 一格一格填：</span>
-<span id="cb44-83"><a href="#cb44-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-86"><a href="#cb44-86" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-87"><a href="#cb44-87" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
-<span id="cb44-88"><a href="#cb44-88" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
-<span id="cb44-89"><a href="#cb44-89" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
-<span id="cb44-90"><a href="#cb44-90" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
-<span id="cb44-91"><a href="#cb44-91" aria-hidden="true" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
-<span id="cb44-92"><a href="#cb44-92" aria-hidden="true" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
-<span id="cb44-93"><a href="#cb44-93" aria-hidden="true" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
-<span id="cb44-94"><a href="#cb44-94" aria-hidden="true" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
-<span id="cb44-95"><a href="#cb44-95" aria-hidden="true" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
-<span id="cb44-96"><a href="#cb44-96" aria-hidden="true" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
-<span id="cb44-97"><a href="#cb44-97" aria-hidden="true" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
-<span id="cb44-98"><a href="#cb44-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-99"><a href="#cb44-99" aria-hidden="true" tabindex="-1"></a><span class="co">#生成全白图像矩阵（Mat 的第 4 个参数是初始值）</span></span>
-<span id="cb44-100"><a href="#cb44-100" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(h,w,CV_8UC1,<span class="dv">255</span>)</span>
-<span id="cb44-101"><a href="#cb44-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-102"><a href="#cb44-102" aria-hidden="true" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
-<span id="cb44-103"><a href="#cb44-103" aria-hidden="true" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
-<span id="cb44-104"><a href="#cb44-104" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
-<span id="cb44-105"><a href="#cb44-105" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
-<span id="cb44-106"><a href="#cb44-106" aria-hidden="true" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格：Rect 就是 c(x, y, width, height)</span></span>
-<span id="cb44-107"><a href="#cb44-107" aria-hidden="true" tabindex="-1"></a>    rct <span class="ot">=</span> <span class="fu">c</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,cell_w,cell_h)</span>
-<span id="cb44-108"><a href="#cb44-108" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(isWhite){</span>
-<span id="cb44-109"><a href="#cb44-109" aria-hidden="true" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">255</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb44-110"><a href="#cb44-110" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
-<span id="cb44-111"><a href="#cb44-111" aria-hidden="true" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb44-112"><a href="#cb44-112" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb44-113"><a href="#cb44-113" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
-<span id="cb44-114"><a href="#cb44-114" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb44-115"><a href="#cb44-115" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
-<span id="cb44-116"><a href="#cb44-116" aria-hidden="true" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
-<span id="cb44-117"><a href="#cb44-117" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
-<span id="cb44-118"><a href="#cb44-118" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb44-119"><a href="#cb44-119" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-120"><a href="#cb44-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-121"><a href="#cb44-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-122"><a href="#cb44-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-123"><a href="#cb44-123" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
-<span id="cb44-124"><a href="#cb44-124" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"用 cv_rectangle 画出来的棋盘格"</span>)</span>
-<span id="cb44-125"><a href="#cb44-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-126"><a href="#cb44-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-127"><a href="#cb44-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-128"><a href="#cb44-128" aria-hidden="true" tabindex="-1"></a><span class="fu">## 方棋盘摄像机标定</span></span>
-<span id="cb44-129"><a href="#cb44-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-130"><a href="#cb44-130" aria-hidden="true" tabindex="-1"></a>**示例**</span>
-<span id="cb44-131"><a href="#cb44-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-132"><a href="#cb44-132" aria-hidden="true" tabindex="-1"></a>基于以下方棋盘图像进行相机标定（<span class="in">`images/calib/`</span> 下有 13 张）：</span>
-<span id="cb44-133"><a href="#cb44-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-134"><a href="#cb44-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-135"><a href="#cb44-135" aria-hidden="true" tabindex="-1"></a><span class="co">#设定用于标定的棋盘文件所在的路径</span></span>
-<span id="cb44-136"><a href="#cb44-136" aria-hidden="true" tabindex="-1"></a>image_path <span class="ot">=</span> <span class="st">"images/calib"</span></span>
-<span id="cb44-137"><a href="#cb44-137" aria-hidden="true" tabindex="-1"></a><span class="co">#获取路径下的棋盘文件名称</span></span>
-<span id="cb44-138"><a href="#cb44-138" aria-hidden="true" tabindex="-1"></a>imgfiles <span class="ot">=</span> <span class="fu">list.files</span>(image_path)</span>
-<span id="cb44-139"><a href="#cb44-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-140"><a href="#cb44-140" aria-hidden="true" tabindex="-1"></a><span class="co">#读取每个图像文件，依次存放在img_list列表中</span></span>
-<span id="cb44-141"><a href="#cb44-141" aria-hidden="true" tabindex="-1"></a>img_list <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb44-142"><a href="#cb44-142" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(imgfiles)){</span>
-<span id="cb44-143"><a href="#cb44-143" aria-hidden="true" tabindex="-1"></a>  img_list[[i]] <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="fu">paste0</span>(image_path,<span class="st">"/"</span>,imgfiles[i]),IMREAD_GRAYSCALE)</span>
-<span id="cb44-144"><a href="#cb44-144" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-145"><a href="#cb44-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-146"><a href="#cb44-146" aria-hidden="true" tabindex="-1"></a><span class="co">#13 张图铺成 4 列</span></span>
-<span id="cb44-147"><a href="#cb44-147" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
-<span id="cb44-148"><a href="#cb44-148" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(img_list)) <span class="fu">plot</span>(img_list[[i]],<span class="at">main =</span> imgfiles[i])</span>
-<span id="cb44-149"><a href="#cb44-149" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
-<span id="cb44-150"><a href="#cb44-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-151"><a href="#cb44-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-152"><a href="#cb44-152" aria-hidden="true" tabindex="-1"></a>接下来做标定。分四步：造世界坐标 → 找角点 → 标定 → 存参数。</span>
-<span id="cb44-153"><a href="#cb44-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-154"><a href="#cb44-154" aria-hidden="true" tabindex="-1"></a>**第一步：世界坐标**</span>
-<span id="cb44-155"><a href="#cb44-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-156"><a href="#cb44-156" aria-hidden="true" tabindex="-1"></a>棋盘是平面，所以每个角点的三维坐标可以取 $z=0$ 的整数格点：</span>
-<span id="cb44-157"><a href="#cb44-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-160"><a href="#cb44-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-161"><a href="#cb44-161" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
-<span id="cb44-162"><a href="#cb44-162" aria-hidden="true" tabindex="-1"></a>ptsnum_perrow <span class="ot">=</span> <span class="dv">6</span></span>
-<span id="cb44-163"><a href="#cb44-163" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
-<span id="cb44-164"><a href="#cb44-164" aria-hidden="true" tabindex="-1"></a>ptsnum_percolumn <span class="ot">=</span> <span class="dv">9</span></span>
-<span id="cb44-165"><a href="#cb44-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-166"><a href="#cb44-166" aria-hidden="true" tabindex="-1"></a><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
-<span id="cb44-167"><a href="#cb44-167" aria-hidden="true" tabindex="-1"></a><span class="co">#外层走 x（行），内层走 y（列），和 findChessboardCorners 的返回顺序一致</span></span>
-<span id="cb44-168"><a href="#cb44-168" aria-hidden="true" tabindex="-1"></a>obj_world_pts <span class="ot">=</span> <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_perrow<span class="dv">-1</span>),<span class="cf">function</span>(x){</span>
-<span id="cb44-169"><a href="#cb44-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_percolumn<span class="dv">-1</span>),<span class="cf">function</span>(y) <span class="fu">c</span>(y,x,<span class="dv">0</span>)))</span>
-<span id="cb44-170"><a href="#cb44-170" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb44-171"><a href="#cb44-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-172"><a href="#cb44-172" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(obj_world_pts)</span>
-<span id="cb44-173"><a href="#cb44-173" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(obj_world_pts,<span class="dv">3</span>)</span>
-<span id="cb44-174"><a href="#cb44-174" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(obj_world_pts,<span class="dv">2</span>)</span>
-<span id="cb44-175"><a href="#cb44-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-176"><a href="#cb44-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-177"><a href="#cb44-177" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 一共 </span><span class="in">`6 × 9 = 54`</span><span class="at"> 个点，坐标从 </span><span class="in">`(0,0,0)`</span><span class="at"> 到 </span><span class="in">`(8,5,0)`</span><span class="at">。</span></span>
-<span id="cb44-178"><a href="#cb44-178" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
-<span id="cb44-179"><a href="#cb44-179" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **顺序不能随便改。** </span><span class="in">`findChessboardCorners`</span><span class="at"> 返回的角点是按「逐行、从左到右」</span></span>
-<span id="cb44-180"><a href="#cb44-180" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 排的，世界坐标必须按同样的顺序排，否则解出来的位姿是转了个身的。</span></span>
-<span id="cb44-181"><a href="#cb44-181" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 这里外层 </span><span class="in">`x`</span><span class="at">、内层 </span><span class="in">`y`</span><span class="at"> 正是原书 </span><span class="in">`for(x...) for(y...)`</span><span class="at"> 的顺序。</span></span>
-<span id="cb44-182"><a href="#cb44-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-183"><a href="#cb44-183" aria-hidden="true" tabindex="-1"></a>**第二步：逐张找角点**</span>
-<span id="cb44-184"><a href="#cb44-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-187"><a href="#cb44-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-188"><a href="#cb44-188" aria-hidden="true" tabindex="-1"></a><span class="co">#指定棋盘文件的路径以及棋盘文件名称</span></span>
-<span id="cb44-189"><a href="#cb44-189" aria-hidden="true" tabindex="-1"></a>image_path <span class="ot">=</span> <span class="st">"images/calib"</span></span>
-<span id="cb44-190"><a href="#cb44-190" aria-hidden="true" tabindex="-1"></a>imgfiles <span class="ot">=</span> <span class="fu">list.files</span>(image_path)</span>
-<span id="cb44-191"><a href="#cb44-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-192"><a href="#cb44-192" aria-hidden="true" tabindex="-1"></a><span class="co">#对于每个棋盘图像文件，若能找寻到角点，则将其依次存入img_points列表中</span></span>
-<span id="cb44-193"><a href="#cb44-193" aria-hidden="true" tabindex="-1"></a>img_points <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb44-194"><a href="#cb44-194" aria-hidden="true" tabindex="-1"></a><span class="co">#对应的三维坐标（每张图都一样，就是 obj_world_pts）</span></span>
-<span id="cb44-195"><a href="#cb44-195" aria-hidden="true" tabindex="-1"></a>obj_points <span class="ot">=</span> <span class="fu">list</span>()</span>
-<span id="cb44-196"><a href="#cb44-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-197"><a href="#cb44-197" aria-hidden="true" tabindex="-1"></a><span class="co">#先把世界坐标转成 CV_32FC3 的 Mat，13 张图共用这一个</span></span>
-<span id="cb44-198"><a href="#cb44-198" aria-hidden="true" tabindex="-1"></a>obj_world_mat <span class="ot">=</span> <span class="fu">pts3f</span>(obj_world_pts)</span>
-<span id="cb44-199"><a href="#cb44-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-200"><a href="#cb44-200" aria-hidden="true" tabindex="-1"></a><span class="co">#迭代终止条件，用于寻找亚像素级别的角点：c(类型, 最大次数, 精度)</span></span>
-<span id="cb44-201"><a href="#cb44-201" aria-hidden="true" tabindex="-1"></a><span class="co">#EPS + MAX_ITER = 2 + 1 = 3，即 COUNT|EPS</span></span>
-<span id="cb44-202"><a href="#cb44-202" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">=</span> <span class="fu">c</span>(EPS<span class="sc">+</span>MAX_ITER,<span class="dv">30</span>,<span class="fl">0.001</span>)</span>
-<span id="cb44-203"><a href="#cb44-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-204"><a href="#cb44-204" aria-hidden="true" tabindex="-1"></a><span class="co">#循环处理每个棋盘文件</span></span>
-<span id="cb44-205"><a href="#cb44-205" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(imgfiles)){</span>
-<span id="cb44-206"><a href="#cb44-206" aria-hidden="true" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="fu">paste0</span>(image_path,<span class="st">"/"</span>,imgfiles[i]),IMREAD_GRAYSCALE)</span>
-<span id="cb44-207"><a href="#cb44-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-208"><a href="#cb44-208" aria-hidden="true" tabindex="-1"></a>  <span class="co">#检测棋盘角点：patternSize 是 c(每行角点数, 每列角点数)</span></span>
-<span id="cb44-209"><a href="#cb44-209" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
-<span id="cb44-210"><a href="#cb44-210" aria-hidden="true" tabindex="-1"></a>  <span class="co">#「找到没有」不在返回值上，在 attr(, "value") 上</span></span>
-<span id="cb44-211"><a href="#cb44-211" aria-hidden="true" tabindex="-1"></a>  found_success <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">"value"</span>)</span>
-<span id="cb44-212"><a href="#cb44-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-213"><a href="#cb44-213" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">isTRUE</span>(found_success)){</span>
-<span id="cb44-214"><a href="#cb44-214" aria-hidden="true" tabindex="-1"></a>    <span class="co">#把 1×54×2 的 cvMat 摊成 54×2 的矩阵，再转回 CV_32FC2 交给 cornerSubPix</span></span>
-<span id="cb44-215"><a href="#cb44-215" aria-hidden="true" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb44-216"><a href="#cb44-216" aria-hidden="true" tabindex="-1"></a>    <span class="co">#进一步取得亚像素棋盘角点</span></span>
-<span id="cb44-217"><a href="#cb44-217" aria-hidden="true" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
-<span id="cb44-218"><a href="#cb44-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-219"><a href="#cb44-219" aria-hidden="true" tabindex="-1"></a>    <span class="co">#将棋盘角点的三维坐标存入obj_points中</span></span>
-<span id="cb44-220"><a href="#cb44-220" aria-hidden="true" tabindex="-1"></a>    obj_points[[<span class="fu">length</span>(obj_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> obj_world_mat</span>
-<span id="cb44-221"><a href="#cb44-221" aria-hidden="true" tabindex="-1"></a>    <span class="co">#将棋盘角点的二维坐标存入img_points中</span></span>
-<span id="cb44-222"><a href="#cb44-222" aria-hidden="true" tabindex="-1"></a>    img_points[[<span class="fu">length</span>(img_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> corners</span>
-<span id="cb44-223"><a href="#cb44-223" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
-<span id="cb44-224"><a href="#cb44-224" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"没找到角点："</span>,imgfiles[i])</span>
-<span id="cb44-225"><a href="#cb44-225" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb44-226"><a href="#cb44-226" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-227"><a href="#cb44-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-228"><a href="#cb44-228" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(obj_points)</span>
-<span id="cb44-229"><a href="#cb44-229" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(img_points)</span>
-<span id="cb44-230"><a href="#cb44-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-231"><a href="#cb44-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-232"><a href="#cb44-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-233"><a href="#cb44-233" aria-hidden="true" tabindex="-1"></a>把检测结果画出来看看：</span>
-<span id="cb44-234"><a href="#cb44-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-237"><a href="#cb44-237" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-238"><a href="#cb44-238" aria-hidden="true" tabindex="-1"></a><span class="co">#挑一张有角点的图，把角点画上去</span></span>
-<span id="cb44-239"><a href="#cb44-239" aria-hidden="true" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left01.jpg"</span>)</span>
-<span id="cb44-240"><a href="#cb44-240" aria-hidden="true" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),</span>
-<span id="cb44-241"><a href="#cb44-241" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
-<span id="cb44-242"><a href="#cb44-242" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb44-243"><a href="#cb44-243" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),<span class="fu">pts2f</span>(corners),</span>
-<span id="cb44-244"><a href="#cb44-244" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
-<span id="cb44-245"><a href="#cb44-245" aria-hidden="true" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_drawChessboardCorners</span>(img_draw,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),</span>
-<span id="cb44-246"><a href="#cb44-246" aria-hidden="true" tabindex="-1"></a>                                    corners,<span class="cn">TRUE</span>)</span>
-<span id="cb44-247"><a href="#cb44-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-248"><a href="#cb44-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-249"><a href="#cb44-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-250"><a href="#cb44-250" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_draw)</span>
-<span id="cb44-251"><a href="#cb44-251" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"检测到的棋盘角点"</span>)</span>
-<span id="cb44-252"><a href="#cb44-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-253"><a href="#cb44-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-254"><a href="#cb44-254" aria-hidden="true" tabindex="-1"></a>**第三步：标定**</span>
-<span id="cb44-255"><a href="#cb44-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-258"><a href="#cb44-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-259"><a href="#cb44-259" aria-hidden="true" tabindex="-1"></a><span class="co">#获取图像的尺寸（mat_info 返回 c(行, 列, 通道, 类型码, 深度码)）</span></span>
-<span id="cb44-260"><a href="#cb44-260" aria-hidden="true" tabindex="-1"></a>img_info <span class="ot">=</span> <span class="fu">mat_info</span>(<span class="fu">cv_imread</span>(<span class="st">"images/calib/left01.jpg"</span>))</span>
-<span id="cb44-261"><a href="#cb44-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-262"><a href="#cb44-262" aria-hidden="true" tabindex="-1"></a><span class="co">#计算内参和畸变系数；rvecs/tvecs 不传就一并返回</span></span>
-<span id="cb44-263"><a href="#cb44-263" aria-hidden="true" tabindex="-1"></a>calib <span class="ot">=</span> <span class="fu">cv_calibrateCamera</span>(obj_points,img_points,<span class="fu">c</span>(img_info[<span class="dv">2</span>],img_info[<span class="dv">1</span>]))</span>
-<span id="cb44-264"><a href="#cb44-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-265"><a href="#cb44-265" aria-hidden="true" tabindex="-1"></a><span class="co">#RMS 重投影误差，越小越好</span></span>
-<span id="cb44-266"><a href="#cb44-266" aria-hidden="true" tabindex="-1"></a>calib<span class="sc">$</span>value</span>
-<span id="cb44-267"><a href="#cb44-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-268"><a href="#cb44-268" aria-hidden="true" tabindex="-1"></a><span class="co">#相机内参</span></span>
-<span id="cb44-269"><a href="#cb44-269" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb44-270"><a href="#cb44-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-271"><a href="#cb44-271" aria-hidden="true" tabindex="-1"></a><span class="co">#畸变系数 k1 k2 p1 p2 k3</span></span>
-<span id="cb44-272"><a href="#cb44-272" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb44-273"><a href="#cb44-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-274"><a href="#cb44-274" aria-hidden="true" tabindex="-1"></a><span class="co">#每张图的旋转向量、平移向量</span></span>
-<span id="cb44-275"><a href="#cb44-275" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>rvecs)</span>
-<span id="cb44-276"><a href="#cb44-276" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>tvecs)</span>
-<span id="cb44-277"><a href="#cb44-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-278"><a href="#cb44-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-279"><a href="#cb44-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-280"><a href="#cb44-280" aria-hidden="true" tabindex="-1"></a>内参的物理含义，对照着看：</span>
-<span id="cb44-281"><a href="#cb44-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-284"><a href="#cb44-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-285"><a href="#cb44-285" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb44-286"><a href="#cb44-286" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fx =</span> K[<span class="dv">1</span>,<span class="dv">1</span>],<span class="at">fy =</span> K[<span class="dv">2</span>,<span class="dv">2</span>],<span class="at">cx =</span> K[<span class="dv">1</span>,<span class="dv">3</span>],<span class="at">cy =</span> K[<span class="dv">2</span>,<span class="dv">3</span>])</span>
-<span id="cb44-287"><a href="#cb44-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-288"><a href="#cb44-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-289"><a href="#cb44-289" aria-hidden="true" tabindex="-1"></a><span class="in">`fx`</span>、<span class="in">`fy`</span> 是焦距（以像素为单位），<span class="in">`cx`</span>、<span class="in">`cy`</span> 是主点，理论上应该接近图像中心。</span>
-<span id="cb44-290"><a href="#cb44-290" aria-hidden="true" tabindex="-1"></a>图像是 640×480，中心是 <span class="in">`(320,240)`</span>——上面这几个数正好在附近。</span>
-<span id="cb44-291"><a href="#cb44-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-292"><a href="#cb44-292" aria-hidden="true" tabindex="-1"></a>把每张图的位姿列出来：</span>
-<span id="cb44-293"><a href="#cb44-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-294"><a href="#cb44-294" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-295"><a href="#cb44-295" aria-hidden="true" tabindex="-1"></a>rvec_df <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">vapply</span>(calib<span class="sc">$</span>rvecs,<span class="cf">function</span>(m) <span class="fu">as.vector</span>(<span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),<span class="fu">numeric</span>(<span class="dv">3</span>)))</span>
-<span id="cb44-296"><a href="#cb44-296" aria-hidden="true" tabindex="-1"></a>tvec_df <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">vapply</span>(calib<span class="sc">$</span>tvecs,<span class="cf">function</span>(m) <span class="fu">as.vector</span>(<span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),<span class="fu">numeric</span>(<span class="dv">3</span>)))</span>
-<span id="cb44-297"><a href="#cb44-297" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">view =</span> imgfiles,</span>
-<span id="cb44-298"><a href="#cb44-298" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">round</span>(rvec_df,<span class="dv">3</span>),<span class="fu">round</span>(tvec_df,<span class="dv">2</span>)),</span>
-<span id="cb44-299"><a href="#cb44-299" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"图像"</span>,<span class="st">"rx"</span>,<span class="st">"ry"</span>,<span class="st">"rz"</span>,<span class="st">"tx"</span>,<span class="st">"ty"</span>,<span class="st">"tz"</span>))</span>
-<span id="cb44-300"><a href="#cb44-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-301"><a href="#cb44-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-302"><a href="#cb44-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-303"><a href="#cb44-303" aria-hidden="true" tabindex="-1"></a>**第四步：保存参数**</span>
-<span id="cb44-304"><a href="#cb44-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-307"><a href="#cb44-307" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-308"><a href="#cb44-308" aria-hidden="true" tabindex="-1"></a><span class="co">#把标定结果存起来，后面几节直接用</span></span>
-<span id="cb44-309"><a href="#cb44-309" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data"</span>,<span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb44-310"><a href="#cb44-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-311"><a href="#cb44-311" aria-hidden="true" tabindex="-1"></a><span class="co">#注意：存的是**普通 R 数组**，不是 cvMat 本身</span></span>
-<span id="cb44-312"><a href="#cb44-312" aria-hidden="true" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">list</span>(</span>
-<span id="cb44-313"><a href="#cb44-313" aria-hidden="true" tabindex="-1"></a>  <span class="at">cameraMatrix =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb44-314"><a href="#cb44-314" aria-hidden="true" tabindex="-1"></a>  <span class="at">distCoeffs   =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb44-315"><a href="#cb44-315" aria-hidden="true" tabindex="-1"></a>  <span class="at">rvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>rvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
-<span id="cb44-316"><a href="#cb44-316" aria-hidden="true" tabindex="-1"></a>  <span class="at">tvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>tvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
-<span id="cb44-317"><a href="#cb44-317" aria-hidden="true" tabindex="-1"></a>  <span class="at">rms          =</span> calib<span class="sc">$</span>value</span>
-<span id="cb44-318"><a href="#cb44-318" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-319"><a href="#cb44-319" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cam_cfg,<span class="st">"data/camera.rds"</span>)</span>
-<span id="cb44-320"><a href="#cb44-320" aria-hidden="true" tabindex="-1"></a><span class="fu">file.info</span>(<span class="st">"data/camera.rds"</span>)<span class="sc">$</span>size</span>
-<span id="cb44-321"><a href="#cb44-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-322"><a href="#cb44-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-323"><a href="#cb44-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-324"><a href="#cb44-324" aria-hidden="true" tabindex="-1"></a>**校正图像**</span>
-<span id="cb44-325"><a href="#cb44-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-328"><a href="#cb44-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-329"><a href="#cb44-329" aria-hidden="true" tabindex="-1"></a>img_test <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left11.jpg"</span>)</span>
-<span id="cb44-330"><a href="#cb44-330" aria-hidden="true" tabindex="-1"></a>img_test_info <span class="ot">=</span> <span class="fu">mat_info</span>(img_test)</span>
-<span id="cb44-331"><a href="#cb44-331" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> img_test_info[<span class="dv">1</span>]</span>
-<span id="cb44-332"><a href="#cb44-332" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> img_test_info[<span class="dv">2</span>]</span>
-<span id="cb44-333"><a href="#cb44-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-334"><a href="#cb44-334" aria-hidden="true" tabindex="-1"></a><span class="co">#计算「最优新内参」：alpha = 1 表示保留所有有效像素</span></span>
-<span id="cb44-335"><a href="#cb44-335" aria-hidden="true" tabindex="-1"></a>cameraMatrix_new <span class="ot">=</span> <span class="fu">cv_getOptimalNewCameraMatrix</span>(</span>
-<span id="cb44-336"><a href="#cb44-336" aria-hidden="true" tabindex="-1"></a>  calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,<span class="fu">c</span>(w,h),<span class="dv">1</span>)</span>
-<span id="cb44-337"><a href="#cb44-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-338"><a href="#cb44-338" aria-hidden="true" tabindex="-1"></a><span class="co">#去畸变</span></span>
-<span id="cb44-339"><a href="#cb44-339" aria-hidden="true" tabindex="-1"></a>img_undistort <span class="ot">=</span> <span class="fu">cv_undistort</span>(img_test,calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,</span>
-<span id="cb44-340"><a href="#cb44-340" aria-hidden="true" tabindex="-1"></a>                             cameraMatrix_new)</span>
-<span id="cb44-341"><a href="#cb44-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-342"><a href="#cb44-342" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img_test)</span>
-<span id="cb44-343"><a href="#cb44-343" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img_undistort)</span>
-<span id="cb44-344"><a href="#cb44-344" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-345"><a href="#cb44-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-346"><a href="#cb44-346" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-347"><a href="#cb44-347" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
-<span id="cb44-348"><a href="#cb44-348" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_test);       <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"原始图像（桶形畸变）"</span>)</span>
-<span id="cb44-349"><a href="#cb44-349" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_undistort);  <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"去畸变结果"</span>)</span>
-<span id="cb44-350"><a href="#cb44-350" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
-<span id="cb44-351"><a href="#cb44-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-352"><a href="#cb44-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-353"><a href="#cb44-353" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`cv_getOptimalNewCameraMatrix`</span><span class="at"> 在 C++ 里还有一个 </span><span class="in">`roi`</span><span class="at"> 输出参数（有效区域），</span></span>
-<span id="cb44-354"><a href="#cb44-354" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 当前的版本没有把它暴露出来，只返回新内参，后面再设法改进。</span></span>
-<span id="cb44-355"><a href="#cb44-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-356"><a href="#cb44-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-357"><a href="#cb44-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE,eval=FALSE}</span></span>
-<span id="cb44-358"><a href="#cb44-358" aria-hidden="true" tabindex="-1"></a><span class="co">#尝试先做透视变换，再做畸变纠正处理。结果并不好</span></span>
-<span id="cb44-359"><a href="#cb44-359" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-360"><a href="#cb44-360" aria-hidden="true" tabindex="-1"></a><span class="co">#读取测试图像文件</span></span>
-<span id="cb44-361"><a href="#cb44-361" aria-hidden="true" tabindex="-1"></a>img_test <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib_radial.jpg"</span>)</span>
-<span id="cb44-362"><a href="#cb44-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-363"><a href="#cb44-363" aria-hidden="true" tabindex="-1"></a><span class="co">#指定图像中棋盘区域的四个顶点坐标</span></span>
-<span id="cb44-364"><a href="#cb44-364" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">57</span>,<span class="dv">40</span>),<span class="fu">c</span>(<span class="dv">329</span>,<span class="dv">23</span>),<span class="fu">c</span>(<span class="dv">374</span>,<span class="dv">407</span>),<span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">407</span>))</span>
-<span id="cb44-365"><a href="#cb44-365" aria-hidden="true" tabindex="-1"></a><span class="co">#指定棋盘区域要映射到的区域（通过四个顶点坐标指定）</span></span>
-<span id="cb44-366"><a href="#cb44-366" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">450</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">450</span>))</span>
-<span id="cb44-367"><a href="#cb44-367" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
-<span id="cb44-368"><a href="#cb44-368" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
-<span id="cb44-369"><a href="#cb44-369" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-370"><a href="#cb44-370" aria-hidden="true" tabindex="-1"></a><span class="co">#依据M对img_test进行透视变换</span></span>
-<span id="cb44-371"><a href="#cb44-371" aria-hidden="true" tabindex="-1"></a>img_pers <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img_test,M,<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">450</span>))</span>
-<span id="cb44-372"><a href="#cb44-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-373"><a href="#cb44-373" aria-hidden="true" tabindex="-1"></a><span class="co">#继续进行畸变校正</span></span>
-<span id="cb44-374"><a href="#cb44-374" aria-hidden="true" tabindex="-1"></a>img_undistort <span class="ot">=</span> <span class="fu">cv_undistort</span>(img_pers,calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs)</span>
-<span id="cb44-375"><a href="#cb44-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-376"><a href="#cb44-376" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_pers)</span>
-<span id="cb44-377"><a href="#cb44-377" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_undistort)</span>
-<span id="cb44-378"><a href="#cb44-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-379"><a href="#cb44-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-380"><a href="#cb44-380" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 这段默认不执行。结论是：**先透视后去畸变是错的顺序**。</span></span>
-<span id="cb44-381"><a href="#cb44-381" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 透视变换假设成像已经满足针孔模型，而畸变恰恰破坏了这个前提；</span></span>
-<span id="cb44-382"><a href="#cb44-382" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 正确的顺序永远是「先去畸变，再做几何变换」。</span></span>
-<span id="cb44-383"><a href="#cb44-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-384"><a href="#cb44-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-385"><a href="#cb44-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-386"><a href="#cb44-386" aria-hidden="true" tabindex="-1"></a><span class="fu">## 单应性矩阵</span></span>
-<span id="cb44-387"><a href="#cb44-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-388"><a href="#cb44-388" aria-hidden="true" tabindex="-1"></a>简单地说，平面单应关系到两个平面之间的变换（取决于一个比例因子）：</span>
-<span id="cb44-389"><a href="#cb44-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-390"><a href="#cb44-390" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb44-391"><a href="#cb44-391" aria-hidden="true" tabindex="-1"></a>s \left<span class="co">[</span><span class="ot"> \begin{matrix} x'\\y'\\1 \end{matrix} \right</span><span class="co">]</span> = H \left<span class="co">[</span><span class="ot"> \begin{matrix} x\\y\\1 \end{matrix} \right</span><span class="co">]</span> = \left<span class="co">[</span><span class="ot"> \begin{matrix} h_{11}&amp;h_{12}&amp;h_{13}\\h_{21}&amp;h_{22}&amp;h_{23}\\h_{31}&amp;h_{32}&amp;h_{33} \end{matrix} \right</span><span class="co">]</span> \left<span class="co">[</span><span class="ot"> \begin{matrix} x\\y\\1 \end{matrix} \right</span><span class="co">]</span></span>
-<span id="cb44-392"><a href="#cb44-392" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb44-393"><a href="#cb44-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-394"><a href="#cb44-394" aria-hidden="true" tabindex="-1"></a>单应矩阵 $H$ 是一个 3×3 矩阵，有 8 个自由度。通常取 $h_{33}=1$，或者约束：</span>
-<span id="cb44-395"><a href="#cb44-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-396"><a href="#cb44-396" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb44-397"><a href="#cb44-397" aria-hidden="true" tabindex="-1"></a>\sum_{i,j=1,2,3} h_{ij}^2=1</span>
-<span id="cb44-398"><a href="#cb44-398" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb44-399"><a href="#cb44-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-400"><a href="#cb44-400" aria-hidden="true" tabindex="-1"></a>opencv 中 **cv::getPerspectiveTransform** 可以获取单应矩阵：</span>
-<span id="cb44-401"><a href="#cb44-401" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-404"><a href="#cb44-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-405"><a href="#cb44-405" aria-hidden="true" tabindex="-1"></a><span class="co">#原图像上的四个点</span></span>
-<span id="cb44-406"><a href="#cb44-406" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
-<span id="cb44-407"><a href="#cb44-407" aria-hidden="true" tabindex="-1"></a><span class="co">#透视校正目标区域（也由四个顶点坐标构成）</span></span>
-<span id="cb44-408"><a href="#cb44-408" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
-<span id="cb44-409"><a href="#cb44-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-410"><a href="#cb44-410" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
-<span id="cb44-411"><a href="#cb44-411" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
-<span id="cb44-412"><a href="#cb44-412" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(M,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb44-413"><a href="#cb44-413" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-414"><a href="#cb44-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-415"><a href="#cb44-415" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 注意这里用的是 </span><span class="in">`cv_getPerspectiveTransform`</span><span class="at">（4 点精确解），</span></span>
-<span id="cb44-416"><a href="#cb44-416" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 不是 </span><span class="in">`cv_findHomography`</span><span class="at">（多点最小二乘 + RANSAC）。四个点用前者，</span></span>
-<span id="cb44-417"><a href="#cb44-417" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 多于四个点用后者，两者都要求 </span><span class="in">`CV_32FC2`</span><span class="at"> 的点集。</span></span>
-<span id="cb44-418"><a href="#cb44-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-419"><a href="#cb44-419" aria-hidden="true" tabindex="-1"></a>以下示例显示了不同类型单应变换：</span>
-<span id="cb44-420"><a href="#cb44-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-421"><a href="#cb44-421" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在一个相机下，真实世界平面 $\pi$ 与其相机成像平面 $\pi'$ 之间的变换关系</span>
-<span id="cb44-422"><a href="#cb44-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-423"><a href="#cb44-423" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example1.jpg)</span></span>
-<span id="cb44-424"><a href="#cb44-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-425"><a href="#cb44-425" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在两个相机下，包含着多个变换关系：真实世界平面与每个相机各自的成像平面之间的变换关系，两个相机成像平面之间的变换关系</span>
-<span id="cb44-426"><a href="#cb44-426" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-427"><a href="#cb44-427" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example2.jpg)</span></span>
-<span id="cb44-428"><a href="#cb44-428" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-429"><a href="#cb44-429" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在一个旋转相机下，真实世界中"无限远"的平面与各成像平面之间的变换关系</span>
-<span id="cb44-430"><a href="#cb44-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-431"><a href="#cb44-431" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example3.jpg)</span></span>
-<span id="cb44-432"><a href="#cb44-432" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-433"><a href="#cb44-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-434"><a href="#cb44-434" aria-hidden="true" tabindex="-1"></a><span class="fu">### 单应变换的用途？</span></span>
-<span id="cb44-435"><a href="#cb44-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-436"><a href="#cb44-436" aria-hidden="true" tabindex="-1"></a>基于共面点的增强现实摄像机姿态估计</span>
-<span id="cb44-437"><a href="#cb44-437" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-438"><a href="#cb44-438" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_pose_estimation.jpg)</span></span>
-<span id="cb44-439"><a href="#cb44-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-440"><a href="#cb44-440" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>透视图校正</span>
-<span id="cb44-441"><a href="#cb44-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-442"><a href="#cb44-442" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/pers_correct.png)</span></span>
-<span id="cb44-443"><a href="#cb44-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-444"><a href="#cb44-444" aria-hidden="true" tabindex="-1"></a>把笔记本封面「拉平」：</span>
-<span id="cb44-445"><a href="#cb44-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-448"><a href="#cb44-448" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-449"><a href="#cb44-449" aria-hidden="true" tabindex="-1"></a><span class="co">#读取图像文件</span></span>
-<span id="cb44-450"><a href="#cb44-450" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/notebook.jpg"</span>)</span>
-<span id="cb44-451"><a href="#cb44-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-452"><a href="#cb44-452" aria-hidden="true" tabindex="-1"></a><span class="co">#原图像透视校正区域（由四个顶点坐标构成）</span></span>
-<span id="cb44-453"><a href="#cb44-453" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
-<span id="cb44-454"><a href="#cb44-454" aria-hidden="true" tabindex="-1"></a><span class="co">#透视校正目标区域</span></span>
-<span id="cb44-455"><a href="#cb44-455" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
-<span id="cb44-456"><a href="#cb44-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-457"><a href="#cb44-457" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
-<span id="cb44-458"><a href="#cb44-458" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
-<span id="cb44-459"><a href="#cb44-459" aria-hidden="true" tabindex="-1"></a><span class="co">#依据M对img进行透视变换</span></span>
-<span id="cb44-460"><a href="#cb44-460" aria-hidden="true" tabindex="-1"></a>img_pers <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img,M,<span class="fu">c</span>(<span class="dv">320</span>,<span class="dv">420</span>))</span>
-<span id="cb44-461"><a href="#cb44-461" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-462"><a href="#cb44-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-463"><a href="#cb44-463" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-464"><a href="#cb44-464" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
-<span id="cb44-465"><a href="#cb44-465" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img);        <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"原始图像"</span>)</span>
-<span id="cb44-466"><a href="#cb44-466" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_pers);   <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"透视校正结果"</span>)</span>
-<span id="cb44-467"><a href="#cb44-467" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
-<span id="cb44-468"><a href="#cb44-468" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-469"><a href="#cb44-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-470"><a href="#cb44-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-471"><a href="#cb44-471" aria-hidden="true" tabindex="-1"></a><span class="fu">### 共面点的姿态估计</span></span>
-<span id="cb44-472"><a href="#cb44-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-473"><a href="#cb44-473" aria-hidden="true" tabindex="-1"></a>例如，可以使用直接线性变换（DLT）算法来估计单应性。由于物体是平面的，物体帧中表示的点和投影到归一化相机帧中表示的图像平面的点之间的变换是单应的。正是因为对象是平面的，所以可以从单应性中检索相机姿势，前提是相机的内在参数已知。当使用棋盘对象和 <span class="in">`findChessboardCorners()`</span> 获得图像中角点位置时，可以很容易地测试这一点。</span>
-<span id="cb44-474"><a href="#cb44-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-475"><a href="#cb44-475" aria-hidden="true" tabindex="-1"></a>先读回上一节存下来的内参：</span>
-<span id="cb44-476"><a href="#cb44-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-479"><a href="#cb44-479" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-480"><a href="#cb44-480" aria-hidden="true" tabindex="-1"></a><span class="co">#读取相机参数：存的是数值数组，读回来要重建 Mat</span></span>
-<span id="cb44-481"><a href="#cb44-481" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">file.exists</span>(<span class="st">"data/camera.rds"</span>))</span>
-<span id="cb44-482"><a href="#cb44-482" aria-hidden="true" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="st">"data/camera.rds"</span>)</span>
-<span id="cb44-483"><a href="#cb44-483" aria-hidden="true" tabindex="-1"></a>cameraMatrix <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>cameraMatrix)</span>
-<span id="cb44-484"><a href="#cb44-484" aria-hidden="true" tabindex="-1"></a>distCoeffs   <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>distCoeffs)</span>
-<span id="cb44-485"><a href="#cb44-485" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-486"><a href="#cb44-486" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cameraMatrix)</span>
-<span id="cb44-487"><a href="#cb44-487" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(distCoeffs)</span>
-<span id="cb44-488"><a href="#cb44-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-489"><a href="#cb44-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-490"><a href="#cb44-490" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-491"><a href="#cb44-491" aria-hidden="true" tabindex="-1"></a>估计姿态，并把坐标轴画上去：</span>
-<span id="cb44-492"><a href="#cb44-492" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-495"><a href="#cb44-495" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-496"><a href="#cb44-496" aria-hidden="true" tabindex="-1"></a><span class="co">#确定三个数轴端点的三维坐标（z 取负，让轴朝相机方向伸出来）</span></span>
-<span id="cb44-497"><a href="#cb44-497" aria-hidden="true" tabindex="-1"></a>obj_points_new <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
-<span id="cb44-498"><a href="#cb44-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-499"><a href="#cb44-499" aria-hidden="true" tabindex="-1"></a><span class="co">#读取位姿估计图像文件</span></span>
-<span id="cb44-500"><a href="#cb44-500" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left14.jpg"</span>)</span>
-<span id="cb44-501"><a href="#cb44-501" aria-hidden="true" tabindex="-1"></a>img_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY)</span>
-<span id="cb44-502"><a href="#cb44-502" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-503"><a href="#cb44-503" aria-hidden="true" tabindex="-1"></a><span class="co">#寻找棋盘角点</span></span>
-<span id="cb44-504"><a href="#cb44-504" aria-hidden="true" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img_gray,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
-<span id="cb44-505"><a href="#cb44-505" aria-hidden="true" tabindex="-1"></a>found <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">"value"</span>)</span>
-<span id="cb44-506"><a href="#cb44-506" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb44-507"><a href="#cb44-507" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img_gray,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
-<span id="cb44-508"><a href="#cb44-508" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-509"><a href="#cb44-509" aria-hidden="true" tabindex="-1"></a><span class="co">#计算旋转向量和平移向量</span></span>
-<span id="cb44-510"><a href="#cb44-510" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">=</span> <span class="fu">cv_solvePnPRansac</span>(<span class="fu">pts3f</span>(obj_world_pts),corners,cameraMatrix,distCoeffs)</span>
-<span id="cb44-511"><a href="#cb44-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-512"><a href="#cb44-512" aria-hidden="true" tabindex="-1"></a><span class="co">#将真实三维点投影到对应的图像平面上</span></span>
-<span id="cb44-513"><a href="#cb44-513" aria-hidden="true" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(obj_points_new),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
-<span id="cb44-514"><a href="#cb44-514" aria-hidden="true" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
-<span id="cb44-515"><a href="#cb44-515" aria-hidden="true" tabindex="-1"></a>xyz <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb44-516"><a href="#cb44-516" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-517"><a href="#cb44-517" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘第一个角点，作为三根轴的公共起点</span></span>
-<span id="cb44-518"><a href="#cb44-518" aria-hidden="true" tabindex="-1"></a>origin <span class="ot">=</span> corners[<span class="dv">1</span>,]</span>
-<span id="cb44-519"><a href="#cb44-519" aria-hidden="true" tabindex="-1"></a><span class="co">#BGR：c(255,0,0) 蓝、c(0,255,0) 绿、c(0,0,255) 红</span></span>
-<span id="cb44-520"><a href="#cb44-520" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">1</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
-<span id="cb44-521"><a href="#cb44-521" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">2</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
-<span id="cb44-522"><a href="#cb44-522" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">3</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">5</span>)</span>
-<span id="cb44-523"><a href="#cb44-523" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-524"><a href="#cb44-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-525"><a href="#cb44-525" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-526"><a href="#cb44-526" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
-<span id="cb44-527"><a href="#cb44-527" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"估计出的相机姿态：X蓝 Y绿 Z红"</span>)</span>
-<span id="cb44-528"><a href="#cb44-528" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-529"><a href="#cb44-529" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-530"><a href="#cb44-530" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-531"><a href="#cb44-531" aria-hidden="true" tabindex="-1"></a>进一步，可以基于姿态估计结果渲染一个立方体：</span>
-<span id="cb44-532"><a href="#cb44-532" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-535"><a href="#cb44-535" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-536"><a href="#cb44-536" aria-hidden="true" tabindex="-1"></a><span class="co">#立方体的 8 个顶点：底面 4 个 z=0，顶面 4 个 z=-3</span></span>
-<span id="cb44-537"><a href="#cb44-537" aria-hidden="true" tabindex="-1"></a>cube <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
-<span id="cb44-538"><a href="#cb44-538" aria-hidden="true" tabindex="-1"></a>             <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
-<span id="cb44-539"><a href="#cb44-539" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-540"><a href="#cb44-540" aria-hidden="true" tabindex="-1"></a><span class="co">#投影到图像平面</span></span>
-<span id="cb44-541"><a href="#cb44-541" aria-hidden="true" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(cube),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
-<span id="cb44-542"><a href="#cb44-542" aria-hidden="true" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
-<span id="cb44-543"><a href="#cb44-543" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb44-544"><a href="#cb44-544" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-545"><a href="#cb44-545" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制绿色底面（填充）</span></span>
-<span id="cb44-546"><a href="#cb44-546" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,]),<span class="sc">-</span><span class="dv">1</span>L,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span>L)</span>
-<span id="cb44-547"><a href="#cb44-547" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制蓝色柱子（四条侧棱）</span></span>
-<span id="cb44-548"><a href="#cb44-548" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>){</span>
-<span id="cb44-549"><a href="#cb44-549" aria-hidden="true" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_line</span>(img,xy[i,],xy[i<span class="sc">+</span><span class="dv">4</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">3</span>)</span>
-<span id="cb44-550"><a href="#cb44-550" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-551"><a href="#cb44-551" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制红色顶面（只描边）</span></span>
-<span id="cb44-552"><a href="#cb44-552" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,]),<span class="sc">-</span><span class="dv">1</span>L,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">3</span>L)</span>
-<span id="cb44-553"><a href="#cb44-553" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-554"><a href="#cb44-554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-555"><a href="#cb44-555" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-556"><a href="#cb44-556" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
-<span id="cb44-557"><a href="#cb44-557" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"在棋盘上渲染的立方体"</span>)</span>
-<span id="cb44-558"><a href="#cb44-558" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-559"><a href="#cb44-559" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-560"><a href="#cb44-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-561"><a href="#cb44-561" aria-hidden="true" tabindex="-1"></a><span class="fu">### 图像融合</span></span>
-<span id="cb44-562"><a href="#cb44-562" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-563"><a href="#cb44-563" aria-hidden="true" tabindex="-1"></a>基于单应矩阵，把一张图「贴」到另一张图指定的四边形区域里：</span>
-<span id="cb44-564"><a href="#cb44-564" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-565"><a href="#cb44-565" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-566"><a href="#cb44-566" aria-hidden="true" tabindex="-1"></a><span class="co">#读取待植入广告牌的文件</span></span>
-<span id="cb44-567"><a href="#cb44-567" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/catoon.jpg"</span>)</span>
-<span id="cb44-568"><a href="#cb44-568" aria-hidden="true" tabindex="-1"></a><span class="co">#读取广告牌文件</span></span>
-<span id="cb44-569"><a href="#cb44-569" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/advert.jpg"</span>)</span>
-<span id="cb44-570"><a href="#cb44-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-571"><a href="#cb44-571" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
-<span id="cb44-572"><a href="#cb44-572" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img1); <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"要贴上去的图"</span>)</span>
-<span id="cb44-573"><a href="#cb44-573" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img2); <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"底图（广告牌）"</span>)</span>
-<span id="cb44-574"><a href="#cb44-574" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
-<span id="cb44-575"><a href="#cb44-575" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-576"><a href="#cb44-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-579"><a href="#cb44-579" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb44-580"><a href="#cb44-580" aria-hidden="true" tabindex="-1"></a><span class="co">#读取待植入广告牌的文件</span></span>
-<span id="cb44-581"><a href="#cb44-581" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/catoon.jpg"</span>)</span>
-<span id="cb44-582"><a href="#cb44-582" aria-hidden="true" tabindex="-1"></a><span class="co">#读取广告牌文件</span></span>
-<span id="cb44-583"><a href="#cb44-583" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/advert.jpg"</span>)</span>
-<span id="cb44-584"><a href="#cb44-584" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-585"><a href="#cb44-585" aria-hidden="true" tabindex="-1"></a><span class="co">#获取img1和img2的基本信息</span></span>
-<span id="cb44-586"><a href="#cb44-586" aria-hidden="true" tabindex="-1"></a>img1_info <span class="ot">=</span> <span class="fu">mat_info</span>(img1)</span>
-<span id="cb44-587"><a href="#cb44-587" aria-hidden="true" tabindex="-1"></a>img2_info <span class="ot">=</span> <span class="fu">mat_info</span>(img2)</span>
-<span id="cb44-588"><a href="#cb44-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-589"><a href="#cb44-589" aria-hidden="true" tabindex="-1"></a><span class="co">#对img1进行边缘扩充，使其尺寸与img2保持一致</span></span>
-<span id="cb44-590"><a href="#cb44-590" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_copyMakeBorder</span>(img1,</span>
-<span id="cb44-591"><a href="#cb44-591" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">1</span>]<span class="sc">-</span>img1_info[<span class="dv">1</span>],</span>
-<span id="cb44-592"><a href="#cb44-592" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">2</span>]<span class="sc">-</span>img1_info[<span class="dv">2</span>],</span>
-<span id="cb44-593"><a href="#cb44-593" aria-hidden="true" tabindex="-1"></a>                         BORDER_CONSTANT)</span>
-<span id="cb44-594"><a href="#cb44-594" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-595"><a href="#cb44-595" aria-hidden="true" tabindex="-1"></a><span class="co">#img1 边界上的四个顶点（用扩充后的尺寸）</span></span>
-<span id="cb44-596"><a href="#cb44-596" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(img1_info[<span class="dv">2</span>],<span class="dv">0</span>),</span>
-<span id="cb44-597"><a href="#cb44-597" aria-hidden="true" tabindex="-1"></a>             <span class="fu">c</span>(img1_info[<span class="dv">2</span>],img1_info[<span class="dv">1</span>]),<span class="fu">c</span>(<span class="dv">0</span>,img1_info[<span class="dv">1</span>]))</span>
-<span id="cb44-598"><a href="#cb44-598" aria-hidden="true" tabindex="-1"></a><span class="co">#广告牌上要植入的区域</span></span>
-<span id="cb44-599"><a href="#cb44-599" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">190</span>,<span class="dv">100</span>),<span class="fu">c</span>(<span class="dv">390</span>,<span class="dv">120</span>),<span class="fu">c</span>(<span class="dv">380</span>,<span class="dv">414</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">440</span>))</span>
-<span id="cb44-600"><a href="#cb44-600" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-601"><a href="#cb44-601" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2计算单应矩阵M</span></span>
-<span id="cb44-602"><a href="#cb44-602" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_findHomography</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
-<span id="cb44-603"><a href="#cb44-603" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-604"><a href="#cb44-604" aria-hidden="true" tabindex="-1"></a><span class="co">#对img1进行单应变换</span></span>
-<span id="cb44-605"><a href="#cb44-605" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img1,M,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb44-606"><a href="#cb44-606" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-607"><a href="#cb44-607" aria-hidden="true" tabindex="-1"></a><span class="co">#灰度化后二值化，形成遮罩：有内容的地方为 255</span></span>
-<span id="cb44-608"><a href="#cb44-608" aria-hidden="true" tabindex="-1"></a>dst_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(dst,COLOR_BGR2GRAY)</span>
-<span id="cb44-609"><a href="#cb44-609" aria-hidden="true" tabindex="-1"></a>mask <span class="ot">=</span> <span class="fu">cv_threshold</span>(dst_gray,<span class="dv">0</span>,<span class="dv">255</span>,THRESH_BINARY)</span>
-<span id="cb44-610"><a href="#cb44-610" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-611"><a href="#cb44-611" aria-hidden="true" tabindex="-1"></a><span class="co">#把 dst 中遮罩覆盖的内容复制到 img2 上</span></span>
-<span id="cb44-612"><a href="#cb44-612" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_copyTo</span>(dst,mask,img2)</span>
-<span id="cb44-613"><a href="#cb44-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-614"><a href="#cb44-614" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mask)</span>
-<span id="cb44-615"><a href="#cb44-615" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-616"><a href="#cb44-616" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-617"><a href="#cb44-617" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
-<span id="cb44-618"><a href="#cb44-618" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img2)</span>
-<span id="cb44-619"><a href="#cb44-619" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"融合结果"</span>)</span>
-<span id="cb44-620"><a href="#cb44-620" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-621"><a href="#cb44-621" aria-hidden="true" tabindex="-1"></a></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="an">output:</span><span class="co"> html_document</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># 摄像机标定和三维重建（calib3d模块） {#sec-calib}</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>{{&lt; include common/_setup.qmd &gt;}}</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROpenCV)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>本章反复要把「点的列表」交给 OpenCV，而 OpenCV 那边的类型是 <span class="in">`vector&lt;Point2f&gt;`</span>、</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="in">`vector&lt;Point3f&gt;`</span>，到了 R 侧必须变成**多通道 Mat**。先定义两个小工具，后面一直用：</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="co">#把 n×2 的 R 矩阵（每行一个 (x,y)）转成 OpenCV 要的 CV_32FC2 Mat</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>pts2f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC2)</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#注意这一行：多通道 Mat 的 [] 赋值是**按通道**铺开的，</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#先写完全部 x、再写完全部 y，不是 (x1,y1,x2,y2) 那样交错</span></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>])</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a><span class="co">#把 n×3 的 R 矩阵（每行一个 (x,y,z)）转成 CV_32FC3 Mat</span></span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>pts3f <span class="ot">=</span> <span class="cf">function</span>(m){</span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">Mat</span>(<span class="fu">nrow</span>(m),<span class="dv">1</span>,CV_32FC3)</span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>  out[] <span class="ot">=</span> <span class="fu">c</span>(m[,<span class="dv">1</span>],m[,<span class="dv">2</span>],m[,<span class="dv">3</span>])</span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **为什么不能直接传 R 矩阵？**</span></span>
+<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`matrix(...,ncol=2)`</span><span class="at"> 建出来是 </span><span class="in">`CV_64FC1`</span><span class="at"> 的 4×2 矩阵，不是一个「点集」。</span></span>
+<span id="cb43-40"><a href="#cb43-40" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`calibrateCamera`</span><span class="at">、</span><span class="in">`solvePnP`</span><span class="at">、</span><span class="in">`findHomography`</span><span class="at"> 这一族要的是</span></span>
+<span id="cb43-41"><a href="#cb43-41" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`CV_32FC2`</span><span class="at"> 且 </span><span class="in">`checkVector(2, CV_32F) == 点数`</span><span class="at">的类型或布局。</span></span>
+<span id="cb43-42"><a href="#cb43-42" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb43-43"><a href="#cb43-43" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 而 </span><span class="in">`cv_findChessboardCorners`</span><span class="at"> 这类**输出**角点的函数，交回来的是</span></span>
+<span id="cb43-44"><a href="#cb43-44" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`1 × N × 2`</span><span class="at"> 的 cvMat，取数据要用</span></span>
+<span id="cb43-45"><a href="#cb43-45" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`matrix(as_array(x, numeric = TRUE), ncol = 2)`</span><span class="at"> 才能变成「每行一个点」。</span></span>
+<span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## 创建校准模式（绘制棋盘格）</span></span>
+<span id="cb43-49"><a href="#cb43-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-50"><a href="#cb43-50" aria-hidden="true" tabindex="-1"></a>标定要用棋盘格。可以不用图像矩阵，直接在 R 里画：</span>
+<span id="cb43-51"><a href="#cb43-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-54"><a href="#cb43-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-55"><a href="#cb43-55" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
+<span id="cb43-56"><a href="#cb43-56" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb43-57"><a href="#cb43-57" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
+<span id="cb43-58"><a href="#cb43-58" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb43-59"><a href="#cb43-59" aria-hidden="true" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
+<span id="cb43-60"><a href="#cb43-60" aria-hidden="true" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
+<span id="cb43-61"><a href="#cb43-61" aria-hidden="true" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
+<span id="cb43-62"><a href="#cb43-62" aria-hidden="true" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb43-63"><a href="#cb43-63" aria-hidden="true" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span id="cb43-64"><a href="#cb43-64" aria-hidden="true" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb43-65"><a href="#cb43-65" aria-hidden="true" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb43-66"><a href="#cb43-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-67"><a href="#cb43-67" aria-hidden="true" tabindex="-1"></a><span class="co">#生成空图</span></span>
+<span id="cb43-68"><a href="#cb43-68" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span>h,<span class="at">type =</span> <span class="st">"n"</span>,<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,w),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,h),<span class="at">bty =</span> <span class="st">"n"</span>,</span>
+<span id="cb43-69"><a href="#cb43-69" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">""</span>,<span class="at">ylab =</span> <span class="st">""</span>,<span class="at">xaxt =</span> <span class="st">"n"</span>,<span class="at">yaxt =</span> <span class="st">"n"</span>,<span class="at">asp=</span><span class="dv">1</span>)</span>
+<span id="cb43-70"><a href="#cb43-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-71"><a href="#cb43-71" aria-hidden="true" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
+<span id="cb43-72"><a href="#cb43-72" aria-hidden="true" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
+<span id="cb43-73"><a href="#cb43-73" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb43-74"><a href="#cb43-74" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb43-75"><a href="#cb43-75" aria-hidden="true" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格</span></span>
+<span id="cb43-76"><a href="#cb43-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rect</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,i<span class="sc">*</span>cell_w,j<span class="sc">*</span>cell_h,</span>
+<span id="cb43-77"><a href="#cb43-77" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">ifelse</span>(isWhite,<span class="st">"white"</span>,<span class="st">"black"</span>),<span class="at">border =</span> <span class="st">"white"</span>)</span>
+<span id="cb43-78"><a href="#cb43-78" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb43-79"><a href="#cb43-79" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-80"><a href="#cb43-80" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb43-81"><a href="#cb43-81" aria-hidden="true" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span id="cb43-82"><a href="#cb43-82" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb43-83"><a href="#cb43-83" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-84"><a href="#cb43-84" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-85"><a href="#cb43-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-86"><a href="#cb43-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-87"><a href="#cb43-87" aria-hidden="true" tabindex="-1"></a>也可以生成一张图像矩阵，用 <span class="in">`cv_rectangle`</span> 一格一格填：</span>
+<span id="cb43-88"><a href="#cb43-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-91"><a href="#cb43-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-92"><a href="#cb43-92" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘宽度</span></span>
+<span id="cb43-93"><a href="#cb43-93" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb43-94"><a href="#cb43-94" aria-hidden="true" tabindex="-1"></a><span class="co">#设置棋盘高度</span></span>
+<span id="cb43-95"><a href="#cb43-95" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> <span class="dv">600</span></span>
+<span id="cb43-96"><a href="#cb43-96" aria-hidden="true" tabindex="-1"></a><span class="co">#设置横向内连接交错点</span></span>
+<span id="cb43-97"><a href="#cb43-97" aria-hidden="true" tabindex="-1"></a>ptsnum_horiz <span class="ot">=</span> <span class="dv">7</span></span>
+<span id="cb43-98"><a href="#cb43-98" aria-hidden="true" tabindex="-1"></a><span class="co">#设置纵向内连接交错点</span></span>
+<span id="cb43-99"><a href="#cb43-99" aria-hidden="true" tabindex="-1"></a>ptsnum_vert <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb43-100"><a href="#cb43-100" aria-hidden="true" tabindex="-1"></a><span class="co">#计算每个棋盘单元格的宽度和高度</span></span>
+<span id="cb43-101"><a href="#cb43-101" aria-hidden="true" tabindex="-1"></a>cell_w <span class="ot">=</span> <span class="fu">floor</span>(w<span class="sc">/</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb43-102"><a href="#cb43-102" aria-hidden="true" tabindex="-1"></a>cell_h <span class="ot">=</span> <span class="fu">floor</span>(h<span class="sc">/</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>))</span>
+<span id="cb43-103"><a href="#cb43-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-104"><a href="#cb43-104" aria-hidden="true" tabindex="-1"></a><span class="co">#生成全白图像矩阵（Mat 的第 4 个参数是初始值）</span></span>
+<span id="cb43-105"><a href="#cb43-105" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">Mat</span>(h,w,CV_8UC1,<span class="dv">255</span>)</span>
+<span id="cb43-106"><a href="#cb43-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-107"><a href="#cb43-107" aria-hidden="true" tabindex="-1"></a><span class="co">#isWhite为TRUE时，棋盘单元格为白色，否则为黑色</span></span>
+<span id="cb43-108"><a href="#cb43-108" aria-hidden="true" tabindex="-1"></a>isWhite <span class="ot">=</span> <span class="cn">TRUE</span></span>
+<span id="cb43-109"><a href="#cb43-109" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_horiz<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb43-110"><a href="#cb43-110" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(ptsnum_vert<span class="sc">+</span><span class="dv">2</span>)){</span>
+<span id="cb43-111"><a href="#cb43-111" aria-hidden="true" tabindex="-1"></a>    <span class="co">#通过循环绘制各个单元格：Rect 就是 c(x, y, width, height)</span></span>
+<span id="cb43-112"><a href="#cb43-112" aria-hidden="true" tabindex="-1"></a>    rct <span class="ot">=</span> <span class="fu">c</span>((i<span class="dv">-1</span>)<span class="sc">*</span>cell_w,(j<span class="dv">-1</span>)<span class="sc">*</span>cell_h,cell_w,cell_h)</span>
+<span id="cb43-113"><a href="#cb43-113" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(isWhite){</span>
+<span id="cb43-114"><a href="#cb43-114" aria-hidden="true" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">255</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb43-115"><a href="#cb43-115" aria-hidden="true" tabindex="-1"></a>    }<span class="cf">else</span>{</span>
+<span id="cb43-116"><a href="#cb43-116" aria-hidden="true" tabindex="-1"></a>      <span class="fu">invisible</span>(<span class="fu">cv_rectangle</span>(img,rct,<span class="fu">c</span>(<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb43-117"><a href="#cb43-117" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb43-118"><a href="#cb43-118" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb43-119"><a href="#cb43-119" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-120"><a href="#cb43-120" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(ptsnum_vert <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>){</span>
+<span id="cb43-121"><a href="#cb43-121" aria-hidden="true" tabindex="-1"></a>    <span class="co">#当纵向内连接交错点为偶数时，需要切换单元格颜色状态</span></span>
+<span id="cb43-122"><a href="#cb43-122" aria-hidden="true" tabindex="-1"></a>    isWhite <span class="ot">=</span> <span class="sc">!</span>isWhite</span>
+<span id="cb43-123"><a href="#cb43-123" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-124"><a href="#cb43-124" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-125"><a href="#cb43-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-126"><a href="#cb43-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-127"><a href="#cb43-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-128"><a href="#cb43-128" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
+<span id="cb43-129"><a href="#cb43-129" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"用 cv_rectangle 画出来的棋盘格"</span>)</span>
+<span id="cb43-130"><a href="#cb43-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-131"><a href="#cb43-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-132"><a href="#cb43-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-133"><a href="#cb43-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## 方棋盘摄像机标定</span></span>
+<span id="cb43-134"><a href="#cb43-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-135"><a href="#cb43-135" aria-hidden="true" tabindex="-1"></a>**示例**</span>
+<span id="cb43-136"><a href="#cb43-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-137"><a href="#cb43-137" aria-hidden="true" tabindex="-1"></a>基于以下方棋盘图像进行相机标定（<span class="in">`images/calib/`</span> 下有 13 张）：</span>
+<span id="cb43-138"><a href="#cb43-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-139"><a href="#cb43-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-140"><a href="#cb43-140" aria-hidden="true" tabindex="-1"></a><span class="co">#设定用于标定的棋盘文件所在的路径</span></span>
+<span id="cb43-141"><a href="#cb43-141" aria-hidden="true" tabindex="-1"></a>image_path <span class="ot">=</span> <span class="st">"images/calib"</span></span>
+<span id="cb43-142"><a href="#cb43-142" aria-hidden="true" tabindex="-1"></a><span class="co">#获取路径下的棋盘文件名称</span></span>
+<span id="cb43-143"><a href="#cb43-143" aria-hidden="true" tabindex="-1"></a>imgfiles <span class="ot">=</span> <span class="fu">list.files</span>(image_path)</span>
+<span id="cb43-144"><a href="#cb43-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-145"><a href="#cb43-145" aria-hidden="true" tabindex="-1"></a><span class="co">#读取每个图像文件，依次存放在img_list列表中</span></span>
+<span id="cb43-146"><a href="#cb43-146" aria-hidden="true" tabindex="-1"></a>img_list <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb43-147"><a href="#cb43-147" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(imgfiles)){</span>
+<span id="cb43-148"><a href="#cb43-148" aria-hidden="true" tabindex="-1"></a>  img_list[[i]] <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="fu">paste0</span>(image_path,<span class="st">"/"</span>,imgfiles[i]),IMREAD_GRAYSCALE)</span>
+<span id="cb43-149"><a href="#cb43-149" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-150"><a href="#cb43-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-151"><a href="#cb43-151" aria-hidden="true" tabindex="-1"></a><span class="co">#13 张图铺成 4 列</span></span>
+<span id="cb43-152"><a href="#cb43-152" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb43-153"><a href="#cb43-153" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(img_list)) <span class="fu">plot</span>(img_list[[i]],<span class="at">main =</span> imgfiles[i])</span>
+<span id="cb43-154"><a href="#cb43-154" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb43-155"><a href="#cb43-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-156"><a href="#cb43-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-157"><a href="#cb43-157" aria-hidden="true" tabindex="-1"></a>接下来做标定。分四步：造世界坐标 → 找角点 → 标定 → 存参数。</span>
+<span id="cb43-158"><a href="#cb43-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-159"><a href="#cb43-159" aria-hidden="true" tabindex="-1"></a>**第一步：世界坐标**</span>
+<span id="cb43-160"><a href="#cb43-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-161"><a href="#cb43-161" aria-hidden="true" tabindex="-1"></a>棋盘是平面，所以每个角点的三维坐标可以取 $z=0$ 的整数格点：</span>
+<span id="cb43-162"><a href="#cb43-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-165"><a href="#cb43-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-166"><a href="#cb43-166" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘横向角点个数（即棋盘每行上黑色棋盘格之间的交点数）</span></span>
+<span id="cb43-167"><a href="#cb43-167" aria-hidden="true" tabindex="-1"></a>ptsnum_perrow <span class="ot">=</span> <span class="dv">6</span></span>
+<span id="cb43-168"><a href="#cb43-168" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘纵向角点个数（即棋盘每列上黑色棋盘格之间的交点数）</span></span>
+<span id="cb43-169"><a href="#cb43-169" aria-hidden="true" tabindex="-1"></a>ptsnum_percolumn <span class="ot">=</span> <span class="dv">9</span></span>
+<span id="cb43-170"><a href="#cb43-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-171"><a href="#cb43-171" aria-hidden="true" tabindex="-1"></a><span class="co">#obj_world_pts各个角点的三维坐标：形如(0,0,0), (1,0,0),..., (8,5,0)</span></span>
+<span id="cb43-172"><a href="#cb43-172" aria-hidden="true" tabindex="-1"></a><span class="co">#外层走 x（行），内层走 y（列），和 findChessboardCorners 的返回顺序一致</span></span>
+<span id="cb43-173"><a href="#cb43-173" aria-hidden="true" tabindex="-1"></a>obj_world_pts <span class="ot">=</span> <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_perrow<span class="dv">-1</span>),<span class="cf">function</span>(x){</span>
+<span id="cb43-174"><a href="#cb43-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind,<span class="fu">lapply</span>(<span class="dv">0</span><span class="sc">:</span>(ptsnum_percolumn<span class="dv">-1</span>),<span class="cf">function</span>(y) <span class="fu">c</span>(y,x,<span class="dv">0</span>)))</span>
+<span id="cb43-175"><a href="#cb43-175" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb43-176"><a href="#cb43-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-177"><a href="#cb43-177" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(obj_world_pts)</span>
+<span id="cb43-178"><a href="#cb43-178" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(obj_world_pts,<span class="dv">3</span>)</span>
+<span id="cb43-179"><a href="#cb43-179" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(obj_world_pts,<span class="dv">2</span>)</span>
+<span id="cb43-180"><a href="#cb43-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-181"><a href="#cb43-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-182"><a href="#cb43-182" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 一共 </span><span class="in">`6 × 9 = 54`</span><span class="at"> 个点，坐标从 </span><span class="in">`(0,0,0)`</span><span class="at"> 到 </span><span class="in">`(8,5,0)`</span><span class="at">。</span></span>
+<span id="cb43-183"><a href="#cb43-183" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb43-184"><a href="#cb43-184" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **顺序不能随便改。** </span><span class="in">`findChessboardCorners`</span><span class="at"> 返回的角点是按「逐行、从左到右」</span></span>
+<span id="cb43-185"><a href="#cb43-185" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 排的，世界坐标必须按同样的顺序排，否则解出来的位姿是转了个身的。</span></span>
+<span id="cb43-186"><a href="#cb43-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-187"><a href="#cb43-187" aria-hidden="true" tabindex="-1"></a>**第二步：逐张找角点**</span>
+<span id="cb43-188"><a href="#cb43-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-191"><a href="#cb43-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-192"><a href="#cb43-192" aria-hidden="true" tabindex="-1"></a><span class="co">#指定棋盘文件的路径以及棋盘文件名称</span></span>
+<span id="cb43-193"><a href="#cb43-193" aria-hidden="true" tabindex="-1"></a>image_path <span class="ot">=</span> <span class="st">"images/calib"</span></span>
+<span id="cb43-194"><a href="#cb43-194" aria-hidden="true" tabindex="-1"></a>imgfiles <span class="ot">=</span> <span class="fu">list.files</span>(image_path)</span>
+<span id="cb43-195"><a href="#cb43-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-196"><a href="#cb43-196" aria-hidden="true" tabindex="-1"></a><span class="co">#对于每个棋盘图像文件，若能找寻到角点，则将其依次存入img_points列表中</span></span>
+<span id="cb43-197"><a href="#cb43-197" aria-hidden="true" tabindex="-1"></a>img_points <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb43-198"><a href="#cb43-198" aria-hidden="true" tabindex="-1"></a><span class="co">#对应的三维坐标（每张图都一样，就是 obj_world_pts）</span></span>
+<span id="cb43-199"><a href="#cb43-199" aria-hidden="true" tabindex="-1"></a>obj_points <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb43-200"><a href="#cb43-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-201"><a href="#cb43-201" aria-hidden="true" tabindex="-1"></a><span class="co">#先把世界坐标转成 CV_32FC3 的 Mat，13 张图共用这一个</span></span>
+<span id="cb43-202"><a href="#cb43-202" aria-hidden="true" tabindex="-1"></a>obj_world_mat <span class="ot">=</span> <span class="fu">pts3f</span>(obj_world_pts)</span>
+<span id="cb43-203"><a href="#cb43-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-204"><a href="#cb43-204" aria-hidden="true" tabindex="-1"></a><span class="co">#迭代终止条件，用于寻找亚像素级别的角点：c(类型, 最大次数, 精度)</span></span>
+<span id="cb43-205"><a href="#cb43-205" aria-hidden="true" tabindex="-1"></a><span class="co">#EPS + MAX_ITER = 2 + 1 = 3，即 COUNT|EPS</span></span>
+<span id="cb43-206"><a href="#cb43-206" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">=</span> <span class="fu">c</span>(EPS<span class="sc">+</span>MAX_ITER,<span class="dv">30</span>,<span class="fl">0.001</span>)</span>
+<span id="cb43-207"><a href="#cb43-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-208"><a href="#cb43-208" aria-hidden="true" tabindex="-1"></a><span class="co">#循环处理每个棋盘文件</span></span>
+<span id="cb43-209"><a href="#cb43-209" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(imgfiles)){</span>
+<span id="cb43-210"><a href="#cb43-210" aria-hidden="true" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="fu">paste0</span>(image_path,<span class="st">"/"</span>,imgfiles[i]),IMREAD_GRAYSCALE)</span>
+<span id="cb43-211"><a href="#cb43-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-212"><a href="#cb43-212" aria-hidden="true" tabindex="-1"></a>  <span class="co">#检测棋盘角点：patternSize 是 c(每行角点数, 每列角点数)</span></span>
+<span id="cb43-213"><a href="#cb43-213" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
+<span id="cb43-214"><a href="#cb43-214" aria-hidden="true" tabindex="-1"></a>  <span class="co">#「找到没有」不在返回值上，在 attr(, "value") 上</span></span>
+<span id="cb43-215"><a href="#cb43-215" aria-hidden="true" tabindex="-1"></a>  found_success <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">"value"</span>)</span>
+<span id="cb43-216"><a href="#cb43-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-217"><a href="#cb43-217" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">isTRUE</span>(found_success)){</span>
+<span id="cb43-218"><a href="#cb43-218" aria-hidden="true" tabindex="-1"></a>    <span class="co">#把 1×54×2 的 cvMat 摊成 54×2 的矩阵，再转回 CV_32FC2 交给 cornerSubPix</span></span>
+<span id="cb43-219"><a href="#cb43-219" aria-hidden="true" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb43-220"><a href="#cb43-220" aria-hidden="true" tabindex="-1"></a>    <span class="co">#进一步取得亚像素棋盘角点</span></span>
+<span id="cb43-221"><a href="#cb43-221" aria-hidden="true" tabindex="-1"></a>    corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb43-222"><a href="#cb43-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-223"><a href="#cb43-223" aria-hidden="true" tabindex="-1"></a>    <span class="co">#将棋盘角点的三维坐标存入obj_points中</span></span>
+<span id="cb43-224"><a href="#cb43-224" aria-hidden="true" tabindex="-1"></a>    obj_points[[<span class="fu">length</span>(obj_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> obj_world_mat</span>
+<span id="cb43-225"><a href="#cb43-225" aria-hidden="true" tabindex="-1"></a>    <span class="co">#将棋盘角点的二维坐标存入img_points中</span></span>
+<span id="cb43-226"><a href="#cb43-226" aria-hidden="true" tabindex="-1"></a>    img_points[[<span class="fu">length</span>(img_points)<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">=</span> corners</span>
+<span id="cb43-227"><a href="#cb43-227" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb43-228"><a href="#cb43-228" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"没找到角点："</span>,imgfiles[i])</span>
+<span id="cb43-229"><a href="#cb43-229" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-230"><a href="#cb43-230" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-231"><a href="#cb43-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-232"><a href="#cb43-232" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(obj_points)</span>
+<span id="cb43-233"><a href="#cb43-233" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(img_points)</span>
+<span id="cb43-234"><a href="#cb43-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-235"><a href="#cb43-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-236"><a href="#cb43-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-237"><a href="#cb43-237" aria-hidden="true" tabindex="-1"></a>把检测结果画出来看看：</span>
+<span id="cb43-238"><a href="#cb43-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-241"><a href="#cb43-241" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-242"><a href="#cb43-242" aria-hidden="true" tabindex="-1"></a><span class="co">#挑一张有角点的图，把角点画上去</span></span>
+<span id="cb43-243"><a href="#cb43-243" aria-hidden="true" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left01.jpg"</span>)</span>
+<span id="cb43-244"><a href="#cb43-244" aria-hidden="true" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),</span>
+<span id="cb43-245"><a href="#cb43-245" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
+<span id="cb43-246"><a href="#cb43-246" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb43-247"><a href="#cb43-247" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(<span class="fu">cv_cvtColor</span>(img_draw,COLOR_BGR2GRAY),<span class="fu">pts2f</span>(corners),</span>
+<span id="cb43-248"><a href="#cb43-248" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb43-249"><a href="#cb43-249" aria-hidden="true" tabindex="-1"></a>img_draw <span class="ot">=</span> <span class="fu">cv_drawChessboardCorners</span>(img_draw,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),</span>
+<span id="cb43-250"><a href="#cb43-250" aria-hidden="true" tabindex="-1"></a>                                    corners,<span class="cn">TRUE</span>)</span>
+<span id="cb43-251"><a href="#cb43-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-252"><a href="#cb43-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-253"><a href="#cb43-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-254"><a href="#cb43-254" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_draw)</span>
+<span id="cb43-255"><a href="#cb43-255" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"检测到的棋盘角点"</span>)</span>
+<span id="cb43-256"><a href="#cb43-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-257"><a href="#cb43-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-258"><a href="#cb43-258" aria-hidden="true" tabindex="-1"></a>**第三步：标定**</span>
+<span id="cb43-259"><a href="#cb43-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-262"><a href="#cb43-262" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-263"><a href="#cb43-263" aria-hidden="true" tabindex="-1"></a><span class="co">#获取图像的尺寸（mat_info 返回 c(行, 列, 通道, 类型码, 深度码)）</span></span>
+<span id="cb43-264"><a href="#cb43-264" aria-hidden="true" tabindex="-1"></a>img_info <span class="ot">=</span> <span class="fu">mat_info</span>(<span class="fu">cv_imread</span>(<span class="st">"images/calib/left01.jpg"</span>))</span>
+<span id="cb43-265"><a href="#cb43-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-266"><a href="#cb43-266" aria-hidden="true" tabindex="-1"></a><span class="co">#计算内参和畸变系数；rvecs/tvecs 不传就一并返回</span></span>
+<span id="cb43-267"><a href="#cb43-267" aria-hidden="true" tabindex="-1"></a>calib <span class="ot">=</span> <span class="fu">cv_calibrateCamera</span>(obj_points,img_points,<span class="fu">c</span>(img_info[<span class="dv">2</span>],img_info[<span class="dv">1</span>]))</span>
+<span id="cb43-268"><a href="#cb43-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-269"><a href="#cb43-269" aria-hidden="true" tabindex="-1"></a><span class="co">#RMS 重投影误差，越小越好</span></span>
+<span id="cb43-270"><a href="#cb43-270" aria-hidden="true" tabindex="-1"></a>calib<span class="sc">$</span>value</span>
+<span id="cb43-271"><a href="#cb43-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-272"><a href="#cb43-272" aria-hidden="true" tabindex="-1"></a><span class="co">#相机内参</span></span>
+<span id="cb43-273"><a href="#cb43-273" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-274"><a href="#cb43-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-275"><a href="#cb43-275" aria-hidden="true" tabindex="-1"></a><span class="co">#畸变系数 k1 k2 p1 p2 k3</span></span>
+<span id="cb43-276"><a href="#cb43-276" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-277"><a href="#cb43-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-278"><a href="#cb43-278" aria-hidden="true" tabindex="-1"></a><span class="co">#每张图的旋转向量、平移向量</span></span>
+<span id="cb43-279"><a href="#cb43-279" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>rvecs)</span>
+<span id="cb43-280"><a href="#cb43-280" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(calib<span class="sc">$</span>tvecs)</span>
+<span id="cb43-281"><a href="#cb43-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-282"><a href="#cb43-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-283"><a href="#cb43-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-284"><a href="#cb43-284" aria-hidden="true" tabindex="-1"></a>内参的物理含义，对照着看：</span>
+<span id="cb43-285"><a href="#cb43-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-288"><a href="#cb43-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-289"><a href="#cb43-289" aria-hidden="true" tabindex="-1"></a>K <span class="ot">=</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-290"><a href="#cb43-290" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fx =</span> K[<span class="dv">1</span>,<span class="dv">1</span>],<span class="at">fy =</span> K[<span class="dv">2</span>,<span class="dv">2</span>],<span class="at">cx =</span> K[<span class="dv">1</span>,<span class="dv">3</span>],<span class="at">cy =</span> K[<span class="dv">2</span>,<span class="dv">3</span>])</span>
+<span id="cb43-291"><a href="#cb43-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-292"><a href="#cb43-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-293"><a href="#cb43-293" aria-hidden="true" tabindex="-1"></a><span class="in">`fx`</span>、<span class="in">`fy`</span> 是焦距（以像素为单位），<span class="in">`cx`</span>、<span class="in">`cy`</span> 是主点，理论上应该接近图像中心。</span>
+<span id="cb43-294"><a href="#cb43-294" aria-hidden="true" tabindex="-1"></a>图像是 640×480，中心是 <span class="in">`(320,240)`</span>——上面这几个数正好在附近。</span>
+<span id="cb43-295"><a href="#cb43-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-296"><a href="#cb43-296" aria-hidden="true" tabindex="-1"></a>把每张图的位姿列出来：</span>
+<span id="cb43-297"><a href="#cb43-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-298"><a href="#cb43-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-299"><a href="#cb43-299" aria-hidden="true" tabindex="-1"></a>rvec_df <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">vapply</span>(calib<span class="sc">$</span>rvecs,<span class="cf">function</span>(m) <span class="fu">as.vector</span>(<span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),<span class="fu">numeric</span>(<span class="dv">3</span>)))</span>
+<span id="cb43-300"><a href="#cb43-300" aria-hidden="true" tabindex="-1"></a>tvec_df <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">vapply</span>(calib<span class="sc">$</span>tvecs,<span class="cf">function</span>(m) <span class="fu">as.vector</span>(<span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),<span class="fu">numeric</span>(<span class="dv">3</span>)))</span>
+<span id="cb43-301"><a href="#cb43-301" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">view =</span> imgfiles,</span>
+<span id="cb43-302"><a href="#cb43-302" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">round</span>(rvec_df,<span class="dv">3</span>),<span class="fu">round</span>(tvec_df,<span class="dv">2</span>)),</span>
+<span id="cb43-303"><a href="#cb43-303" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"图像"</span>,<span class="st">"rx"</span>,<span class="st">"ry"</span>,<span class="st">"rz"</span>,<span class="st">"tx"</span>,<span class="st">"ty"</span>,<span class="st">"tz"</span>))</span>
+<span id="cb43-304"><a href="#cb43-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-305"><a href="#cb43-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-306"><a href="#cb43-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-307"><a href="#cb43-307" aria-hidden="true" tabindex="-1"></a>**第四步：保存参数**</span>
+<span id="cb43-308"><a href="#cb43-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-311"><a href="#cb43-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-312"><a href="#cb43-312" aria-hidden="true" tabindex="-1"></a><span class="co">#把标定结果存起来，后面几节直接用</span></span>
+<span id="cb43-313"><a href="#cb43-313" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data"</span>,<span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-314"><a href="#cb43-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-315"><a href="#cb43-315" aria-hidden="true" tabindex="-1"></a><span class="co">#注意：存的是**普通 R 数组**，不是 cvMat 本身</span></span>
+<span id="cb43-316"><a href="#cb43-316" aria-hidden="true" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb43-317"><a href="#cb43-317" aria-hidden="true" tabindex="-1"></a>  <span class="at">cameraMatrix =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>cameraMatrix,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-318"><a href="#cb43-318" aria-hidden="true" tabindex="-1"></a>  <span class="at">distCoeffs   =</span> <span class="fu">as_array</span>(calib<span class="sc">$</span>distCoeffs,<span class="at">numeric =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-319"><a href="#cb43-319" aria-hidden="true" tabindex="-1"></a>  <span class="at">rvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>rvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb43-320"><a href="#cb43-320" aria-hidden="true" tabindex="-1"></a>  <span class="at">tvecs        =</span> <span class="fu">lapply</span>(calib<span class="sc">$</span>tvecs,<span class="cf">function</span>(m) <span class="fu">as_array</span>(m,<span class="at">numeric =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb43-321"><a href="#cb43-321" aria-hidden="true" tabindex="-1"></a>  <span class="at">rms          =</span> calib<span class="sc">$</span>value</span>
+<span id="cb43-322"><a href="#cb43-322" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-323"><a href="#cb43-323" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cam_cfg,<span class="st">"data/camera.rds"</span>)</span>
+<span id="cb43-324"><a href="#cb43-324" aria-hidden="true" tabindex="-1"></a><span class="fu">file.info</span>(<span class="st">"data/camera.rds"</span>)<span class="sc">$</span>size</span>
+<span id="cb43-325"><a href="#cb43-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-326"><a href="#cb43-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-327"><a href="#cb43-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-328"><a href="#cb43-328" aria-hidden="true" tabindex="-1"></a>**校正图像**</span>
+<span id="cb43-329"><a href="#cb43-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-332"><a href="#cb43-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-333"><a href="#cb43-333" aria-hidden="true" tabindex="-1"></a>img_test <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left11.jpg"</span>)</span>
+<span id="cb43-334"><a href="#cb43-334" aria-hidden="true" tabindex="-1"></a>img_test_info <span class="ot">=</span> <span class="fu">mat_info</span>(img_test)</span>
+<span id="cb43-335"><a href="#cb43-335" aria-hidden="true" tabindex="-1"></a>h <span class="ot">=</span> img_test_info[<span class="dv">1</span>]</span>
+<span id="cb43-336"><a href="#cb43-336" aria-hidden="true" tabindex="-1"></a>w <span class="ot">=</span> img_test_info[<span class="dv">2</span>]</span>
+<span id="cb43-337"><a href="#cb43-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-338"><a href="#cb43-338" aria-hidden="true" tabindex="-1"></a><span class="co">#计算「最优新内参」：alpha = 1 表示保留所有有效像素</span></span>
+<span id="cb43-339"><a href="#cb43-339" aria-hidden="true" tabindex="-1"></a>cameraMatrix_new <span class="ot">=</span> <span class="fu">cv_getOptimalNewCameraMatrix</span>(</span>
+<span id="cb43-340"><a href="#cb43-340" aria-hidden="true" tabindex="-1"></a>  calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,<span class="fu">c</span>(w,h),<span class="dv">1</span>)</span>
+<span id="cb43-341"><a href="#cb43-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-342"><a href="#cb43-342" aria-hidden="true" tabindex="-1"></a><span class="co">#去畸变</span></span>
+<span id="cb43-343"><a href="#cb43-343" aria-hidden="true" tabindex="-1"></a>img_undistort <span class="ot">=</span> <span class="fu">cv_undistort</span>(img_test,calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs,</span>
+<span id="cb43-344"><a href="#cb43-344" aria-hidden="true" tabindex="-1"></a>                             cameraMatrix_new)</span>
+<span id="cb43-345"><a href="#cb43-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-346"><a href="#cb43-346" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img_test)</span>
+<span id="cb43-347"><a href="#cb43-347" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(img_undistort)</span>
+<span id="cb43-348"><a href="#cb43-348" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-349"><a href="#cb43-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-350"><a href="#cb43-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-351"><a href="#cb43-351" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb43-352"><a href="#cb43-352" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_test);       <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"原始图像（桶形畸变）"</span>)</span>
+<span id="cb43-353"><a href="#cb43-353" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_undistort);  <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"去畸变结果"</span>)</span>
+<span id="cb43-354"><a href="#cb43-354" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb43-355"><a href="#cb43-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-356"><a href="#cb43-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-357"><a href="#cb43-357" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; </span><span class="in">`cv_getOptimalNewCameraMatrix`</span><span class="at"> 在 C++ 里还有一个 </span><span class="in">`roi`</span><span class="at"> 输出参数（有效区域），</span></span>
+<span id="cb43-358"><a href="#cb43-358" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 当前的版本没有把它暴露出来，只返回新内参，后面再设法改进。</span></span>
+<span id="cb43-359"><a href="#cb43-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-360"><a href="#cb43-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-361"><a href="#cb43-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE,eval=FALSE}</span></span>
+<span id="cb43-362"><a href="#cb43-362" aria-hidden="true" tabindex="-1"></a><span class="co">#尝试先做透视变换，再做畸变纠正处理。结果并不好</span></span>
+<span id="cb43-363"><a href="#cb43-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-364"><a href="#cb43-364" aria-hidden="true" tabindex="-1"></a><span class="co">#读取测试图像文件</span></span>
+<span id="cb43-365"><a href="#cb43-365" aria-hidden="true" tabindex="-1"></a>img_test <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib_radial.jpg"</span>)</span>
+<span id="cb43-366"><a href="#cb43-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-367"><a href="#cb43-367" aria-hidden="true" tabindex="-1"></a><span class="co">#指定图像中棋盘区域的四个顶点坐标</span></span>
+<span id="cb43-368"><a href="#cb43-368" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">57</span>,<span class="dv">40</span>),<span class="fu">c</span>(<span class="dv">329</span>,<span class="dv">23</span>),<span class="fu">c</span>(<span class="dv">374</span>,<span class="dv">407</span>),<span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">407</span>))</span>
+<span id="cb43-369"><a href="#cb43-369" aria-hidden="true" tabindex="-1"></a><span class="co">#指定棋盘区域要映射到的区域（通过四个顶点坐标指定）</span></span>
+<span id="cb43-370"><a href="#cb43-370" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">450</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">450</span>))</span>
+<span id="cb43-371"><a href="#cb43-371" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span id="cb43-372"><a href="#cb43-372" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb43-373"><a href="#cb43-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-374"><a href="#cb43-374" aria-hidden="true" tabindex="-1"></a><span class="co">#依据M对img_test进行透视变换</span></span>
+<span id="cb43-375"><a href="#cb43-375" aria-hidden="true" tabindex="-1"></a>img_pers <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img_test,M,<span class="fu">c</span>(<span class="dv">400</span>,<span class="dv">450</span>))</span>
+<span id="cb43-376"><a href="#cb43-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-377"><a href="#cb43-377" aria-hidden="true" tabindex="-1"></a><span class="co">#继续进行畸变校正</span></span>
+<span id="cb43-378"><a href="#cb43-378" aria-hidden="true" tabindex="-1"></a>img_undistort <span class="ot">=</span> <span class="fu">cv_undistort</span>(img_pers,calib<span class="sc">$</span>cameraMatrix,calib<span class="sc">$</span>distCoeffs)</span>
+<span id="cb43-379"><a href="#cb43-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-380"><a href="#cb43-380" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_pers)</span>
+<span id="cb43-381"><a href="#cb43-381" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_undistort)</span>
+<span id="cb43-382"><a href="#cb43-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-383"><a href="#cb43-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-384"><a href="#cb43-384" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 这段默认不执行。结论是：**先透视后去畸变是错的顺序**。</span></span>
+<span id="cb43-385"><a href="#cb43-385" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 透视变换假设成像已经满足针孔模型，而畸变恰恰破坏了这个前提；</span></span>
+<span id="cb43-386"><a href="#cb43-386" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt; 正确的顺序永远是「先去畸变，再做几何变换」。</span></span>
+<span id="cb43-387"><a href="#cb43-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-388"><a href="#cb43-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-389"><a href="#cb43-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-390"><a href="#cb43-390" aria-hidden="true" tabindex="-1"></a><span class="fu">## 单应性矩阵</span></span>
+<span id="cb43-391"><a href="#cb43-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-392"><a href="#cb43-392" aria-hidden="true" tabindex="-1"></a>简单地说，平面单应关系到两个平面之间的变换（取决于一个比例因子）：</span>
+<span id="cb43-393"><a href="#cb43-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-394"><a href="#cb43-394" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb43-395"><a href="#cb43-395" aria-hidden="true" tabindex="-1"></a>s \left<span class="co">[</span><span class="ot"> \begin{matrix} x'\\y'\\1 \end{matrix} \right</span><span class="co">]</span> = H \left<span class="co">[</span><span class="ot"> \begin{matrix} x\\y\\1 \end{matrix} \right</span><span class="co">]</span> = \left<span class="co">[</span><span class="ot"> \begin{matrix} h_{11}&amp;h_{12}&amp;h_{13}\\h_{21}&amp;h_{22}&amp;h_{23}\\h_{31}&amp;h_{32}&amp;h_{33} \end{matrix} \right</span><span class="co">]</span> \left<span class="co">[</span><span class="ot"> \begin{matrix} x\\y\\1 \end{matrix} \right</span><span class="co">]</span></span>
+<span id="cb43-396"><a href="#cb43-396" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb43-397"><a href="#cb43-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-398"><a href="#cb43-398" aria-hidden="true" tabindex="-1"></a>单应矩阵 $H$ 是一个 3×3 矩阵，有 8 个自由度。通常取 $h_{33}=1$，或者约束：</span>
+<span id="cb43-399"><a href="#cb43-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-400"><a href="#cb43-400" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb43-401"><a href="#cb43-401" aria-hidden="true" tabindex="-1"></a>\sum_{i,j=1,2,3} h_{ij}^2=1</span>
+<span id="cb43-402"><a href="#cb43-402" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb43-403"><a href="#cb43-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-404"><a href="#cb43-404" aria-hidden="true" tabindex="-1"></a>opencv 中 **cv::getPerspectiveTransform** 可以获取单应矩阵：</span>
+<span id="cb43-405"><a href="#cb43-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-408"><a href="#cb43-408" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-409"><a href="#cb43-409" aria-hidden="true" tabindex="-1"></a><span class="co">#原图像上的四个点</span></span>
+<span id="cb43-410"><a href="#cb43-410" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
+<span id="cb43-411"><a href="#cb43-411" aria-hidden="true" tabindex="-1"></a><span class="co">#透视校正目标区域（也由四个顶点坐标构成）</span></span>
+<span id="cb43-412"><a href="#cb43-412" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
+<span id="cb43-413"><a href="#cb43-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-414"><a href="#cb43-414" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span id="cb43-415"><a href="#cb43-415" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb43-416"><a href="#cb43-416" aria-hidden="true" tabindex="-1"></a><span class="fu">as_array</span>(M,<span class="at">numeric =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-417"><a href="#cb43-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-418"><a href="#cb43-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-419"><a href="#cb43-419" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 注意这里用的是 </span><span class="in">`cv_getPerspectiveTransform`</span><span class="at">（4 点精确解），</span></span>
+<span id="cb43-420"><a href="#cb43-420" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 不是 </span><span class="in">`cv_findHomography`</span><span class="at">（多点最小二乘 + RANSAC）。四个点用前者，</span></span>
+<span id="cb43-421"><a href="#cb43-421" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; 多于四个点用后者，两者都要求 </span><span class="in">`CV_32FC2`</span><span class="at"> 的点集。</span></span>
+<span id="cb43-422"><a href="#cb43-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-423"><a href="#cb43-423" aria-hidden="true" tabindex="-1"></a>以下示例显示了不同类型单应变换：</span>
+<span id="cb43-424"><a href="#cb43-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-425"><a href="#cb43-425" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在一个相机下，真实世界平面 $\pi$ 与其相机成像平面 $\pi'$ 之间的变换关系</span>
+<span id="cb43-426"><a href="#cb43-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-427"><a href="#cb43-427" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example1.jpg)</span></span>
+<span id="cb43-428"><a href="#cb43-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-429"><a href="#cb43-429" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在两个相机下，包含着多个变换关系：真实世界平面与每个相机各自的成像平面之间的变换关系，两个相机成像平面之间的变换关系</span>
+<span id="cb43-430"><a href="#cb43-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-431"><a href="#cb43-431" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example2.jpg)</span></span>
+<span id="cb43-432"><a href="#cb43-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-433"><a href="#cb43-433" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>在一个旋转相机下，真实世界中"无限远"的平面与各成像平面之间的变换关系</span>
+<span id="cb43-434"><a href="#cb43-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-435"><a href="#cb43-435" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_transformation_example3.jpg)</span></span>
+<span id="cb43-436"><a href="#cb43-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-437"><a href="#cb43-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-438"><a href="#cb43-438" aria-hidden="true" tabindex="-1"></a><span class="fu">### 单应变换的用途？</span></span>
+<span id="cb43-439"><a href="#cb43-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-440"><a href="#cb43-440" aria-hidden="true" tabindex="-1"></a>基于共面点的增强现实摄像机姿态估计</span>
+<span id="cb43-441"><a href="#cb43-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-442"><a href="#cb43-442" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/tutorial/homography_pose_estimation.jpg)</span></span>
+<span id="cb43-443"><a href="#cb43-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-444"><a href="#cb43-444" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>透视图校正</span>
+<span id="cb43-445"><a href="#cb43-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-446"><a href="#cb43-446" aria-hidden="true" tabindex="-1"></a><span class="al">![](images/pers_correct.png)</span></span>
+<span id="cb43-447"><a href="#cb43-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-448"><a href="#cb43-448" aria-hidden="true" tabindex="-1"></a>把笔记本封面「拉平」：</span>
+<span id="cb43-449"><a href="#cb43-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-452"><a href="#cb43-452" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-453"><a href="#cb43-453" aria-hidden="true" tabindex="-1"></a><span class="co">#读取图像文件</span></span>
+<span id="cb43-454"><a href="#cb43-454" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/notebook.jpg"</span>)</span>
+<span id="cb43-455"><a href="#cb43-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-456"><a href="#cb43-456" aria-hidden="true" tabindex="-1"></a><span class="co">#原图像透视校正区域（由四个顶点坐标构成）</span></span>
+<span id="cb43-457"><a href="#cb43-457" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">92</span>,<span class="dv">68</span>),<span class="fu">c</span>(<span class="dv">262</span>,<span class="dv">116</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">364</span>),<span class="fu">c</span>(<span class="dv">18</span>,<span class="dv">304</span>))</span>
+<span id="cb43-458"><a href="#cb43-458" aria-hidden="true" tabindex="-1"></a><span class="co">#透视校正目标区域</span></span>
+<span id="cb43-459"><a href="#cb43-459" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">10</span>),<span class="fu">c</span>(<span class="dv">300</span>,<span class="dv">400</span>),<span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">400</span>))</span>
+<span id="cb43-460"><a href="#cb43-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-461"><a href="#cb43-461" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2进行透视变换，获得变换矩阵M</span></span>
+<span id="cb43-462"><a href="#cb43-462" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_getPerspectiveTransform</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb43-463"><a href="#cb43-463" aria-hidden="true" tabindex="-1"></a><span class="co">#依据M对img进行透视变换</span></span>
+<span id="cb43-464"><a href="#cb43-464" aria-hidden="true" tabindex="-1"></a>img_pers <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img,M,<span class="fu">c</span>(<span class="dv">320</span>,<span class="dv">420</span>))</span>
+<span id="cb43-465"><a href="#cb43-465" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-466"><a href="#cb43-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-467"><a href="#cb43-467" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-468"><a href="#cb43-468" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb43-469"><a href="#cb43-469" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img);        <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"原始图像"</span>)</span>
+<span id="cb43-470"><a href="#cb43-470" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img_pers);   <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"透视校正结果"</span>)</span>
+<span id="cb43-471"><a href="#cb43-471" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb43-472"><a href="#cb43-472" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-473"><a href="#cb43-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-474"><a href="#cb43-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-475"><a href="#cb43-475" aria-hidden="true" tabindex="-1"></a><span class="fu">### 共面点的姿态估计</span></span>
+<span id="cb43-476"><a href="#cb43-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-477"><a href="#cb43-477" aria-hidden="true" tabindex="-1"></a>例如，可以使用直接线性变换（DLT）算法来估计单应性。由于物体是平面的，物体帧中表示的点和投影到归一化相机帧中表示的图像平面的点之间的变换是单应的。正是因为对象是平面的，所以可以从单应性中检索相机姿势，前提是相机的内在参数已知。当使用棋盘对象和 <span class="in">`findChessboardCorners()`</span> 获得图像中角点位置时，可以很容易地测试这一点。</span>
+<span id="cb43-478"><a href="#cb43-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-479"><a href="#cb43-479" aria-hidden="true" tabindex="-1"></a>先读回上一节存下来的内参：</span>
+<span id="cb43-480"><a href="#cb43-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-483"><a href="#cb43-483" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-484"><a href="#cb43-484" aria-hidden="true" tabindex="-1"></a><span class="co">#读取相机参数：存的是数值数组，读回来要重建 Mat</span></span>
+<span id="cb43-485"><a href="#cb43-485" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">file.exists</span>(<span class="st">"data/camera.rds"</span>))</span>
+<span id="cb43-486"><a href="#cb43-486" aria-hidden="true" tabindex="-1"></a>cam_cfg <span class="ot">=</span> <span class="fu">readRDS</span>(<span class="st">"data/camera.rds"</span>)</span>
+<span id="cb43-487"><a href="#cb43-487" aria-hidden="true" tabindex="-1"></a>cameraMatrix <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>cameraMatrix)</span>
+<span id="cb43-488"><a href="#cb43-488" aria-hidden="true" tabindex="-1"></a>distCoeffs   <span class="ot">=</span> <span class="fu">Mat</span>(cam_cfg<span class="sc">$</span>distCoeffs)</span>
+<span id="cb43-489"><a href="#cb43-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-490"><a href="#cb43-490" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cameraMatrix)</span>
+<span id="cb43-491"><a href="#cb43-491" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(distCoeffs)</span>
+<span id="cb43-492"><a href="#cb43-492" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-493"><a href="#cb43-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-494"><a href="#cb43-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-495"><a href="#cb43-495" aria-hidden="true" tabindex="-1"></a>估计姿态，并把坐标轴画上去：</span>
+<span id="cb43-496"><a href="#cb43-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-499"><a href="#cb43-499" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-500"><a href="#cb43-500" aria-hidden="true" tabindex="-1"></a><span class="co">#确定三个数轴端点的三维坐标（z 取负，让轴朝相机方向伸出来）</span></span>
+<span id="cb43-501"><a href="#cb43-501" aria-hidden="true" tabindex="-1"></a>obj_points_new <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
+<span id="cb43-502"><a href="#cb43-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-503"><a href="#cb43-503" aria-hidden="true" tabindex="-1"></a><span class="co">#读取位姿估计图像文件</span></span>
+<span id="cb43-504"><a href="#cb43-504" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/calib/left14.jpg"</span>)</span>
+<span id="cb43-505"><a href="#cb43-505" aria-hidden="true" tabindex="-1"></a>img_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(img,COLOR_BGR2GRAY)</span>
+<span id="cb43-506"><a href="#cb43-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-507"><a href="#cb43-507" aria-hidden="true" tabindex="-1"></a><span class="co">#寻找棋盘角点</span></span>
+<span id="cb43-508"><a href="#cb43-508" aria-hidden="true" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">cv_findChessboardCorners</span>(img_gray,<span class="fu">c</span>(ptsnum_percolumn,ptsnum_perrow),<span class="dv">0</span>L)</span>
+<span id="cb43-509"><a href="#cb43-509" aria-hidden="true" tabindex="-1"></a>found <span class="ot">=</span> <span class="fu">attr</span>(r,<span class="st">"value"</span>)</span>
+<span id="cb43-510"><a href="#cb43-510" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(r,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb43-511"><a href="#cb43-511" aria-hidden="true" tabindex="-1"></a>corners <span class="ot">=</span> <span class="fu">cv_cornerSubPix</span>(img_gray,<span class="fu">pts2f</span>(corners),<span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">11</span>),<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),criteria)</span>
+<span id="cb43-512"><a href="#cb43-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-513"><a href="#cb43-513" aria-hidden="true" tabindex="-1"></a><span class="co">#计算旋转向量和平移向量</span></span>
+<span id="cb43-514"><a href="#cb43-514" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">=</span> <span class="fu">cv_solvePnPRansac</span>(<span class="fu">pts3f</span>(obj_world_pts),corners,cameraMatrix,distCoeffs)</span>
+<span id="cb43-515"><a href="#cb43-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-516"><a href="#cb43-516" aria-hidden="true" tabindex="-1"></a><span class="co">#将真实三维点投影到对应的图像平面上</span></span>
+<span id="cb43-517"><a href="#cb43-517" aria-hidden="true" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(obj_points_new),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
+<span id="cb43-518"><a href="#cb43-518" aria-hidden="true" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
+<span id="cb43-519"><a href="#cb43-519" aria-hidden="true" tabindex="-1"></a>xyz <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb43-520"><a href="#cb43-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-521"><a href="#cb43-521" aria-hidden="true" tabindex="-1"></a><span class="co">#棋盘第一个角点，作为三根轴的公共起点</span></span>
+<span id="cb43-522"><a href="#cb43-522" aria-hidden="true" tabindex="-1"></a>origin <span class="ot">=</span> corners[<span class="dv">1</span>,]</span>
+<span id="cb43-523"><a href="#cb43-523" aria-hidden="true" tabindex="-1"></a><span class="co">#BGR：c(255,0,0) 蓝、c(0,255,0) 绿、c(0,0,255) 红</span></span>
+<span id="cb43-524"><a href="#cb43-524" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">1</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
+<span id="cb43-525"><a href="#cb43-525" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">2</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="dv">5</span>)</span>
+<span id="cb43-526"><a href="#cb43-526" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_line</span>(img,origin,xyz[<span class="dv">3</span>,],<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">5</span>)</span>
+<span id="cb43-527"><a href="#cb43-527" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-528"><a href="#cb43-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-529"><a href="#cb43-529" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-530"><a href="#cb43-530" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
+<span id="cb43-531"><a href="#cb43-531" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"估计出的相机姿态：X蓝 Y绿 Z红"</span>)</span>
+<span id="cb43-532"><a href="#cb43-532" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-533"><a href="#cb43-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-534"><a href="#cb43-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-535"><a href="#cb43-535" aria-hidden="true" tabindex="-1"></a>进一步，可以基于姿态估计结果渲染一个立方体：</span>
+<span id="cb43-536"><a href="#cb43-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-539"><a href="#cb43-539" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-540"><a href="#cb43-540" aria-hidden="true" tabindex="-1"></a><span class="co">#立方体的 8 个顶点：底面 4 个 z=0，顶面 4 个 z=-3</span></span>
+<span id="cb43-541"><a href="#cb43-541" aria-hidden="true" tabindex="-1"></a>cube <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">0</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb43-542"><a href="#cb43-542" aria-hidden="true" tabindex="-1"></a>             <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>),<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">3</span>))</span>
+<span id="cb43-543"><a href="#cb43-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-544"><a href="#cb43-544" aria-hidden="true" tabindex="-1"></a><span class="co">#投影到图像平面</span></span>
+<span id="cb43-545"><a href="#cb43-545" aria-hidden="true" tabindex="-1"></a>imgpts <span class="ot">=</span> <span class="fu">cv_projectPoints</span>(<span class="fu">pts3f</span>(cube),pn<span class="sc">$</span>rvec,pn<span class="sc">$</span>tvec,</span>
+<span id="cb43-546"><a href="#cb43-546" aria-hidden="true" tabindex="-1"></a>                          cameraMatrix,distCoeffs)<span class="sc">$</span>imagePoints</span>
+<span id="cb43-547"><a href="#cb43-547" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">as_array</span>(imgpts,<span class="at">numeric =</span> <span class="cn">TRUE</span>),<span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb43-548"><a href="#cb43-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-549"><a href="#cb43-549" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制绿色底面（填充）</span></span>
+<span id="cb43-550"><a href="#cb43-550" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,]),<span class="sc">-</span><span class="dv">1</span>L,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">255</span>,<span class="dv">0</span>),<span class="sc">-</span><span class="dv">1</span>L)</span>
+<span id="cb43-551"><a href="#cb43-551" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制蓝色柱子（四条侧棱）</span></span>
+<span id="cb43-552"><a href="#cb43-552" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>){</span>
+<span id="cb43-553"><a href="#cb43-553" aria-hidden="true" tabindex="-1"></a>  img <span class="ot">=</span> <span class="fu">cv_line</span>(img,xy[i,],xy[i<span class="sc">+</span><span class="dv">4</span>,],<span class="fu">c</span>(<span class="dv">255</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="dv">3</span>)</span>
+<span id="cb43-554"><a href="#cb43-554" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-555"><a href="#cb43-555" aria-hidden="true" tabindex="-1"></a><span class="co">#绘制红色顶面（只描边）</span></span>
+<span id="cb43-556"><a href="#cb43-556" aria-hidden="true" tabindex="-1"></a>img <span class="ot">=</span> <span class="fu">cv_drawContours</span>(img,<span class="fu">list</span>(xy[<span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,]),<span class="sc">-</span><span class="dv">1</span>L,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">255</span>),<span class="dv">3</span>L)</span>
+<span id="cb43-557"><a href="#cb43-557" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-558"><a href="#cb43-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-559"><a href="#cb43-559" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-560"><a href="#cb43-560" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img)</span>
+<span id="cb43-561"><a href="#cb43-561" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"在棋盘上渲染的立方体"</span>)</span>
+<span id="cb43-562"><a href="#cb43-562" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-563"><a href="#cb43-563" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-564"><a href="#cb43-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-565"><a href="#cb43-565" aria-hidden="true" tabindex="-1"></a><span class="fu">### 图像融合</span></span>
+<span id="cb43-566"><a href="#cb43-566" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-567"><a href="#cb43-567" aria-hidden="true" tabindex="-1"></a>基于单应矩阵，把一张图「贴」到另一张图指定的四边形区域里：</span>
+<span id="cb43-568"><a href="#cb43-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-569"><a href="#cb43-569" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-570"><a href="#cb43-570" aria-hidden="true" tabindex="-1"></a><span class="co">#读取待植入广告牌的文件</span></span>
+<span id="cb43-571"><a href="#cb43-571" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/catoon.jpg"</span>)</span>
+<span id="cb43-572"><a href="#cb43-572" aria-hidden="true" tabindex="-1"></a><span class="co">#读取广告牌文件</span></span>
+<span id="cb43-573"><a href="#cb43-573" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/advert.jpg"</span>)</span>
+<span id="cb43-574"><a href="#cb43-574" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-575"><a href="#cb43-575" aria-hidden="true" tabindex="-1"></a>op <span class="ot">=</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb43-576"><a href="#cb43-576" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img1); <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"要贴上去的图"</span>)</span>
+<span id="cb43-577"><a href="#cb43-577" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img2); <span class="fu">title</span>(<span class="at">main =</span> <span class="st">"底图（广告牌）"</span>)</span>
+<span id="cb43-578"><a href="#cb43-578" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span>
+<span id="cb43-579"><a href="#cb43-579" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-580"><a href="#cb43-580" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-583"><a href="#cb43-583" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb43-584"><a href="#cb43-584" aria-hidden="true" tabindex="-1"></a><span class="co">#读取待植入广告牌的文件</span></span>
+<span id="cb43-585"><a href="#cb43-585" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/catoon.jpg"</span>)</span>
+<span id="cb43-586"><a href="#cb43-586" aria-hidden="true" tabindex="-1"></a><span class="co">#读取广告牌文件</span></span>
+<span id="cb43-587"><a href="#cb43-587" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_imread</span>(<span class="st">"images/advert.jpg"</span>)</span>
+<span id="cb43-588"><a href="#cb43-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-589"><a href="#cb43-589" aria-hidden="true" tabindex="-1"></a><span class="co">#获取img1和img2的基本信息</span></span>
+<span id="cb43-590"><a href="#cb43-590" aria-hidden="true" tabindex="-1"></a>img1_info <span class="ot">=</span> <span class="fu">mat_info</span>(img1)</span>
+<span id="cb43-591"><a href="#cb43-591" aria-hidden="true" tabindex="-1"></a>img2_info <span class="ot">=</span> <span class="fu">mat_info</span>(img2)</span>
+<span id="cb43-592"><a href="#cb43-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-593"><a href="#cb43-593" aria-hidden="true" tabindex="-1"></a><span class="co">#对img1进行边缘扩充，使其尺寸与img2保持一致</span></span>
+<span id="cb43-594"><a href="#cb43-594" aria-hidden="true" tabindex="-1"></a>img1 <span class="ot">=</span> <span class="fu">cv_copyMakeBorder</span>(img1,</span>
+<span id="cb43-595"><a href="#cb43-595" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">1</span>]<span class="sc">-</span>img1_info[<span class="dv">1</span>],</span>
+<span id="cb43-596"><a href="#cb43-596" aria-hidden="true" tabindex="-1"></a>                         <span class="dv">0</span>,img2_info[<span class="dv">2</span>]<span class="sc">-</span>img1_info[<span class="dv">2</span>],</span>
+<span id="cb43-597"><a href="#cb43-597" aria-hidden="true" tabindex="-1"></a>                         BORDER_CONSTANT)</span>
+<span id="cb43-598"><a href="#cb43-598" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-599"><a href="#cb43-599" aria-hidden="true" tabindex="-1"></a><span class="co">#img1 边界上的四个顶点（用扩充后的尺寸）</span></span>
+<span id="cb43-600"><a href="#cb43-600" aria-hidden="true" tabindex="-1"></a>pts1 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),<span class="fu">c</span>(img1_info[<span class="dv">2</span>],<span class="dv">0</span>),</span>
+<span id="cb43-601"><a href="#cb43-601" aria-hidden="true" tabindex="-1"></a>             <span class="fu">c</span>(img1_info[<span class="dv">2</span>],img1_info[<span class="dv">1</span>]),<span class="fu">c</span>(<span class="dv">0</span>,img1_info[<span class="dv">1</span>]))</span>
+<span id="cb43-602"><a href="#cb43-602" aria-hidden="true" tabindex="-1"></a><span class="co">#广告牌上要植入的区域</span></span>
+<span id="cb43-603"><a href="#cb43-603" aria-hidden="true" tabindex="-1"></a>pts2 <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">c</span>(<span class="dv">190</span>,<span class="dv">100</span>),<span class="fu">c</span>(<span class="dv">390</span>,<span class="dv">120</span>),<span class="fu">c</span>(<span class="dv">380</span>,<span class="dv">414</span>),<span class="fu">c</span>(<span class="dv">180</span>,<span class="dv">440</span>))</span>
+<span id="cb43-604"><a href="#cb43-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-605"><a href="#cb43-605" aria-hidden="true" tabindex="-1"></a><span class="co">#依据pts1和pts2计算单应矩阵M</span></span>
+<span id="cb43-606"><a href="#cb43-606" aria-hidden="true" tabindex="-1"></a>M <span class="ot">=</span> <span class="fu">cv_findHomography</span>(<span class="fu">pts2f</span>(pts1),<span class="fu">pts2f</span>(pts2))</span>
+<span id="cb43-607"><a href="#cb43-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-608"><a href="#cb43-608" aria-hidden="true" tabindex="-1"></a><span class="co">#对img1进行单应变换</span></span>
+<span id="cb43-609"><a href="#cb43-609" aria-hidden="true" tabindex="-1"></a>dst <span class="ot">=</span> <span class="fu">cv_warpPerspective</span>(img1,M,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb43-610"><a href="#cb43-610" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-611"><a href="#cb43-611" aria-hidden="true" tabindex="-1"></a><span class="co">#灰度化后二值化，形成遮罩：有内容的地方为 255</span></span>
+<span id="cb43-612"><a href="#cb43-612" aria-hidden="true" tabindex="-1"></a>dst_gray <span class="ot">=</span> <span class="fu">cv_cvtColor</span>(dst,COLOR_BGR2GRAY)</span>
+<span id="cb43-613"><a href="#cb43-613" aria-hidden="true" tabindex="-1"></a>mask <span class="ot">=</span> <span class="fu">cv_threshold</span>(dst_gray,<span class="dv">0</span>,<span class="dv">255</span>,THRESH_BINARY)</span>
+<span id="cb43-614"><a href="#cb43-614" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-615"><a href="#cb43-615" aria-hidden="true" tabindex="-1"></a><span class="co">#把 dst 中遮罩覆盖的内容复制到 img2 上</span></span>
+<span id="cb43-616"><a href="#cb43-616" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">=</span> <span class="fu">cv_copyTo</span>(dst,mask,img2)</span>
+<span id="cb43-617"><a href="#cb43-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-618"><a href="#cb43-618" aria-hidden="true" tabindex="-1"></a><span class="co"># dim(mask)</span></span>
+<span id="cb43-619"><a href="#cb43-619" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-620"><a href="#cb43-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-621"><a href="#cb43-621" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE}</span></span>
+<span id="cb43-622"><a href="#cb43-622" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(img2)</span>
+<span id="cb43-623"><a href="#cb43-623" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main =</span> <span class="st">"融合结果"</span>)</span>
+<span id="cb43-624"><a href="#cb43-624" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb43-625"><a href="#cb43-625" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="复制到剪贴板" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
