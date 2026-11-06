@@ -7,8 +7,10 @@
 /*.qmd
 /_quarto.yml
 /Makefile
-/README.md
 /LICENSE
+# 例外：README.md 是仓库首页唯一的说明文档，必须随仓库发布，
+# 否则 GitHub 上看不到任何项目介绍，只看到 _book/ 下几百个 HTML 文件。
+!/README.md
 /book.bib
 /packages.bib
 /ROpenCVTutorial.Rproj
